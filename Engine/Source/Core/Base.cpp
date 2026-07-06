@@ -1,4 +1,5 @@
 #include <Core/Base.h>
+#include <Core/Common.h>
 using namespace Engine;
 
 Engine::Base::Base(const BaseDesc& desc): m_logger(desc.logger)

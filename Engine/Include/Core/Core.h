@@ -7,6 +7,7 @@ namespace Engine {
 	class Base;
 	class Logger;
 	class Game;
+	class GLFWContext;
 	
 	using i32 = std::int32_t;
 	using ui32 = std::uint32_t;

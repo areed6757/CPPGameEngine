@@ -1,4 +1,5 @@
 #pragma once
+#include <Core/Core.h>
 #include <Core/Base.h>
 #include <Core/Logger.h>
 
@@ -10,6 +11,10 @@ namespace Engine {
 
 	struct GameDesc {
 		Logger::LogLevel logLevel = Logger::LogLevel::Error;
+	};
+
+	struct GLFWDesc {
+		BaseDesc base;
 	};
 }
 
