@@ -1,6 +1,8 @@
 #pragma once
 #include <Core/Base.h>
 #include <Core/Core.h>
+#include <ThirdParty/glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace Engine {
 	class Game : public Base {

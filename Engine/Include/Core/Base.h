@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/Common.h>
+#include <ThirdParty/glad/glad.h>
 
 // Assets provided to all Engine classes
 namespace Engine {
