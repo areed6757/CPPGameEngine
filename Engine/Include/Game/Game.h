@@ -3,7 +3,7 @@
 #include <Core/Core.h>
 #include <ThirdParty/glad/glad.h> // Must be above glfw3.h
 #include <GLFW/glfw3.h>
-#include <ThirdParty/GLFWContext.h>
+#include <Graphics/GLFWContext.h>
 
 namespace Engine {
 	class Game : public Base {

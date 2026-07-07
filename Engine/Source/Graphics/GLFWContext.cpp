@@ -1,4 +1,4 @@
-#include <ThirdParty/GLFWContext.h>
+#include <Graphics/GLFWContext.h>
 #include <format>
 
 Engine::GLFWContext::GLFWContext(const GLFWDesc& desc)
