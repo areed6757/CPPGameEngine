@@ -12,9 +12,9 @@ namespace Engine {
 	struct GameDesc {
 		Logger::LogLevel logLevel = Logger::LogLevel::Error;
 
-		const char* title = { "Station Authority" };
 		i32 windowWidth = { 1280 };
 		i32 windowHeight = { 1020 };
+		const char* title = { "Station Authority" };
 	};
 
 	struct GLFWDesc {
@@ -23,10 +23,10 @@ namespace Engine {
 
 	struct WindowDesc {
 		BaseDesc base;
-
-		const char* title = { "Station Authority" };
+		// Default window fields
 		i32 windowWidth = { 1280 };
 		i32 windowHeight = { 1020 };
+		const char* title = { "Station Authority" };
 	};
 }
 

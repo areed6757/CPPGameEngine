@@ -1,7 +1,8 @@
 #include <Graphics/GLFWContext.h>
 #include <format>
 
-Engine::GLFWContext::GLFWContext(const GLFWDesc& desc) : Base(desc.base)
+Engine::GLFWContext::GLFWContext(const GLFWDesc& desc)
+    : Base(desc.base)
 {
     s_instance = this;
     glfwSetErrorCallback(&GLFWContext::error_callback);
@@ -9,16 +10,6 @@ Engine::GLFWContext::GLFWContext(const GLFWDesc& desc) : Base(desc.base)
     if (!glfwInit()) {
         EngineLogErrorAndThrow("GLFWInit failed.");
     }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-    //gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);    
 
     EngineLogInfo("GLFW initialized.");
 }

@@ -1,17 +1,20 @@
 #pragma once
 #include <Core/Common.h>
+#define GLFW_INCLUDE_NONE
+#include <ThirdParty/glad/glad.h>
 #include <GLFW/glfw3.h>
 
 namespace Engine {
-	class Window : public Base {
+	class Window final : public Base {
 	public:
 		explicit Window(const WindowDesc& desc);
 		~Window();
 
-	protected:
-		i32 windowHeight{};
-		i32 windowWidth{};
-		const char* title{};
+		Window(const Window&) = delete;
+		Window& operator=(const Window&) = delete;
+
+		bool shouldClose() const noexcept;
+		GLFWwindow* get() const noexcept;
 
 	private:
 		struct GLFWwindowDeleter {
@@ -22,6 +25,8 @@ namespace Engine {
 			}
 		};
 
-		using uniqueGLFWWindow = std::unique_ptr <GLFWwindow, GLFWwindowDeleter>;
+		using UniqueGLFWWindow = std::unique_ptr <GLFWwindow, GLFWwindowDeleter>;
+
+		UniqueGLFWWindow m_window{};
 	};
 }

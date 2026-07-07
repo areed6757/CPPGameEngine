@@ -1,5 +1,4 @@
 #pragma once
-#include <ThirdParty/glad/glad.h>
 
 namespace Engine {
     class Logger;

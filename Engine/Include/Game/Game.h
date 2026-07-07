@@ -2,6 +2,7 @@
 #include <Core/Base.h>
 #include <Core/Core.h>
 #include <Graphics/GLFWContext.h>
+#include <Graphics/Window.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -17,6 +18,7 @@ namespace Engine {
 	private:
 		std::unique_ptr<Logger> m_loggerPtr{};
 		std::unique_ptr<GLFWContext> m_glfwContext{};
+		std::unique_ptr<Window> m_window{};
 		bool m_isRunning{ true };
 	};
 }

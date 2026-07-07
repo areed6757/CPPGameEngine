@@ -1,17 +1,40 @@
 #include <Graphics/Window.h>
 
-Engine::Window::Window(const WindowDesc& desc) : Base(desc.base), windowWidth(desc.windowWidth), windowHeight(desc.windowHeight), title(desc.title)
-{
-    uniqueGLFWWindow window(glfwCreateWindow(windowWidth / 2, windowHeight / 2, title, NULL, NULL));
+Engine::Window::Window(const WindowDesc& desc) : Base(desc.base){
+    GLFWwindow* rawWindow(glfwCreateWindow(desc.windowWidth, desc.windowHeight, desc.title, NULL, NULL));
+    if (!rawWindow) {
+        EngineLogErrorAndThrow("GLFW window creation failed.");
+    }
 
-    if (!window.get()) {
+    m_window.reset(rawWindow);
+
+    glfwMakeContextCurrent(m_window.get());
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        EngineLogErrorAndThrow("Glad initiation failed.");
+    }
+
+    if (!m_window.get()) {
         EngineLogErrorAndThrow("GLFW window creation failed.");
         glfwTerminate();
     }
 
-    glfwMakeContextCurrent(window.get());
+    EngineLogInfo("GLFW window created.");
+
+    glfwMakeContextCurrent(m_window.get());
 }
 
 Engine::Window::~Window()
 {
+    EngineLogInfo("Window closing...");
+}
+
+bool Engine::Window::shouldClose() const noexcept
+{
+    return glfwWindowShouldClose(m_window.get());
+}
+
+GLFWwindow* Engine::Window::get() const noexcept
+{
+    return m_window.get();
 }

@@ -12,7 +12,14 @@ Engine::Game::Game(const GameDesc& desc) :
 {
 	GLFWDesc glfwDesc{ BaseDesc{ m_logger } };
 	m_glfwContext = std::make_unique<GLFWContext>(glfwDesc);
+	WindowDesc windowDesc{ BaseDesc {m_logger} };
+	m_window = std::make_unique<Window>(WindowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title });
 	EngineLogInfo("Game Initialized.");
+	/*
+	if (glfwWindowShouldClose(m_window->get())) {
+		m_window.get()->shouldClose();
+	}
+	*/
 }
 
 Engine::Game::~Game()
