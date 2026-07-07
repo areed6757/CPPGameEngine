@@ -14,10 +14,25 @@ namespace Engine {
         GLFWContext(const GLFWContext&) = delete;
         GLFWContext& operator=(const GLFWContext&) = delete;
 
+    protected:
+        i32 windowHeight{};
+        i32 windowWidth {};
+        const char* title{};
+
+
     private:
         static inline GLFWContext* s_instance = nullptr;
 
         static void error_callback(int error, const char* description);
-    };
+        
+        struct GLFWwindowDeleter {
+            void operator()(GLFWwindow* window) const {
+                if (window) {
+                    glfwDestroyWindow(window);
+                }
+            }
+        };
 
+        using uniqueGLFWWindow = std::unique_ptr <GLFWwindow, GLFWwindowDeleter>;
+    };
 }

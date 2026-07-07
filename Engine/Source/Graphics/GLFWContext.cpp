@@ -1,8 +1,7 @@
 #include <Graphics/GLFWContext.h>
 #include <format>
 
-Engine::GLFWContext::GLFWContext(const GLFWDesc& desc)
-    : Base(desc.base)
+Engine::GLFWContext::GLFWContext(const GLFWDesc& desc) : Base(desc.base), windowWidth(desc.windowWidth), windowHeight(desc.windowHeight), title(desc.title)
 {
     s_instance = this;
     glfwSetErrorCallback(&GLFWContext::error_callback);
@@ -10,6 +9,24 @@ Engine::GLFWContext::GLFWContext(const GLFWDesc& desc)
     if (!glfwInit()) {
         EngineLogErrorAndThrow("GLFWInit failed.");
     }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
+    uniqueGLFWWindow window(glfwCreateWindow(windowWidth /2, windowHeight /2, title, NULL, NULL));
+
+    if (!window.get()) {
+        EngineLogErrorAndThrow("GLFW window creation failed.");
+        glfwTerminate();
+    }
+
+    glfwMakeContextCurrent(window.get());
+    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);    
 
     EngineLogInfo("GLFW initialized.");
 }

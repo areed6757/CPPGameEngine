@@ -15,6 +15,10 @@ namespace Engine {
 
 	struct GLFWDesc {
 		BaseDesc base;
+
+		const char* title = {"Station Authority"};
+		i32 windowWidth = { 1280 };
+		i32 windowHeight = { 1020 };
 	};
 }
 

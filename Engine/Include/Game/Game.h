@@ -1,8 +1,6 @@
 #pragma once
 #include <Core/Base.h>
 #include <Core/Core.h>
-#include <ThirdParty/glad/glad.h> // Must be above glfw3.h
-#include <GLFW/glfw3.h>
 #include <Graphics/GLFWContext.h>
 
 namespace Engine {
