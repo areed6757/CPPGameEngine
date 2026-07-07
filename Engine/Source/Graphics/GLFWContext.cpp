@@ -1,7 +1,7 @@
 #include <Graphics/GLFWContext.h>
 #include <format>
 
-Engine::GLFWContext::GLFWContext(const GLFWDesc& desc) : Base(desc.base), windowWidth(desc.windowWidth), windowHeight(desc.windowHeight), title(desc.title)
+Engine::GLFWContext::GLFWContext(const GLFWDesc& desc) : Base(desc.base)
 {
     s_instance = this;
     glfwSetErrorCallback(&GLFWContext::error_callback);
@@ -18,15 +18,7 @@ Engine::GLFWContext::GLFWContext(const GLFWDesc& desc) : Base(desc.base), window
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    uniqueGLFWWindow window(glfwCreateWindow(windowWidth /2, windowHeight /2, title, NULL, NULL));
-
-    if (!window.get()) {
-        EngineLogErrorAndThrow("GLFW window creation failed.");
-        glfwTerminate();
-    }
-
-    glfwMakeContextCurrent(window.get());
-    gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);    
+    //gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);    
 
     EngineLogInfo("GLFW initialized.");
 }
