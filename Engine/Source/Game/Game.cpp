@@ -15,8 +15,9 @@ Engine::Game::Game(const GameDesc& desc) :
 	WindowDesc windowDesc{ BaseDesc {m_logger} };
 	m_window = std::make_unique<Window>(WindowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title });
 	EngineLogInfo("Game Initialized.");
-	/*
-	if (glfwWindowShouldClose(m_window->get())) {
+
+	/* DONT UNCOMMENT WITHOUT UPDATE HANDLING
+	while (!glfwWindowShouldClose(m_window->get())) {
 		m_window.get()->shouldClose();
 	}
 	*/
@@ -29,4 +30,7 @@ Engine::Game::~Game()
 
 void Engine::Game::run()
 {
+	while (!glfwWindowShouldClose(m_window->get())) {
+		glfwPollEvents();
+	}
 }

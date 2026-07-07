@@ -1,5 +1,6 @@
 #include <Graphics/Window.h>
 
+// Wrapper to handle creation and destruction of OpenGL windows via GLFW/glad
 Engine::Window::Window(const WindowDesc& desc) : Base(desc.base){
     GLFWwindow* rawWindow(glfwCreateWindow(desc.windowWidth, desc.windowHeight, desc.title, NULL, NULL));
     if (!rawWindow) {
@@ -19,9 +20,9 @@ Engine::Window::Window(const WindowDesc& desc) : Base(desc.base){
         glfwTerminate();
     }
 
-    EngineLogInfo("GLFW window created.");
+    glfwSwapInterval(1); // int frames to wait to swap buffers (basically vsync)
 
-    glfwMakeContextCurrent(m_window.get());
+    EngineLogInfo("GLFW window created.");
 }
 
 Engine::Window::~Window()

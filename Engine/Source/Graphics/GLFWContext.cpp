@@ -1,6 +1,7 @@
 #include <Graphics/GLFWContext.h>
 #include <format>
 
+// Basic context hanlder for GLFW, extends error_callbacks into the global logger
 Engine::GLFWContext::GLFWContext(const GLFWDesc& desc)
     : Base(desc.base)
 {
