@@ -2,6 +2,7 @@
 #include <Core/Core.h>
 #include <Core/Base.h>
 #include <Core/Logger.h>
+#include <vector>
 
 // Descriptions for dependency injection, constructors should only take these structs as args
 namespace Engine {
@@ -27,6 +28,12 @@ namespace Engine {
 		i32 windowWidth = { 1280 };
 		i32 windowHeight = { 1020 };
 		const char* title = { "Station Authority" };
+		ActionBindings& actionBindings;
+	};
+
+	struct InputHandlerDesc {
+		BaseDesc base;
+		ActionBindings& actionBindings;
 	};
 }
 

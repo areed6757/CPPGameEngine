@@ -11,16 +11,10 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_loggerPtr(&m_logger)
 {
 	GLFWDesc glfwDesc{ BaseDesc{ m_logger } };
-	m_glfwContext = std::make_unique<GLFWContext>(glfwDesc);
-	WindowDesc windowDesc{ BaseDesc {m_logger} };
-	m_window = std::make_unique<Window>(WindowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title });
+	m_glfwContext = std::make_unique<GLFWContext>(glfwDesc); 
+	WindowDesc windowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title, m_actionBindings };
+	m_window = std::make_unique<Window>(windowDesc);
 	EngineLogInfo("Game Initialized.");
-
-	/* DONT UNCOMMENT WITHOUT UPDATE HANDLING
-	while (!glfwWindowShouldClose(m_window->get())) {
-		m_window.get()->shouldClose();
-	}
-	*/
 }
 
 Engine::Game::~Game()
@@ -32,5 +26,6 @@ void Engine::Game::run()
 {
 	while (!glfwWindowShouldClose(m_window->get())) {
 		glfwPollEvents();
+
 	}
 }

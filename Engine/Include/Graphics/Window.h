@@ -16,6 +16,8 @@ namespace Engine {
 		bool shouldClose() const noexcept;
 		GLFWwindow* get() const noexcept;
 
+		void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
 	private:
 		struct GLFWwindowDeleter {
 			void operator()(GLFWwindow* window) const {
@@ -26,7 +28,9 @@ namespace Engine {
 		};
 
 		using UniqueGLFWWindow = std::unique_ptr <GLFWwindow, GLFWwindowDeleter>;
-
 		UniqueGLFWWindow m_window{};
+
+		std::unique_ptr<InputHandler> m_inputHandler;
+
 	};
 }

@@ -3,6 +3,7 @@
 #include <Core/Core.h>
 #include <Graphics/GLFWContext.h>
 #include <Graphics/Window.h>
+#include <Input/ActionBindings.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -19,6 +20,7 @@ namespace Engine {
 		std::unique_ptr<Logger> m_loggerPtr{};
 		std::unique_ptr<GLFWContext> m_glfwContext{};
 		std::unique_ptr<Window> m_window{};
+		ActionBindings m_actionBindings{};
 		bool m_isRunning{ true };
 	};
 }
