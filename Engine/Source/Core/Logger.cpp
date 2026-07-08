@@ -3,8 +3,8 @@
 
 Engine::Logger::Logger(LogLevel logLevel) : m_logLevel(logLevel)
 {
-	std::clog << "|=-{ Auctoritas }-=|" << "\n";
-	std::clog << "--------------------" << "\n";
+	std::clog << "|=-{ Void Primacy }-=|" << "\n";
+	std::clog << "----------------------" << "\n";
 }
 
 void Engine::Logger::log(LogLevel logLevel, const char* message) const

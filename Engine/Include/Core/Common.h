@@ -28,12 +28,12 @@ namespace Engine {
 		i32 windowWidth = { 1280 };
 		i32 windowHeight = { 1020 };
 		const char* title = { "Station Authority" };
-		ActionBindings& actionBindings;
+		ActionMap& actionMap;
 	};
 
 	struct InputHandlerDesc {
 		BaseDesc base;
-		ActionBindings& actionBindings;
+		ActionMap& actionMap;
 	};
 }
 

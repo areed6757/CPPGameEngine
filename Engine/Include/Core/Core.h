@@ -11,7 +11,8 @@ namespace Engine {
 	class Window;
 	class InputHandler;
 
-	struct ActionBindings;
+	struct ActionMap;
+	struct KeyStates;
 	
 	using i32 = std::int32_t;
 	using ui32 = std::uint32_t;

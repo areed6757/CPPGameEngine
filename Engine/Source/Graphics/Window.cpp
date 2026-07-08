@@ -24,12 +24,12 @@ Engine::Window::Window(const WindowDesc& desc) : Base(desc.base){
     glfwSwapInterval(1); // int frames to wait to swap buffers (basically vsync)
 
     // Input handling - all inputs to a window will be passed through
-    InputHandlerDesc handleDesc{ BaseDesc{desc.base.logger}, desc.actionBindings };
+    InputHandlerDesc handleDesc{ BaseDesc{desc.base.logger}, desc.actionMap };
     m_inputHandler = std::make_unique<InputHandler>(handleDesc);
 
 
-    //glfwSetWindowUserPointer(m_window.get(), this);
-    //glfwSetKeyCallback(m_window.get(), &Window::key_callback);
+    glfwSetWindowUserPointer(m_window.get(), this);
+    glfwSetKeyCallback(m_window.get(), Window::key_callback);
 
     EngineLogInfo("GLFW window created.");
 }
@@ -49,6 +49,7 @@ GLFWwindow* Engine::Window::get() const noexcept
     return m_window.get();
 }
 
+// Static key callback function for input handling, prompts the InputHandler associated with this Window.
 void Engine::Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
     if (self && self->m_inputHandler) {
