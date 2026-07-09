@@ -12,6 +12,7 @@ namespace Engine {
 	class InputHandler;
 	class GameClock;
 	class Scheduler;
+	class TickedSystem;
 
 	struct ActionMap;
 	struct KeyStates;

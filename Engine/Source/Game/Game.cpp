@@ -25,6 +25,11 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler = std::make_unique<Scheduler>(schedulerDesc);
 	if (!m_scheduler) { EngineLogErrorAndThrow("Scheduler failed to initialize.") };
 
+	GraphicsTicksDesc gfxTicksDesc = { {m_logger} };
+	m_gfxTicks = std::make_unique<GraphicsTicks>(gfxTicksDesc);
+	if (!m_gfxTicks) { EngineLogErrorAndThrow("GraphicsTicks failed to initialize.") };
+	m_scheduler->registerSystem(m_gfxTicks.get());
+
 	EngineLogInfo("Game initialized successfully.");
 }
 
@@ -35,5 +40,8 @@ Engine::Game::~Game()
 
 void Engine::Game::run()
 {
-	glfwPollEvents();
+	while (!glfwWindowShouldClose(m_window->get())) {
+		glfwPollEvents();
+		m_scheduler.get()->advance();
+	}
 }

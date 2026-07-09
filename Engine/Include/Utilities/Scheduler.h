@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/Common.h>
+#include <Utilities/GameClock.h>
 
 namespace Engine {
 	class Scheduler : public Base {
@@ -10,9 +11,14 @@ namespace Engine {
 		Scheduler(const Scheduler&) = delete;
 		Scheduler& operator = (const Scheduler&) = delete;
 
+		void registerSystem(TickedSystem* sys);
 
+		void advance();
 
 	private:
 		GameClock& m_clock;
+		d64 m_fixedTimestep;
+		std::vector<TickedSystem*> m_systems{};
+		d64 m_accumulator;
 	};
 }

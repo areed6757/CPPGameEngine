@@ -2,6 +2,7 @@
 #include <Core/Core.h>
 #include <Core/Base.h>
 #include <Core/Logger.h>
+#include <TickedSystems/TickedSystem.h>
 #include <vector>
 
 // Descriptions for dependency injection, constructors should only take these structs as args
@@ -45,6 +46,11 @@ namespace Engine {
 	struct SchedulerDesc {
 		BaseDesc base;
 		GameClock& gameClock;
+		d64 tickRate{ 1.0/60.0 };
+	};
+
+	struct GraphicsTicksDesc {
+		BaseDesc base;
 	};
 }
 

@@ -17,6 +17,5 @@ namespace Engine {
 	private:
 		SteadyClock::time_point m_last{SteadyClock::now()};
 		double m_delta{ 0.0 };
-
 	};
 }
