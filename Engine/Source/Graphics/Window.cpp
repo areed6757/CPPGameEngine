@@ -27,6 +27,9 @@ Engine::Window::Window(const WindowDesc& desc) : Base(desc.base){
     InputHandlerDesc handleDesc{ BaseDesc{desc.base.logger}, desc.actionMap };
     m_inputHandler = std::make_unique<InputHandler>(handleDesc);
 
+    if (!m_inputHandler.get()) {
+        EngineLogErrorAndThrow("Input handler not created for Window.");
+    }
 
     glfwSetWindowUserPointer(m_window.get(), this);
     glfwSetKeyCallback(m_window.get(), Window::key_callback);

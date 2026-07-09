@@ -33,6 +33,7 @@ void Engine::InputHandler::onKey(i32 key, i32 scancode, i32 action, i32 mods)
 		return;
 	case(GLFW_REPEAT):
 		// Handle key repeats (LOOK THIS UP IN GLFW DOCS)
+		EngineLogWarning("GLFW_REPEAT key action called but not defined in InputHandler.");
 		return;
 	default:
 		EngineLogWarning("Unexpected GLFW key action.");

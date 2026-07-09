@@ -24,16 +24,22 @@ namespace Engine {
 
 	struct WindowDesc {
 		BaseDesc base;
+
 		// Default window fields
 		i32 windowWidth = { 1280 };
 		i32 windowHeight = { 1020 };
 		const char* title = { "Station Authority" };
-		ActionMap& actionMap;
+
+		ActionMap& actionMap; // Strictly pass-through for InputHandler of the Window
 	};
 
 	struct InputHandlerDesc {
 		BaseDesc base;
 		ActionMap& actionMap;
+	};
+
+	struct GameClockDesc {
+		BaseDesc base;
 	};
 }
 

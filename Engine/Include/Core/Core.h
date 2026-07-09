@@ -10,6 +10,7 @@ namespace Engine {
 	class GLFWContext;
 	class Window;
 	class InputHandler;
+	class GameClock;
 
 	struct ActionMap;
 	struct KeyStates;
