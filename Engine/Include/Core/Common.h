@@ -41,5 +41,10 @@ namespace Engine {
 	struct GameClockDesc {
 		BaseDesc base;
 	};
+
+	struct SchedulerDesc {
+		BaseDesc base;
+		GameClock& gameClock;
+	};
 }
 

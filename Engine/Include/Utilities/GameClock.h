@@ -11,11 +11,8 @@ namespace Engine {
 		explicit GameClock(const GameClockDesc& desc);
 		~GameClock();
 
-		void tick() noexcept {
-			auto now = SteadyClock::now();
-			m_delta = std::chrono::duration_cast<Duration>(now - m_last).count();
-			m_last = now;
-		}
+		void tick() noexcept;
+		d64 getDelta() const noexcept { return m_delta; };
 		
 	private:
 		SteadyClock::time_point m_last{SteadyClock::now()};

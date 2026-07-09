@@ -4,10 +4,12 @@
 Engine::InputHandler::InputHandler(InputHandlerDesc& desc) : Base(desc.base), m_actionMap(desc.actionMap), m_keyStates(GLFW_KEY_LAST + 1, false)
 {
 	m_actionMap.bindings.shrink_to_fit();
+	EngineLogInfo("InputHandler created.");
 }
 
 Engine::InputHandler::~InputHandler()
 {
+	EngineLogInfo("InputHandler destroyed.");
 }
 
 void Engine::InputHandler::onKey(i32 key, i32 scancode, i32 action, i32 mods)
