@@ -3,6 +3,7 @@
 #include <Core/Core.h>
 #include <Graphics/GLFWContext.h>
 #include <Graphics/Window.h>
+#include <Input/InputHandler.h>
 #include <Input/ActionMap.h>
 #include <Utilities/GameClock.h>
 #include <Utilities/Scheduler.h>
@@ -26,6 +27,7 @@ namespace Engine {
 		std::unique_ptr<GameClock> m_gameClock{};
 		std::unique_ptr<Scheduler> m_scheduler{};
 		std::unique_ptr<GraphicsTicks> m_gfxTicks{};
+		InputHandler* m_inputHandler{};
 		ActionMap m_actionMap{};
 		bool m_isRunning{ true };
 	};

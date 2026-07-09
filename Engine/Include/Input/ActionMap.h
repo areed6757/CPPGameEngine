@@ -32,7 +32,7 @@ namespace Engine {
 			{GLFW_KEY_X, "X"},
 			{GLFW_KEY_Y, "Y"},
 			{GLFW_KEY_Z, "Z"},			
-			{GLFW_KEY_SPACE, " "},
+			{GLFW_KEY_SPACE, "pause"},
 			{GLFW_KEY_APOSTROPHE, "'"},
 			{GLFW_KEY_COMMA, ","},
 			{GLFW_KEY_MINUS, "-"},

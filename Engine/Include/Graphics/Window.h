@@ -18,6 +18,8 @@ namespace Engine {
 
 		static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+		InputHandler* getInputHandler() const noexcept { return m_inputHandler.get(); };
+
 	private:
 		struct GLFWwindowDeleter {
 			void operator()(GLFWwindow* window) const {

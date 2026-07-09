@@ -16,6 +16,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_glfwContext = std::make_unique<GLFWContext>(glfwDesc); 
 	WindowDesc windowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title, m_actionMap};
 	m_window = std::make_unique<Window>(windowDesc);
+	m_inputHandler = m_window->getInputHandler();
 
 	GameClockDesc clockDesc = { {m_logger} };
 	m_gameClock = std::make_unique<GameClock>(clockDesc);
@@ -42,6 +43,13 @@ void Engine::Game::run()
 {
 	while (!glfwWindowShouldClose(m_window->get())) {
 		glfwPollEvents();
+
+		if (m_inputHandler->wasEventActivated("pause")) {
+			m_scheduler.get()->togglePause();
+		}
+
 		m_scheduler.get()->advance();
+
+		m_inputHandler->endFrame();
 	}
 }

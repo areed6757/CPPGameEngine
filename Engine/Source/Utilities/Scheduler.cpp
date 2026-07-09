@@ -2,7 +2,7 @@
 #include <format>
 
 Engine::Scheduler::Scheduler(const SchedulerDesc& desc) : Base(desc.base),
-m_clock(desc.gameClock), m_fixedTimestep(desc.tickRate), m_systems{}, m_accumulator{0.0}
+m_clock(desc.gameClock), m_fixedTimestep(desc.tickRate), m_systems{}, m_accumulator{ 0.0 }, m_paused{ false }
 {
 	EngineLogInfo("Scheduler created.");
 }
@@ -22,12 +22,26 @@ void Engine::Scheduler::advance()
 {
 	m_clock.tick();
 	m_accumulator += m_clock.getDelta();
+	if (m_paused) { m_accumulator = 0; };
+
 	while (m_accumulator >= m_fixedTimestep) {
 		for (auto* sys : m_systems) {
 			sys->Update(m_fixedTimestep);
 		}
 		m_accumulator -= m_fixedTimestep;
 		// EngineLogInfo("______________Tick______________"); // Uncomment to view tick-delineated logging
+	}
+}
+
+void Engine::Scheduler::togglePause()
+{
+	if (m_paused) {
+		EngineLogInfo("Game unpaused.");
+		m_paused = false;
+	}
+	else {
+		EngineLogInfo("Game paused.");
+		m_paused = true;
 	}
 }
  
