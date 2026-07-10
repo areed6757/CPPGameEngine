@@ -7,7 +7,7 @@
 #include <Input/ActionMap.h>
 #include <Utilities/GameClock.h>
 #include <Utilities/Scheduler.h>
-#include <TickedSystems/GraphicsTicks.h>
+#include <ECS/Systems/GraphicsTicks.h>
 
 namespace Engine {
 	class Game : public Base {

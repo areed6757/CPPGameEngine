@@ -1,6 +1,6 @@
 #pragma once
 #include <Core/Common.h>
-#include <TickedSystems/TickedSystem.h>
+#include <ECS/Systems/TickedSystem.h>
 
 // TODO: THIS CLASS IS FOR TESTING. IT WILL HANDLE GRAPHICS UPDATES LATER
 namespace Engine{

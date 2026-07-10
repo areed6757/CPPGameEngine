@@ -2,7 +2,7 @@
 #include <Core/Core.h>
 #include <Core/Base.h>
 #include <Core/Logger.h>
-#include <TickedSystems/TickedSystem.h>
+#include <ECS/Systems/TickedSystem.h>
 #include <vector>
 
 // Descriptions for dependency injection, constructors should only take these structs as args
@@ -14,8 +14,8 @@ namespace Engine {
 	struct GameDesc {
 		Logger::LogLevel logLevel = Logger::LogLevel::Error;
 
-		i32 windowWidth = { 1280 };
-		i32 windowHeight = { 1020 };
+		i32 windowWidth = { 600 };
+		i32 windowHeight = { 500 };
 		const char* title = { "Station Authority" };
 	};
 
@@ -26,10 +26,10 @@ namespace Engine {
 	struct WindowDesc {
 		BaseDesc base;
 
-		// Default window fields
-		i32 windowWidth = { 1280 };
-		i32 windowHeight = { 1020 };
-		const char* title = { "Station Authority" };
+		// Default window fields set by instantiation in GameDesc
+		i32 windowWidth = {};
+		i32 windowHeight = {};
+		const char* title = {};
 
 		ActionMap& actionMap; // Strictly pass-through for InputHandler of the Window
 	};
@@ -46,11 +46,16 @@ namespace Engine {
 	struct SchedulerDesc {
 		BaseDesc base;
 		GameClock& gameClock;
-		d64 tickRate{ 1.0/60.0 };
+		d64 tickRate{ 1.0/60.0 }; // 1/60 tickRate is 60 ticks per second ***TODO : fix this to be 60 instead of 1/60
 	};
 
 	struct GraphicsTicksDesc {
 		BaseDesc base;
+	};
+
+	struct EntityRegisterDesc {
+		BaseDesc base;
+		i32 maxEntities{1000};
 	};
 }
 
