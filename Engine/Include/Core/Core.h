@@ -16,6 +16,8 @@ namespace Engine {
 
 	struct ActionMap;
 	struct KeyStates;
+	struct Vector3double;
+	struct Vector3float;
 	
 	using i32 = std::int32_t;
 	using ui32 = std::uint32_t;

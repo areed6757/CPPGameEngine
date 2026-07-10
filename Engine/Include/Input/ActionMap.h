@@ -3,36 +3,16 @@
 
 // Maps key presses to actions as GLFW_KEY_<label>, "ActionString"
 // This uses a vector of pairs implementation to avoid overhead from unordered_map lookups
+// bindings should not be edited after compilation to maintain memory contiguity
+// ActionStrings should remain <14 characters to ensure they are stored in-line
 namespace Engine {
 	struct ActionMap {
 		std::vector<std::pair<i32, std::string>> bindings = {
-			{GLFW_KEY_A, "A"},
-			{GLFW_KEY_B, "B"},
-			{GLFW_KEY_C, "C"},
-			{GLFW_KEY_D, "D"},
-			{GLFW_KEY_E, "E"},
-			{GLFW_KEY_F, "F"},
-			{GLFW_KEY_G, "G"},
-			{GLFW_KEY_H, "H"},
-			{GLFW_KEY_I, "I"},
-			{GLFW_KEY_J, "J"},
-			{GLFW_KEY_K, "K"},
-			{GLFW_KEY_L, "L"},
-			{GLFW_KEY_M, "M"},
-			{GLFW_KEY_N, "N"},
-			{GLFW_KEY_O, "O"},
-			{GLFW_KEY_P, "P"},
-			{GLFW_KEY_Q, "Q"},
-			{GLFW_KEY_R, "R"},
-			{GLFW_KEY_S, "S"},
-			{GLFW_KEY_T, "T"},
-			{GLFW_KEY_U, "U"},
-			{GLFW_KEY_V, "V"},
-			{GLFW_KEY_W, "W"},
-			{GLFW_KEY_X, "X"},
-			{GLFW_KEY_Y, "Y"},
-			{GLFW_KEY_Z, "Z"},			
-			{GLFW_KEY_SPACE, "pause"},
+						{GLFW_KEY_SPACE, "pause"}
+		};
+
+		/* Unused Keys
+		
 			{GLFW_KEY_APOSTROPHE, "'"},
 			{GLFW_KEY_COMMA, ","},
 			{GLFW_KEY_MINUS, "-"},
@@ -111,6 +91,6 @@ namespace Engine {
 			{GLFW_KEY_RIGHT_ALT, "R_ALT"},
 			{GLFW_KEY_LEFT_SUPER, "L_SUPER"},
 			{GLFW_KEY_RIGHT_SUPER, "R_SUPER"}
-		};
+		*/
 	};
 }
