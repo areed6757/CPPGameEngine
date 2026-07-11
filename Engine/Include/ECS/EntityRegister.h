@@ -7,11 +7,9 @@
 /// some functions to continue targetting the destroyed Entity)
 /// </summary>
 namespace Engine {
-	struct EntityID{
-		i32 index{};
-		i32 generation{};
-
-		auto operator<=>(const EntityID&) const = default; // Defaults all six comparison operators
+	struct EntityID {
+		i32 id;
+		i32 generation;
 	};
 
 	class EntityRegister : public Base {
@@ -19,9 +17,9 @@ namespace Engine {
 		explicit EntityRegister(const EntityRegisterDesc& desc);
 		~EntityRegister();
 
-		EntityID create();
-		void destroy(EntityID& id);
-		bool isValid(EntityID& id);
+		[[nodiscard]] EntityID create();
+		void destroy(EntityID id);
+		bool isValid(EntityID id) const noexcept;
 
 	private:
 		i32 m_maxEntities{};

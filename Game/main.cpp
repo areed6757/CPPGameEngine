@@ -4,8 +4,7 @@
 int main()
 {
 	try {
-		Engine::Game game({Engine::Logger::LogLevel::Info
-	});
+		Engine::Game game({});
 		game.run();
 	}
 	catch (const std::runtime_error&) {

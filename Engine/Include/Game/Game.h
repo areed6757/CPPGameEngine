@@ -8,6 +8,7 @@
 #include <Utilities/GameClock.h>
 #include <Utilities/Scheduler.h>
 #include <ECS/Systems/GraphicsTicks.h>
+#include <ECS/EntityRegister.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -27,6 +28,7 @@ namespace Engine {
 		std::unique_ptr<GameClock> m_gameClock{};
 		std::unique_ptr<Scheduler> m_scheduler{};
 		std::unique_ptr<GraphicsTicks> m_gfxTicks{};
+		std::unique_ptr<EntityRegister> m_entityRegister{};
 		InputHandler* m_inputHandler{};
 		ActionMap m_actionMap{};
 		bool m_isRunning{ true };

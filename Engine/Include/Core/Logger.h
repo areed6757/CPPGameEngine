@@ -3,11 +3,12 @@
 namespace Engine {
 	class Logger final {
 	public:
-		// LogLevel will eventually need debugging level to raise
+		// Debug is VERY heavy for some functions!!
 		enum class LogLevel {
-			Error = 0,
+			Debug = 0,
+			Info,
 			Warning,
-			Info
+			Error
 		};
 
 		explicit Logger(LogLevel logLevel = LogLevel::Error);
@@ -42,7 +43,7 @@ namespace Engine {
 		}
 
 	#define EngineLogWarningAndThrow(message) {\
-		DX3DLogWarning(message);\
+		EngineLogWarning(message);\
 		throw std::runtime_error(message);\
 		}
 
@@ -51,7 +52,11 @@ namespace Engine {
 		}
 
 	#define EngineLogInfoAndThrow(message) {\
-		DX3DLogInfo(message);\
+		EngineLogInfo(message);\
 		throw std::runtime_error(message);\
+		}
+
+	#define EngineLogDebug(message) {\
+		getLogger().log((Logger::LogLevel::Debug), message);\
 		}
 }

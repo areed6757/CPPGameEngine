@@ -13,14 +13,14 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_loggerPtr(&m_logger)
 {
 	GLFWDesc glfwDesc{ { m_logger } };
-	m_glfwContext = std::make_unique<GLFWContext>(glfwDesc); 
-	WindowDesc windowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title, m_actionMap};
+	m_glfwContext = std::make_unique<GLFWContext>(glfwDesc);
+	WindowDesc windowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title, m_actionMap };
 	m_window = std::make_unique<Window>(windowDesc);
 	m_inputHandler = m_window->getInputHandler();
 
 	GameClockDesc clockDesc = { {m_logger} };
 	m_gameClock = std::make_unique<GameClock>(clockDesc);
-	if (!m_gameClock) { EngineLogErrorAndThrow("GameClock failed to initialize." )};
+	if (!m_gameClock) { EngineLogErrorAndThrow("GameClock failed to initialize.") };
 
 	SchedulerDesc schedulerDesc = { {m_logger}, *m_gameClock };
 	m_scheduler = std::make_unique<Scheduler>(schedulerDesc);
@@ -30,6 +30,10 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_gfxTicks = std::make_unique<GraphicsTicks>(gfxTicksDesc);
 	if (!m_gfxTicks) { EngineLogErrorAndThrow("GraphicsTicks failed to initialize.") };
 	m_scheduler->registerSystem(m_gfxTicks.get());
+
+	EntityRegisterDesc eRegDesc = { {m_logger} };
+	m_entityRegister = std::make_unique<EntityRegister>(eRegDesc);
+	if (!m_entityRegister) { EngineLogErrorAndThrow("EntityRegister failed to initialize.") }
 
 	EngineLogInfo("Game initialized successfully.");
 }
