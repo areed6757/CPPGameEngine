@@ -20,7 +20,7 @@ namespace Engine {
 				return;
 			}
 			if (m_sparse.at(index) != INVALID_INDEX) {
-				EngineLogWarning(std::format("Entity {} already has this component; overwriting", index).c_str());
+				EngineLogWarning(std::format("Entity {} already has this component; overwriting.", index).c_str());
 			}
 			m_dense.push_back(component);
 			m_backRef.push_back(index);
@@ -32,11 +32,12 @@ namespace Engine {
 		}
 
 		bool has(i32 index) const noexcept {
-
+			return m_sparse.at(index) != INVALID_INDEX;
 		}
 
 		T& get(i32 index) {
-
+			assert(has(index) && "get() called on entity with no component");
+			return m_dense.at(m_sparse.at(index));
 		}
 	
 	private:
