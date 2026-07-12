@@ -4,7 +4,7 @@
 
 namespace Engine {
 	struct Transform {
-		Vector3double transform;
-		f32 rotation;
+		Vector3double transform{0.0, 0.0, 0.0};
+		f32 rotation{0.0};
 	};
 }

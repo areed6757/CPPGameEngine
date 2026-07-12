@@ -3,7 +3,6 @@
 #include <Core/Base.h>
 #include <Core/Logger.h>
 #include <ECS/Systems/TickedSystem.h>
-#include <ECS/EntityRegister.h>
 #include <vector>
 
 // Descriptions for dependency injection, constructors should only take these structs as args
@@ -76,6 +75,7 @@ namespace Engine {
 	struct ECSWrapperDesc {
 		BaseDesc base;
 		EntityRegister& entityRegister;
+		ComponentDesc& compDesc; // Pass-through for component pools owned by the ECSWrapper
 	};
 }
 

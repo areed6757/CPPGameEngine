@@ -35,10 +35,17 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_entityRegister = std::make_unique<EntityRegister>(eRegDesc);
 	if (!m_entityRegister) { EngineLogErrorAndThrow("EntityRegister failed to initialize.") }
 
-	ECSWrapperDesc ecsDesc = { {m_logger}, *m_entityRegister.get()};
+	ComponentDesc compDesc = { {m_logger} };
+	ECSWrapperDesc ecsDesc = { {m_logger}, *m_entityRegister.get(), compDesc };
 	m_ecsWrapper = std::make_unique<ECSWrapper>(ecsDesc);
 	if (!m_ecsWrapper) { EngineLogErrorAndThrow("ECSWrapper failed to initialize."); }
 
+	EntityID e1 = m_ecsWrapper->createEntity();
+	Transform t{ Vector3double{0, 0, 0}, 0 };
+	m_ecsWrapper->addComponent<Transform>(e1, t);
+	m_ecsWrapper->removeComponent<Transform>(e1);
+	// m_ecsWrapper->destroyEntity(e1); // TODO: Make this call destroy associated components
+	
 	EngineLogInfo("Game initialized successfully.");
 }
 

@@ -9,6 +9,9 @@
 #include <Utilities/Scheduler.h>
 #include <ECS/Systems/GraphicsTicks.h>
 #include <ECS/EntityRegister.h>
+#include <ECS/ECSWrapper.h>
+#include <ECS/Components/Transform.h>
+#include <Physics/Vector3double.h>
 
 namespace Engine {
 	class Game : public Base {

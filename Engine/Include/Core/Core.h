@@ -13,12 +13,15 @@ namespace Engine {
 	class GameClock;
 	class Scheduler;
 	class TickedSystem;
+	class EntityRegister;
 	class ECSWrapper;
 
 	struct ActionMap;
 	struct KeyStates;
 	struct Vector3double;
 	struct Vector3float;
+	struct EntityID;
+	struct ComponentPools;
 	
 	using i32 = std::int32_t;
 	using ui32 = std::uint32_t;

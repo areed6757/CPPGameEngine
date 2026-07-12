@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/Common.h>
 #include <format>
+#include <cassert>
 
 namespace Engine {
 	constexpr i32 INVALID_INDEX{ -1 };
@@ -8,15 +9,18 @@ namespace Engine {
 	template <typename T>
 	class Component : public Base {
 	public:
+		friend class ECSWrapper;
+
 		explicit Component(const ComponentDesc& desc) : Base(desc.base) {
 			m_maxEntities = desc.maxEntities;
 			m_sparse.assign(m_maxEntities + 1, INVALID_INDEX);
 		}
 		~Component() {};
-
+	
+	private:
 		void add(i32 index, const T& component) {
 			if (!(index > 0 && index <= m_maxEntities)) {
-				EngineLogError(std::format("Invalid attempt to add component to index {}", index).c_str()); 
+				EngineLogError(std::format("Invalid attempt to add component to index {}", index).c_str());
 				return;
 			}
 			if (m_sparse.at(index) != INVALID_INDEX) {
@@ -26,6 +30,7 @@ namespace Engine {
 			m_dense.push_back(component);
 			m_backRef.push_back(index);
 			m_sparse.at(index) = static_cast<i32> (m_dense.size() - 1);
+			EngineLogDebug(std::format("Entity {} added component", index).c_str());
 		}
 
 		void remove(i32 index) {
@@ -41,6 +46,8 @@ namespace Engine {
 			m_dense.pop_back();
 			m_backRef.pop_back();
 			m_sparse.at(index) = INVALID_INDEX;
+
+			EngineLogDebug(std::format("Entity {} destroyed component", index).c_str());
 		}
 
 		bool has(i32 index) const noexcept {
@@ -55,8 +62,7 @@ namespace Engine {
 		i32 size() {
 			return m_dense.size();
 		}
-	
-	private:
+
 		i32 m_maxEntities{};
 		std::vector<i32> m_sparse{};
 		std::vector<T> m_dense{};

@@ -14,14 +14,16 @@ namespace Engine {
 
 	class EntityRegister : public Base {
 	public:
+		friend class ECSWrapper;
+
 		explicit EntityRegister(const EntityRegisterDesc& desc);
 		~EntityRegister();
 
+	private:		
 		[[nodiscard]] EntityID create();
 		void destroy(EntityID id);
 		bool isValid(EntityID id) const noexcept;
 
-	private:
 		i32 m_maxEntities{};
 		std::vector<i32> m_generations;
 		std::vector<i32> m_freeIndices;

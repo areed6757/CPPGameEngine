@@ -2,7 +2,7 @@
 #include <Core/Common.h>
 
 namespace Engine {
-	struct Transform {
+	struct Movement {
 		f32 linearVelocity;
 		f32 angularVelocity;
 
