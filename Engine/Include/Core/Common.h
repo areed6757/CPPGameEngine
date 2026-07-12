@@ -12,7 +12,7 @@ namespace Engine {
 	};
 
 	struct GameDesc {
-		Logger::LogLevel logLevel = Logger::LogLevel::Info;
+		Logger::LogLevel logLevel = Logger::LogLevel::Debug;
 
 		i32 windowWidth = { 600 };
 		i32 windowHeight = { 500 };
@@ -56,6 +56,11 @@ namespace Engine {
 	struct EntityRegisterDesc {
 		BaseDesc base;
 		i32 maxEntities{ 1000 };
+	};
+
+	struct ComponentStorageDesc {
+		BaseDesc base;
+		i32 totalComponents{ 1 };
 	};
 }
 
