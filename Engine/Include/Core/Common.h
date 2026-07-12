@@ -9,11 +9,11 @@
 namespace Engine {
 	
 	// Customization fields, to be moved later.
-	i32 WINDOW_WIDTH{ 600 };
-	i32 WINDOW_HEIGHT{ 500 };
-	const char* TITLE { "Station Authority" };
-	d64 TICK_RATE = { 1.0 / 60.0 }; // 1/60 tickRate is 60 ticks per second ***TODO : fix this to be 60 instead of 1/60
-	const i32 MAX_ENTITIES = { 1000 };
+	constexpr i32 WINDOW_WIDTH{ 600 };
+	constexpr i32 WINDOW_HEIGHT{ 500 };
+	constexpr const char* TITLE { "Station Authority" };
+	constexpr d64 TICK_RATE = { 1.0 / 60.0 }; // 1/60 tickRate is 60 ticks per second ***TODO : fix this to be 60 instead of 1/60
+	constexpr const i32 MAX_ENTITIES = { 1000 };
 
 	
 	struct BaseDesc {
