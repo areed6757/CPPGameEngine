@@ -7,6 +7,15 @@
 
 // Descriptions for dependency injection, constructors should only take these structs as args
 namespace Engine {
+	
+	// Customization fields, to be moved later.
+	i32 WINDOW_WIDTH{ 600 };
+	i32 WINDOW_HEIGHT{ 500 };
+	const char* TITLE { "Station Authority" };
+	d64 TICK_RATE = { 1.0 / 60.0 }; // 1/60 tickRate is 60 ticks per second ***TODO : fix this to be 60 instead of 1/60
+	const i32 MAX_ENTITIES = { 1000 };
+
+	
 	struct BaseDesc {
 		Logger& logger;
 	};
@@ -14,9 +23,9 @@ namespace Engine {
 	struct GameDesc {
 		Logger::LogLevel logLevel = Logger::LogLevel::Debug;
 
-		i32 windowWidth = { 600 };
-		i32 windowHeight = { 500 };
-		const char* title = { "Station Authority" };
+		i32 windowWidth = { WINDOW_WIDTH };
+		i32 windowHeight = { WINDOW_HEIGHT };
+		const char* title = { TITLE }; 
 	};
 
 	struct GLFWDesc {
@@ -46,7 +55,7 @@ namespace Engine {
 	struct SchedulerDesc {
 		BaseDesc base;
 		GameClock& gameClock;
-		d64 tickRate{ 1.0/60.0 }; // 1/60 tickRate is 60 ticks per second ***TODO : fix this to be 60 instead of 1/60
+		d64 tickRate{ TICK_RATE }; 
 	};
 
 	struct GraphicsTicksDesc {
@@ -55,12 +64,12 @@ namespace Engine {
 
 	struct EntityRegisterDesc {
 		BaseDesc base;
-		i32 maxEntities{ 1000 };
+		i32 maxEntities{ MAX_ENTITIES };
 	};
 
 	struct ComponentStorageDesc {
 		BaseDesc base;
-		i32 totalComponents{ 1 };
+		i32 maxEntities{ MAX_ENTITIES };
 	};
 }
 

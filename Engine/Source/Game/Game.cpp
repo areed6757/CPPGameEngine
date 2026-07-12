@@ -35,6 +35,8 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_entityRegister = std::make_unique<EntityRegister>(eRegDesc);
 	if (!m_entityRegister) { EngineLogErrorAndThrow("EntityRegister failed to initialize.") }
 
+	
+
 	EngineLogInfo("Game initialized successfully.");
 }
 

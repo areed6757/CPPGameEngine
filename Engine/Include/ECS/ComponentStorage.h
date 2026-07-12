@@ -7,7 +7,9 @@ namespace Engine {
 	template <typename T>
 	class ComponentStorage : public Base {
 	public:
-		explicit ComponentStorage(const ComponentStorageDesc& desc);
+		explicit ComponentStorage(const ComponentStorageDesc& desc) {
+			m_sparse.assign{desc.maxEntities + 1, INVALID_INDEX};
+		}
 		~ComponentStorage();
 
 		void add(i32 index, const T& value) {
@@ -27,8 +29,8 @@ namespace Engine {
 		}
 	
 	private:
-		std::vector<i32> m_sparse;
-		std::vector<T> m_dense;
-		std::vector<i32> m_backRef;
+		std::vector<i32> m_sparse{};
+		std::vector<T> m_dense{};
+		std::vector<i32> m_backRef{};
 	};
 }
