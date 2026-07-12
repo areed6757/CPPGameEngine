@@ -29,6 +29,7 @@ namespace Engine {
 		std::unique_ptr<Scheduler> m_scheduler{};
 		std::unique_ptr<GraphicsTicks> m_gfxTicks{};
 		std::unique_ptr<EntityRegister> m_entityRegister{};
+		std::unique_ptr<ECSWrapper> m_ecsWrapper{};
 		InputHandler* m_inputHandler{};
 		ActionMap m_actionMap{};
 		bool m_isRunning{ true };

@@ -6,13 +6,13 @@ namespace Engine {
 	constexpr i32 INVALID_INDEX{ -1 };
 
 	template <typename T>
-	class ComponentStorage : public Base {
+	class Component : public Base {
 	public:
-		explicit ComponentStorage(const ComponentStorageDesc& desc) : Base(desc.base) {
+		explicit Component(const ComponentDesc& desc) : Base(desc.base) {
 			m_maxEntities = desc.maxEntities;
 			m_sparse.assign(m_maxEntities + 1, INVALID_INDEX);
 		}
-		~ComponentStorage() {};
+		~Component() {};
 
 		void add(i32 index, const T& component) {
 			if (!(index > 0 && index <= m_maxEntities)) {

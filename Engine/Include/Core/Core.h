@@ -13,6 +13,7 @@ namespace Engine {
 	class GameClock;
 	class Scheduler;
 	class TickedSystem;
+	class ECSWrapper;
 
 	struct ActionMap;
 	struct KeyStates;

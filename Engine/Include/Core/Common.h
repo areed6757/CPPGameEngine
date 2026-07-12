@@ -3,6 +3,7 @@
 #include <Core/Base.h>
 #include <Core/Logger.h>
 #include <ECS/Systems/TickedSystem.h>
+#include <ECS/EntityRegister.h>
 #include <vector>
 
 // Descriptions for dependency injection, constructors should only take these structs as args
@@ -67,9 +68,14 @@ namespace Engine {
 		i32 maxEntities{ MAX_ENTITIES };
 	};
 
-	struct ComponentStorageDesc {
+	struct ComponentDesc {
 		BaseDesc base;
 		i32 maxEntities{ MAX_ENTITIES };
+	};
+
+	struct ECSWrapperDesc {
+		BaseDesc base;
+		EntityRegister& entityRegister;
 	};
 }
 

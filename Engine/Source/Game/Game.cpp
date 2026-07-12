@@ -35,7 +35,9 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_entityRegister = std::make_unique<EntityRegister>(eRegDesc);
 	if (!m_entityRegister) { EngineLogErrorAndThrow("EntityRegister failed to initialize.") }
 
-	
+	ECSWrapperDesc ecsDesc = { {m_logger}, *m_entityRegister.get()};
+	m_ecsWrapper = std::make_unique<ECSWrapper>(ecsDesc);
+	if (!m_ecsWrapper) { EngineLogErrorAndThrow("ECSWrapper failed to initialize."); }
 
 	EngineLogInfo("Game initialized successfully.");
 }
