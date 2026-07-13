@@ -1,7 +1,9 @@
 #pragma once
 #include <Core/Common.h>
 #include <format>
-#include <cassert>
+//#include <cassert>
+#include <typeinfo>
+#include <Core/Assert.h>
 
 namespace Engine {
 	constexpr i32 INVALID_INDEX{ -1 };
@@ -30,11 +32,11 @@ namespace Engine {
 			m_dense.push_back(component);
 			m_backRef.push_back(index);
 			m_sparse.at(index) = static_cast<i32> (m_dense.size() - 1);
-			EngineLogDebug(std::format("Entity {} added component", index).c_str());
+			EngineLogDebug(std::format("Entity {} added {} component", index, typeid(T).name()).c_str());
 		}
 
 		void remove(i32 index) {
-			assert(has(index) && "remove() called on entity with no component");
+			ENGINE_ASSERT(has(index), "remove() called on entity with no component");
 			i32 denseIndex = m_sparse.at(index);
 			i32 lastDenseIndex = static_cast<i32>(m_dense.size() - 1);
 			i32 lastEntity = m_backRef.at(lastDenseIndex);
@@ -47,7 +49,7 @@ namespace Engine {
 			m_backRef.pop_back();
 			m_sparse.at(index) = INVALID_INDEX;
 
-			EngineLogDebug(std::format("Entity {} destroyed component", index).c_str());
+			EngineLogDebug(std::format("Entity {} destroyed {} component.", index, typeid(T).name()).c_str());
 		}
 
 		bool has(i32 index) const noexcept {
@@ -55,7 +57,7 @@ namespace Engine {
 		}
 
 		T& get(i32 index) {
-			assert(has(index) && "get() called on entity with no component");
+			ENGINE_ASSERT(has(index), "get() called on entity with no component of type");
 			return m_dense.at(m_sparse.at(index));
 		}
 

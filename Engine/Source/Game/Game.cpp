@@ -43,6 +43,8 @@ Engine::Game::Game(const GameDesc& desc) :
 	EntityID e1 = m_ecsWrapper->createEntity();
 	Transform t{ Vector3double{0, 0, 0}, 0 };
 	m_ecsWrapper->addComponent<Transform>(e1, t);
+	Transform test = m_ecsWrapper->getComponent<Transform>(e1);
+	EngineLogInfo(std::format("Test Transform has rotation {} and position x {}", test.rotation, test.transform.x).c_str());
 	m_ecsWrapper->removeComponent<Transform>(e1);
 	// m_ecsWrapper->destroyEntity(e1); // TODO: Make this call destroy associated components
 	
