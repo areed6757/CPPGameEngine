@@ -24,6 +24,10 @@ namespace Engine {
 		void destroy(EntityID id);
 		bool isValid(EntityID id) const noexcept;
 
+		i32 generationAt(i32 index) const {
+			return m_generations.at(index);
+		}
+
 		i32 m_maxEntities{};
 		std::vector<i32> m_generations;
 		std::vector<i32> m_freeIndices;

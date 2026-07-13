@@ -63,6 +63,11 @@ namespace Engine {
 		BaseDesc base;
 	};
 
+	struct MovementTicksDesc {
+		BaseDesc base;
+		ECSWrapper& ecs;
+	};
+
 	struct EntityRegisterDesc {
 		BaseDesc base;
 		i32 maxEntities{ MAX_ENTITIES };

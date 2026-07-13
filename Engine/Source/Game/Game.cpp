@@ -26,11 +26,8 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler = std::make_unique<Scheduler>(schedulerDesc);
 	if (!m_scheduler) { EngineLogErrorAndThrow("Scheduler failed to initialize.") };
 
-	GraphicsTicksDesc gfxTicksDesc = { {m_logger} };
-	m_gfxTicks = std::make_unique<GraphicsTicks>(gfxTicksDesc);
-	if (!m_gfxTicks) { EngineLogErrorAndThrow("GraphicsTicks failed to initialize.") };
-	m_scheduler->registerSystem(m_gfxTicks.get());
-
+	// ECS
+	
 	EntityRegisterDesc eRegDesc = { {m_logger} };
 	m_entityRegister = std::make_unique<EntityRegister>(eRegDesc);
 	if (!m_entityRegister) { EngineLogErrorAndThrow("EntityRegister failed to initialize.") }
@@ -40,12 +37,32 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_ecsWrapper = std::make_unique<ECSWrapper>(ecsDesc);
 	if (!m_ecsWrapper) { EngineLogErrorAndThrow("ECSWrapper failed to initialize."); }
 
+	// Create TickedSystems
+	GraphicsTicksDesc gfxTicksDesc = { {m_logger} };
+	m_gfxTicks = std::make_unique<GraphicsTicks>(gfxTicksDesc);
+	if (!m_gfxTicks) { EngineLogErrorAndThrow("GraphicsTicks failed to initialize.") };
+
+	MovementTicksDesc mvTicksDesc = { {m_logger}, *m_ecsWrapper.get() };
+	m_moveTicks = std::make_unique<MovementTicks>(mvTicksDesc);
+	if (!m_moveTicks) { EngineLogErrorAndThrow("MoveTicks failed to initialize.") };
+	
+
+	// Register TickedSystems
+	m_scheduler->registerSystem(m_gfxTicks.get());
+	m_scheduler->registerSystem(m_moveTicks.get());
+
+	EntityID e1 = m_ecsWrapper->createEntity();
+	m_ecsWrapper->addComponent(e1, Movement{1.0, 0.0, 1.0, 0.0} );
+	m_ecsWrapper->addComponent(e1, Transform{ {0.0, 0.0, 0.0}, 0.0 });
+
 	EngineLogInfo("Game initialized successfully.");
 
-	EntityStressTestDesc estDesc = { {m_logger}, *m_ecsWrapper.get() };
-	EntityStressTest esTest{estDesc};
+
+	// STRESS TESTING
+	//EntityStressTestDesc estDesc = { {m_logger}, *m_ecsWrapper.get() };
+	//EntityStressTest esTest{estDesc};
 	//esTest.runMillionEntityTest();
-	esTest.runChurnTest();
+	//esTest.runChurnTest();
 }
 
 Engine::Game::~Game()

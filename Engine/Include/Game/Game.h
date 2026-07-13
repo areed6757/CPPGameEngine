@@ -8,11 +8,15 @@
 #include <Utilities/GameClock.h>
 #include <Utilities/Scheduler.h>
 #include <ECS/Systems/GraphicsTicks.h>
+#include <ECS/Systems/MovementTicks.h>
 #include <ECS/EntityRegister.h>
 #include <ECS/ECSWrapper.h>
 #include <ECS/Components/Transform.h>
 #include <Physics/Vector3double.h>
 #include <Test/EntityStressTest.h>
+
+#include<ECS/Components/Movement.h>
+#include<ECS/Components/Position.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -26,12 +30,19 @@ namespace Engine {
 		// IMPORTANT: unique_ptrs must be instantiated in priority order.
 		// The first of these objects created will be destroyed LAST.
 	private:
+
+		// Core startup
 		std::unique_ptr<Logger> m_loggerPtr{};
 		std::unique_ptr<GLFWContext> m_glfwContext{};
 		std::unique_ptr<Window> m_window{};
+		
+		// Ticked Systems + clock/scheduler
 		std::unique_ptr<GameClock> m_gameClock{};
 		std::unique_ptr<Scheduler> m_scheduler{};
 		std::unique_ptr<GraphicsTicks> m_gfxTicks{};
+		std::unique_ptr<MovementTicks> m_moveTicks{};
+
+		// ECS
 		std::unique_ptr<EntityRegister> m_entityRegister{};
 		std::unique_ptr<ECSWrapper> m_ecsWrapper{};
 		InputHandler* m_inputHandler{};
