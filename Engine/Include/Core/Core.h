@@ -15,6 +15,7 @@ namespace Engine {
 	class TickedSystem;
 	class EntityRegister;
 	class ECSWrapper;
+	class EntityStressTest;
 
 	struct ActionMap;
 	struct KeyStates;

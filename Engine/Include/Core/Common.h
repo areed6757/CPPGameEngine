@@ -9,11 +9,12 @@
 namespace Engine {
 	
 	// Customization fields, to be moved later.
+	constexpr Logger::LogLevel LOG_LEVEL{ Logger::LogLevel::Info };
 	constexpr i32 WINDOW_WIDTH{ 600 };
 	constexpr i32 WINDOW_HEIGHT{ 500 };
 	constexpr const char* TITLE { "Station Authority" };
 	constexpr d64 TICK_RATE = { 1.0 / 60.0 }; // 1/60 tickRate is 60 ticks per second ***TODO : fix this to be 60 instead of 1/60
-	constexpr const i32 MAX_ENTITIES = { 1000 };
+	constexpr const i32 MAX_ENTITIES = { 1'000'000 };
 
 	
 	struct BaseDesc {
@@ -21,7 +22,7 @@ namespace Engine {
 	};
 
 	struct GameDesc {
-		Logger::LogLevel logLevel = Logger::LogLevel::Debug;
+		Logger::LogLevel logLevel = LOG_LEVEL;
 
 		i32 windowWidth = { WINDOW_WIDTH };
 		i32 windowHeight = { WINDOW_HEIGHT };
@@ -40,7 +41,7 @@ namespace Engine {
 		i32 windowHeight = {};
 		const char* title = {};
 
-		ActionMap& actionMap; // Strictly pass-through for InputHandler of the Window
+		ActionMap& actionMap; // Pass-through for InputHandler of the Window
 	};
 
 	struct InputHandlerDesc {
@@ -77,5 +78,12 @@ namespace Engine {
 		EntityRegister& entityRegister;
 		ComponentDesc& compDesc; // Pass-through for component pools owned by the ECSWrapper
 	};
+
+	// Test Descriptions
+	struct EntityStressTestDesc {
+		BaseDesc base;
+		ECSWrapper& ecsWrapper;
+	};
+
 }
 

@@ -2,7 +2,7 @@
 
 Engine::GameClock::GameClock(const GameClockDesc& desc) : Base(desc.base)
 {
-	EngineLogInfo("GameClock creation.");
+	EngineLogInfo("GameClock created.");
 }
 
 Engine::GameClock::~GameClock()

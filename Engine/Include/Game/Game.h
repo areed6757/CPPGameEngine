@@ -12,6 +12,7 @@
 #include <ECS/ECSWrapper.h>
 #include <ECS/Components/Transform.h>
 #include <Physics/Vector3double.h>
+#include <Test/EntityStressTest.h>
 
 namespace Engine {
 	class Game : public Base {

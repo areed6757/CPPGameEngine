@@ -3,10 +3,7 @@ file(GLOB_RECURSE ENGINE_HEADERS CONFIGURE_DEPENDS Include/*.h Source/*.h)
 
 message(STATUS "ENGINE_SOURCES: ${ENGINE_SOURCES}")
 
-add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS} "Include/Core/Logger.h" "Source/Core/Logger.cpp" "All.h" 
-"Include/Game/Game.h" "Source/Game/Game.cpp" "Include/Graphics/Window.h" "Source/Graphics/Window.cpp" "Include/Input/InputHandler.h" 
-"Source/Input/InputHandler.cpp" "Include/Input/ActionMap.h" "Include/Utilities/Scheduler.h" "Include/Physics/Vector3double.h" "Source/Physics/Vector3double.cpp"
-"Include/Physics/Vector3float.h" "Source/Physics/Vector3float.cpp" "Include/ECS/ECSWrapper.h" "Include/ECS/Components/Movement.h")
+add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS} "All.h")
 
 target_include_directories(Engine
     PUBLIC Include
@@ -20,4 +17,13 @@ target_link_libraries(Engine PUBLIC
 
 target_compile_definitions(Engine PUBLIC
     NOMINMAX
+)
+
+target_compile_options(Engine PRIVATE
+    $<$<CONFIG:Debug>:/Od /Zi>
+    $<$<CONFIG:Release>:/O2 /DNDEBUG>
+)
+target_compile_definitions(Engine PRIVATE
+    $<$<CONFIG:Debug>:_DEBUG>
+    $<$<CONFIG:Release>:NDEBUG>
 )
