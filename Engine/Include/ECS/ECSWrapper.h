@@ -12,7 +12,7 @@
 /// as the logic for efficiently handling creation and deletion of both entities and components. All ticked systems will interface with this class
 /// per their own automated loops that are called in update() cycles.
 /// 
-/// NOTE: (for now) When adding a new Component type, #include the file, add it to the ComponentPools struct and initialize it there, and create a 
+/// NOTE: (for now) When adding a new Component type, #include the file, add it to the ComponentPools struct and initialize it there, add it to getPool(), and create a 
 ///	ComponentBit struct in the template list below.
 /// 
 /// Entity signatures are generated in the form of a bitset so that external systems updating per tick can lookup a signature set instead of parsing
@@ -37,6 +37,24 @@ namespace Engine {
 
 
 	class ECSWrapper : public Base {
+	private:
+		EntityRegister& m_entityReg;
+		ComponentPools m_pools;
+		std::vector<std::bitset<64>> m_entitySignatures{};
+
+		template<typename T>
+		Component<T>& getPool() {
+			if constexpr (std::is_same_v<T, Transform>) {
+				return m_pools.transforms;
+			}
+			else if constexpr (std::is_same_v<T, Movement>) {
+				return m_pools.movements;
+			}
+			else {
+				static_assert(sizeof(T) == 0, "getPool: unregistered component type");
+			}
+		}
+
 	public:
 		explicit ECSWrapper(const ECSWrapperDesc& desc);
 		~ECSWrapper();
@@ -61,32 +79,14 @@ namespace Engine {
 		template <typename T>
 		bool hasComponent(EntityID id) {
 			if (!isValidEntity(id)) { return false; } // TODO: handle fail
-
-			if constexpr (std::is_same_v<T, Transform>) {
-				return m_pools.transforms.has(id.id);
-			}
-			else if constexpr (std::is_same_v<T, Movement>) {
-				return m_pools.movements.has(id.id);
-			}
-			else {
-				static_assert(sizeof(T) == 0, "hasComponent: unregistered component type");
-			}
+			return getPool<T>().has(id.id);
 		}
 
 		// Called as addComponent<T>(EntityID);
 		template <typename T>
 		void addComponent(EntityID id, const T& component) {
 			if (!isValidEntity(id)) { return; } // TODO: handle fail
-
-			if constexpr (std::is_same_v<T, Transform>) {
-				m_pools.transforms.add(id.id, component);
-			}
-			else if constexpr (std::is_same_v<T, Movement>) {
-				m_pools.movements.add(id.id, component);
-			}
-			else {
-				static_assert(sizeof(T) == 0, "addComponent: unregistered component type");
-			}
+			getPool<T>().add(id.id, component);
 			m_entitySignatures.at(id.id).set(ComponentBit<T>::value);
 		}
 
@@ -94,45 +94,20 @@ namespace Engine {
 		template <typename T>
 		void removeComponent(EntityID id) {
 			if (!isValidEntity(id)) { return; } // TODO: handle fail
-
-			if constexpr (std::is_same_v<T, Transform>) {
-				m_pools.transforms.remove(id.id);
-			}
-			else if constexpr (std::is_same_v<T, Movement>) {
-				m_pools.movements.remove(id.id);
-			}
-			else {
-				static_assert(sizeof(T) == 0, "removeComponent: unregistered component type");
-			}
+			getPool<T>().remove(id.id);
 			m_entitySignatures.at(id.id).reset(ComponentBit<T>::value);
 		}
 
 		// Called as getComponent<T>(EntityID);
 		template <typename T>
 		T& getComponent(EntityID id) {
-			if constexpr (std::is_same_v<T, Transform>) {
-				return m_pools.transforms.get(id.id);
-			}
-			else if constexpr (std::is_same_v<T, Movement>) {
-				return m_pools.movements.get(id.id);
-			}
-			else {
-				static_assert(sizeof(T) == 0, "getComponent: unregistered component type");
-			}
+			return getPool<T>().get(id.id);
 		}
 
 		// Called as sizeComponentPool<T>();
 		template <typename T>
 		i32 sizeComponentPool() {
-			if constexpr (std::is_same_v<T, Transform>) {
-				return m_pools.transforms.size();
-			}
-			else if constexpr (std::is_same_v<T, Movement>) {
-				return m_pools.movements.size();
-			}
-			else {
-				static_assert(sizeof(T) == 0, "getComponent: unregistered component type");
-			}
+			return getPool<T>().size();
 		}
 
 		// Used to create a unique signature for calling update Systems as: m_bitMask(ECSWrapper(instance).makeSignature<Transform, Movement>())	
@@ -147,9 +122,6 @@ namespace Engine {
 			return m_entitySignatures.at(id.id);
 		}
 
-	private:
-		EntityRegister& m_entityReg;
-		ComponentPools m_pools;
-		std::vector<std::bitset<64>> m_entitySignatures{};
+
 	};
 }
