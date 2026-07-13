@@ -25,6 +25,7 @@ namespace Engine {
 	struct ComponentPools;
 	
 	using i32 = std::int32_t;
+	using i64 = std::int64_t;
 	using ui32 = std::uint32_t;
 	using f32 = float;
 	using d64 = double;

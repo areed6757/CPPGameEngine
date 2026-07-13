@@ -44,7 +44,8 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	EntityStressTestDesc estDesc = { {m_logger}, *m_ecsWrapper.get() };
 	EntityStressTest esTest{estDesc};
-	esTest.runMillionEntityTest();
+	//esTest.runMillionEntityTest();
+	esTest.runChurnTest();
 }
 
 Engine::Game::~Game()
