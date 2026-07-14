@@ -12,6 +12,13 @@ Engine::GLFWContext::GLFWContext(const GLFWDesc& desc)
         EngineLogErrorAndThrow("GLFWInit failed.");
     }
 
+    // GLFW Version declaration
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+
+    // CORE profile is the modern OpenGL library only
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     EngineLogInfo("GLFW initialized.");
 }
 
