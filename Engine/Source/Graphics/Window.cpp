@@ -31,6 +31,20 @@ Engine::Window::Window(const WindowDesc& desc) : Base(desc.base){
         EngineLogErrorAndThrow("Input handler not created for Window.");
     }
 
+    // Window decoration "thicknesses"
+    i32 left, top, right, bottom;
+    glfwGetWindowFrameSize(m_window.get(), &left, &top, &right, &bottom);
+
+    // Frame buffer size, TODO: handle window resizing
+    i32 width, height;
+    glfwGetFramebufferSize(m_window.get(), &width, &height);
+    glViewport(0, 0, width, height);
+
+    // Static color render
+    glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glfwSwapBuffers(m_window.get());
+
     glfwSetWindowUserPointer(m_window.get(), this);
     glfwSetKeyCallback(m_window.get(), Window::key_callback);
 

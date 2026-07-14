@@ -1,5 +1,5 @@
 #include <Test/EntityStressTest.h>
-#include <ECS/Components/Transform.h>
+#include <ECS/Components/Position.h>
 #include <chrono>
 
 /// <summary>
@@ -15,14 +15,14 @@ namespace Engine {
 
         for (i32 i = 0; i < count; ++i) {
             EntityID id = m_ecs.createEntity();
-            m_ecs.addComponent(id, Transform{ .transform = Vector3double{0.0, 0.0, 0.0}, .rotation = 0.0f });
+            m_ecs.addComponent(id, Position{ .transform = Vector3double{0.0, 0.0, 0.0}, .rotation = 0.0f });
             ids.push_back(id);
         }
 
         auto end = std::chrono::high_resolution_clock::now();
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-        EngineLogInfo(std::format("Created {} entities with Transform in {}ms", count, ms).c_str());
+        EngineLogInfo(std::format("Created {} entities with Position in {}ms", count, ms).c_str());
     }
 
     void EntityStressTest::runChurnTest() {
@@ -35,7 +35,7 @@ namespace Engine {
         // Seed a working population first — churn against a "live" set, not an empty one
         for (i32 i = 0; i < initialCount; ++i) {
             EntityID id = m_ecs.createEntity();
-            m_ecs.addComponent(id, Transform{ .transform = Vector3double{0.0, 0.0, 0.0}, .rotation = 0.0f });
+            m_ecs.addComponent(id, Position{ .transform = Vector3double{0.0, 0.0, 0.0}, .rotation = 0.0f });
             ids.push_back(id);
         }
 
@@ -51,7 +51,7 @@ namespace Engine {
             m_ecs.destroyEntity(victim);
 
             EntityID replacement = m_ecs.createEntity();
-            m_ecs.addComponent(replacement, Transform{ .transform = Vector3double{0.0, 0.0, 0.0}, .rotation = 0.0f });
+            m_ecs.addComponent(replacement, Position{ .transform = Vector3double{0.0, 0.0, 0.0}, .rotation = 0.0f });
             ids[victimIndex] = replacement;
 
             // exercise add/remove churn on a still-alive neighbor too — the actual
@@ -70,7 +70,7 @@ namespace Engine {
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
         EngineLogInfo(std::format(
-            "Churned {} cycles (destroy+create+Transform, plus Movement add/remove) over {} live entities in {}ms",
+            "Churned {} cycles (destroy+create+Position, plus Movement add/remove) over {} live entities in {}ms",
             churnCycles, initialCount, ms
         ).c_str());
     }

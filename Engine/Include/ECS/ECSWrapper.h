@@ -5,7 +5,7 @@
 #include <Core/Common.h>
 #include <ECS/EntityRegister.h>
 #include <ECS/Component.h>
-#include <ECS/Components/Transform.h>
+#include <ECS/Components/Position.h>
 #include <ECS/Components/Movement.h>
 
 /// <summary>
@@ -22,7 +22,7 @@
 /// </summary>
 namespace Engine {
 	struct ComponentPools {
-		Component<Transform> transforms;
+		Component<Position> transforms;
 		Component<Movement> movements;
 
 		explicit ComponentPools(const ComponentDesc& desc) : transforms(desc), movements(desc) {}
@@ -33,7 +33,7 @@ namespace Engine {
 	template <typename T>
 	struct ComponentBit;
 
-	template <> struct ComponentBit<Transform> { static constexpr i32 value = 0; };
+	template <> struct ComponentBit<Position> { static constexpr i32 value = 0; };
 	template <> struct ComponentBit<Movement> { static constexpr i32 value = 1; };
 
 
@@ -45,7 +45,7 @@ namespace Engine {
 
 		template<typename T>
 		Component<T>& getPool() {
-			if constexpr (std::is_same_v<T, Transform>) {
+			if constexpr (std::is_same_v<T, Position>) {
 				return m_pools.transforms;
 			}
 			else if constexpr (std::is_same_v<T, Movement>) {
@@ -69,7 +69,7 @@ namespace Engine {
 				return;
 			}
 			
-			if (m_pools.transforms.has(id.id)) { removeComponent<Transform>(id); }
+			if (m_pools.transforms.has(id.id)) { removeComponent<Position>(id); }
 			if (m_pools.movements.has(id.id)) { removeComponent<Movement>(id); }
 
 			m_entitySignatures.at(id.id).reset(); // This is redundant after calling each removeComponent, but it doesn't hurt
@@ -121,7 +121,7 @@ namespace Engine {
 			return EntityID{ index, m_entityReg.generationAt(index) };
 		}
 
-		// Used to create a unique signature for calling update Systems as: m_bitMask(ECSWrapper(instance).makeSignature<Transform, Movement>())	
+		// Used to create a unique signature for calling update Systems as: m_bitMask(ECSWrapper(instance).makeSignature<Position, Movement>())	
 		template <typename... Ts>
 		std::bitset<64> makeSignature() {
 			std::bitset<64> mask;

@@ -16,6 +16,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_glfwContext = std::make_unique<GLFWContext>(glfwDesc);
 	WindowDesc windowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title, m_actionMap };
 	m_window = std::make_unique<Window>(windowDesc);
+
 	m_inputHandler = m_window->getInputHandler();
 
 	GameClockDesc clockDesc = { {m_logger} };
@@ -54,7 +55,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	// MOVEMENT TEST
 	//EntityID e1 = m_ecsWrapper->createEntity();
 	//m_ecsWrapper->addComponent(e1, Movement{1.0, 0.0, 5.0, 0.0} );
-	//m_ecsWrapper->addComponent(e1, Transform{ {0.0, 0.0, 0.0}, 0.0 });
+	//m_ecsWrapper->addComponent(e1, Position{ {0.0, 0.0, 0.0}, 0.0 });
 
 	EngineLogInfo("Game initialized successfully.");
 

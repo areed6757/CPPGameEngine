@@ -11,7 +11,7 @@
 #include <ECS/Systems/MovementTicks.h>
 #include <ECS/EntityRegister.h>
 #include <ECS/ECSWrapper.h>
-#include <ECS/Components/Transform.h>
+#include <ECS/Components/Position.h>
 #include <Physics/Vector3double.h>
 #include <Test/EntityStressTest.h>
 #include <ECS/Components/Movement.h>

@@ -3,7 +3,7 @@
 
 Engine::MovementTicks::MovementTicks(const MovementTicksDesc& desc) : Base(desc.base), m_ecs(desc.ecs)
 {
-	m_entityMask = m_ecs.makeSignature<Transform, Movement>();
+	m_entityMask = m_ecs.makeSignature<Position, Movement>();
 }
 
 Engine::MovementTicks::~MovementTicks()
@@ -20,7 +20,7 @@ void Engine::MovementTicks::Update(d64 dt)
 
 		if ((m_ecs.getSignature(id) & m_entityMask) != m_entityMask) { continue; }
 
-		auto& tform = m_ecs.getComponent<Transform>(id);
+		auto& tform = m_ecs.getComponent<Position>(id);
 		auto& movement = m_ecs.getComponent<Movement>(id);
 
 		movement.linearVelocity += movement.linearAcceleration * dt;

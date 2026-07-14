@@ -5,7 +5,7 @@
 #include <ECS/ECSWrapper.h>
 #include <ECS/Systems/TickedSystem.h>
 #include <ECS/Components/Movement.h>
-#include <ECS/Components/Transform.h>
+#include <ECS/Components/Position.h>
 
 namespace Engine {
 	class MovementTicks final : public Base, public TickedSystem {
