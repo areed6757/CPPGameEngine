@@ -40,12 +40,14 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_ecsWrapper = std::make_unique<ECSWrapper>(ecsDesc);
 	if (!m_ecsWrapper) { EngineLogErrorAndThrow("ECSWrapper failed to initialize."); }
 
+
+
 	EngineLogInfo("Game initialized successfully.");
 
-	EntityStressTestDesc estDesc = { {m_logger}, *m_ecsWrapper.get() };
-	EntityStressTest esTest{estDesc};
+	//EntityStressTestDesc estDesc = { {m_logger}, *m_ecsWrapper.get() };
+	//EntityStressTest esTest{estDesc};
 	//esTest.runMillionEntityTest();
-	esTest.runChurnTest();
+	//esTest.runChurnTest();
 }
 
 Engine::Game::~Game()
