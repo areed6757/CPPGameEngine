@@ -1,5 +1,6 @@
 #pragma once
 #include <bitset>
+#include <format>
 #include <Core/Common.h>
 #include <ECS/ECSWrapper.h>
 #include <ECS/Systems/TickedSystem.h>

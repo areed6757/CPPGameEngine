@@ -14,9 +14,7 @@
 #include <ECS/Components/Transform.h>
 #include <Physics/Vector3double.h>
 #include <Test/EntityStressTest.h>
-
-#include<ECS/Components/Movement.h>
-#include<ECS/Components/Position.h>
+#include <ECS/Components/Movement.h>
 
 namespace Engine {
 	class Game : public Base {

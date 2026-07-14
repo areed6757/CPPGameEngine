@@ -1,6 +1,7 @@
 #pragma once
 #include <bitset>
 #include <vector>
+#include <format>
 #include <Core/Common.h>
 #include <ECS/EntityRegister.h>
 #include <ECS/Component.h>
