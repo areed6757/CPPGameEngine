@@ -1,6 +1,7 @@
 #pragma once
 #include <bitset>
 #include <vector>
+#include <format>
 #include <Core/Common.h>
 #include <ECS/EntityRegister.h>
 #include <ECS/Component.h>
@@ -108,6 +109,16 @@ namespace Engine {
 		template <typename T>
 		i32 sizeComponentPool() {
 			return getPool<T>().size();
+		}
+
+		// Used by Systems to parse a component dense list for entity updates
+		template <typename T>
+		i32 entityAtDenseIndex(i32 denseIndex) {
+			return getPool<T>().entityAt(denseIndex);
+		}
+
+		EntityID entityFromIndex(i32 index) {
+			return EntityID{ index, m_entityReg.generationAt(index) };
 		}
 
 		// Used to create a unique signature for calling update Systems as: m_bitMask(ECSWrapper(instance).makeSignature<Transform, Movement>())	

@@ -65,6 +65,10 @@ namespace Engine {
 			return m_dense.size();
 		}
 
+		i32 entityAt(i32 denseIndex) const {
+			return m_backRef.at(denseIndex);
+		}
+
 		i32 m_maxEntities{};
 		std::vector<i32> m_sparse{};
 		std::vector<T> m_dense{};

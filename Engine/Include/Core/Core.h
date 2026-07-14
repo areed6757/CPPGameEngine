@@ -12,10 +12,12 @@ namespace Engine {
 	class InputHandler;
 	class GameClock;
 	class Scheduler;
-	class TickedSystem;
 	class EntityRegister;
 	class ECSWrapper;
 	class EntityStressTest;
+
+	class TickedSystem;
+	class MovementTicks;
 
 	struct ActionMap;
 	struct KeyStates;
@@ -23,6 +25,9 @@ namespace Engine {
 	struct Vector3float;
 	struct EntityID;
 	struct ComponentPools;
+
+	struct Movement;
+	struct Position;
 	
 	using i32 = std::int32_t;
 	using i64 = std::int64_t;
