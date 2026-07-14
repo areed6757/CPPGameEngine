@@ -51,9 +51,10 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler->registerSystem(m_gfxTicks.get());
 	m_scheduler->registerSystem(m_moveTicks.get());
 
-	EntityID e1 = m_ecsWrapper->createEntity();
-	m_ecsWrapper->addComponent(e1, Movement{1.0, 0.0, 5.0, 0.0} );
-	m_ecsWrapper->addComponent(e1, Transform{ {0.0, 0.0, 0.0}, 0.0 });
+	// MOVEMENT TEST
+	//EntityID e1 = m_ecsWrapper->createEntity();
+	//m_ecsWrapper->addComponent(e1, Movement{1.0, 0.0, 5.0, 0.0} );
+	//m_ecsWrapper->addComponent(e1, Transform{ {0.0, 0.0, 0.0}, 0.0 });
 
 	EngineLogInfo("Game initialized successfully.");
 
