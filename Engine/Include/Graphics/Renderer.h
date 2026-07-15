@@ -12,6 +12,6 @@ namespace Engine {
 
 	private:
 		Window& m_window;
-		GLuint m_VBO{}, m_VAO{}, m_shaderProgram{};
+		GLuint m_VBO{}, m_VAO{}, m_EBO{}, m_shaderProgram{};
 	};
 }
