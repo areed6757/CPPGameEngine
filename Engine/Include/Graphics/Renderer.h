@@ -8,7 +8,10 @@ namespace Engine {
 		explicit Renderer(const RendererDesc& desc);
 		~Renderer();
 
+		void draw();
+
 	private:
 		Window& m_window;
+		GLuint m_VBO{}, m_VAO{}, m_shaderProgram{};
 	};
 }

@@ -15,6 +15,7 @@
 #include <Physics/Vector3double.h>
 #include <Test/EntityStressTest.h>
 #include <Components/Movement.h>
+#include <Graphics/Renderer.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -33,6 +34,7 @@ namespace Engine {
 		std::unique_ptr<Logger> m_loggerPtr{};
 		std::unique_ptr<GLFWContext> m_glfwContext{};
 		std::unique_ptr<Window> m_window{};
+		std::unique_ptr<Renderer> m_renderer{};
 		
 		// Ticked Systems + clock/scheduler
 		std::unique_ptr<GameClock> m_gameClock{};

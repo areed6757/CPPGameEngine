@@ -12,12 +12,18 @@ Engine::Game::Game(const GameDesc& desc) :
 	Base({ *std::make_unique<Logger>(desc.logLevel).release() }),
 	m_loggerPtr(&m_logger)
 {
+	// Graphics
 	GLFWDesc glfwDesc{ { m_logger } };
 	m_glfwContext = std::make_unique<GLFWContext>(glfwDesc);
 	WindowDesc windowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title, m_actionMap };
 	m_window = std::make_unique<Window>(windowDesc);
 
 	m_inputHandler = m_window->getInputHandler();
+
+	RendererDesc rendererDesc{ {m_logger}, *m_window.get() };
+	m_renderer = std::make_unique<Renderer>(rendererDesc);
+
+	// Time
 
 	GameClockDesc clockDesc = { {m_logger} };
 	m_gameClock = std::make_unique<GameClock>(clockDesc);
@@ -38,7 +44,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_ecsWrapper = std::make_unique<ECSWrapper>(ecsDesc);
 	if (!m_ecsWrapper) { EngineLogErrorAndThrow("ECSWrapper failed to initialize."); }
 
-	// Create TickedSystems
+	// TickedSystems
 	GraphicsTicksDesc gfxTicksDesc = { {m_logger} };
 	m_gfxTicks = std::make_unique<GraphicsTicks>(gfxTicksDesc);
 	if (!m_gfxTicks) { EngineLogErrorAndThrow("GraphicsTicks failed to initialize.") };
@@ -51,6 +57,9 @@ Engine::Game::Game(const GameDesc& desc) :
 	// Register TickedSystems
 	m_scheduler->registerSystem(m_gfxTicks.get());
 	m_scheduler->registerSystem(m_moveTicks.get());
+
+	// Check Renderer
+	m_renderer->draw();
 
 	// MOVEMENT TEST
 	//EntityID e1 = m_ecsWrapper->createEntity();
