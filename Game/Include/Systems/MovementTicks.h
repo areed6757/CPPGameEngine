@@ -2,10 +2,10 @@
 #include <bitset>
 #include <format>
 #include <Core/Common.h>
-#include <ECS/ECSWrapper.h>
-#include <ECS/Systems/TickedSystem.h>
-#include <ECS/Components/Movement.h>
-#include <ECS/Components/Position.h>
+#include <ECSWrapper.h>
+#include <ECS/TickedSystem.h>
+#include <Components/Movement.h>
+#include <Components/Position.h>
 
 namespace Engine {
 	class MovementTicks final : public Base, public TickedSystem {

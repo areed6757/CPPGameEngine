@@ -7,14 +7,14 @@
 #include <Input/ActionMap.h>
 #include <Utilities/GameClock.h>
 #include <Utilities/Scheduler.h>
-#include <ECS/Systems/GraphicsTicks.h>
-#include <ECS/Systems/MovementTicks.h>
+#include <Systems/GraphicsTicks.h>
+#include <Systems/MovementTicks.h>
 #include <ECS/EntityRegister.h>
-#include <ECS/ECSWrapper.h>
-#include <ECS/Components/Position.h>
+#include <ECSWrapper.h>
+#include <Components/Position.h>
 #include <Physics/Vector3double.h>
 #include <Test/EntityStressTest.h>
-#include <ECS/Components/Movement.h>
+#include <Components/Movement.h>
 
 namespace Engine {
 	class Game : public Base {

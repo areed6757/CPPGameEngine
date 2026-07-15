@@ -1,6 +1,6 @@
 #pragma once
 #include <Core/Common.h>
-#include <ECS/ECSWrapper.h>
+#include <ECSWrapper.h>
 
 namespace Engine {
     class EntityStressTest : public Base {

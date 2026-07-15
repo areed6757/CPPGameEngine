@@ -2,7 +2,6 @@
 #include <Core/Core.h>
 #include <Core/Base.h>
 #include <Core/Logger.h>
-#include <ECS/Systems/TickedSystem.h>
 #include <vector>
 
 // Descriptions for dependency injection, constructors should only take these structs as args

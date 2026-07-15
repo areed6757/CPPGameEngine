@@ -5,8 +5,8 @@
 #include <Core/Common.h>
 #include <ECS/EntityRegister.h>
 #include <ECS/Component.h>
-#include <ECS/Components/Position.h>
-#include <ECS/Components/Movement.h>
+#include <Components/Position.h>
+#include <Components/Movement.h>
 
 /// <summary>
 /// This is a wrapper class to contain all public functions of the ECS package. It will hold a reference to a created EntityRegister as well
@@ -19,6 +19,9 @@
 /// Entity signatures are generated in the form of a bitset so that external systems updating per tick can lookup a signature set instead of parsing
 /// every component on every entity to find entities that require their update service. i.e. Movement and Position are required components for the
 /// MovementSystem to update an entity, it will simply look for bitset signatures *11 then update matches.
+/// 
+/// TODO:
+///		This class should be stripped of concrete components by 
 /// </summary>
 namespace Engine {
 	struct ComponentPools {

@@ -1,5 +1,5 @@
 #include <cstdlib>
-#include <../All.h>
+#include <Game.h>
 
 int main()
 {

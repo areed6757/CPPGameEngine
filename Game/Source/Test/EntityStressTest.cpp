@@ -1,5 +1,5 @@
 #include <Test/EntityStressTest.h>
-#include <ECS/Components/Position.h>
+#include <Components/Position.h>
 #include <chrono>
 
 /// <summary>

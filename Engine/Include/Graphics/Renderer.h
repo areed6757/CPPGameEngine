@@ -9,6 +9,6 @@ namespace Engine {
 		~Renderer();
 
 	private:
-		Window m_window;
+		Window& m_window;
 	};
 }

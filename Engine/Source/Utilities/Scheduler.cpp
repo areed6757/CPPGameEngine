@@ -1,4 +1,5 @@
 #include <Utilities/Scheduler.h>
+#include <ECS/TickedSystem.h>
 #include <format>
 
 Engine::Scheduler::Scheduler(const SchedulerDesc& desc) : Base(desc.base),

@@ -1,4 +1,4 @@
-#include <ECS/Systems/GraphicsTicks.h>
+#include <Systems/GraphicsTicks.h>
 #include <format>
 
 Engine::GraphicsTicks::GraphicsTicks(GraphicsTicksDesc& desc) : Base(desc.base), m_tickCount{0}

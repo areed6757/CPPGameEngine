@@ -1,5 +1,5 @@
 #include <bitset>
-#include <ECS/Systems/MovementTicks.h>
+#include <Systems/MovementTicks.h>
 
 Engine::MovementTicks::MovementTicks(const MovementTicksDesc& desc) : Base(desc.base), m_ecs(desc.ecs)
 {
