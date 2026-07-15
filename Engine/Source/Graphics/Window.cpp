@@ -40,11 +40,6 @@ Engine::Window::Window(const WindowDesc& desc) : Base(desc.base){
     glfwGetFramebufferSize(m_window.get(), &width, &height);
     glViewport(0, 0, width, height); // From x = 0, y = 0 -> x = width, y = height
 
-    // Static color render
-    glClearColor(0.07f, 0.13f, 0.17f, 1.0f);    // Specify color
-    glClear(GL_COLOR_BUFFER_BIT);               // Assign color to a cleaned back buffer
-    glfwSwapBuffers(m_window.get());            // swap back buffer with front
-
     glfwSetWindowUserPointer(m_window.get(), this);
     glfwSetKeyCallback(m_window.get(), Window::key_callback);
 
