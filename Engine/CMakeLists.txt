@@ -3,7 +3,7 @@ file(GLOB_RECURSE ENGINE_HEADERS CONFIGURE_DEPENDS Include/*.h Source/*.h)
 
 message(STATUS "ENGINE_SOURCES: ${ENGINE_SOURCES}")
 
-add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS} "All.h" "Source/ECS/Systems/MovementTicks.cpp")
+add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS} "All.h" "Source/ECS/Systems/MovementTicks.cpp" "Include/Graphics/Renderer.h" "Source/Graphics/Renderer.cpp")
 
 target_include_directories(Engine
     PUBLIC Include

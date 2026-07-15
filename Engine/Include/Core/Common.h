@@ -44,6 +44,11 @@ namespace Engine {
 		ActionMap& actionMap; // Pass-through for InputHandler of the Window
 	};
 
+	struct RendererDesc {
+		BaseDesc base;
+		Window& window;
+	};
+
 	struct InputHandlerDesc {
 		BaseDesc base;
 		ActionMap& actionMap;

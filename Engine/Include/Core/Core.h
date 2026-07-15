@@ -15,6 +15,7 @@ namespace Engine {
 	class EntityRegister;
 	class ECSWrapper;
 	class EntityStressTest;
+	class Renderer;
 
 	class TickedSystem;
 	class MovementTicks;
