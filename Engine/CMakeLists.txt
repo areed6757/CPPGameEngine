@@ -4,7 +4,7 @@ file(GLOB SHADER_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Shad
 
 message(STATUS "ENGINE_SOURCES: ${ENGINE_SOURCES}")
 
-add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS} )
+add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS}  "Source/ThirdParty/stb/stb.cpp")
 
 target_include_directories(Engine
     PUBLIC Include

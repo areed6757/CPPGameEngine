@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/Common.h>
 #include <ThirdParty/glad/glad.h>
+#include <ThirdParty/stb/stb_image.h>
 #include <string>
 #include <fstream>
 #include <sstream>
