@@ -16,6 +16,10 @@ namespace Engine {
 	class ECSWrapper;
 	class EntityStressTest;
 	class Renderer;
+	class Shader;
+	class VBO;
+	class VAO;
+	class EBO;
 
 	class TickedSystem;
 	class MovementTicks;

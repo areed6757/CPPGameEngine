@@ -1,16 +1,14 @@
-#ifndef EBO_CLASS_H
-#define EBO_CLASS_H
-
+#pragma once
 #include<ThirdParty/glad/glad.h>
 
-class EBO {
-public:
-	GLuint ID{};
-	EBO(GLuint* indices, GLsizeiptr size);
+namespace Engine{
+	class EBO {
+	public:
+		GLuint ID{};
+		EBO(GLuint* indices, GLsizeiptr size);
+		~EBO();
 
-	void Bind();
-	void Unbind();
-	void Delete();
-};
-
-#endif
+		void Bind() const;
+		void Unbind() const;
+	};
+}

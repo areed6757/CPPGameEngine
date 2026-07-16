@@ -1,22 +1,27 @@
-#ifndef SHADER_CLASS_H
-#define SHADER_CLASS_H
+#pragma once
+#include <Core/Common.h>
+#include <ThirdParty/glad/glad.h>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
-#include<ThirdParty/glad/glad.h>
-#include<string>
-#include<fstream>
-#include<sstream>
-#include<iostream>
-#include<cerrno>
+namespace Engine {
+	class Shader : public Base {
+	public:
+		Shader(const ShaderDesc& desc);
+		~Shader();
 
-std::string get_file_contents(const char* filename);
+		GLuint ID;
 
-class Shader {
-public:
-	GLuint ID;
-	Shader(const char* vertexFile, const char* fragmentFile);
+		void Activate();
+	
+		void compileErrors(unsigned int shader, const char* type);
 
-	void Activate();
-	void Delete();
-};
+	private:
+		const char* m_vertexFile;
+		const char* m_fragmentFile;
 
-#endif
+		std::string get_file_contents(const char* filename);
+	};
+}

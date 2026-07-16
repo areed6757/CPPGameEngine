@@ -20,7 +20,8 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	m_inputHandler = m_window->getInputHandler();
 
-	RendererDesc rendererDesc{ {m_logger}, *m_window.get() };
+	ShaderDesc shaderDesc{ {m_logger} };
+	RendererDesc rendererDesc{ {m_logger}, *m_window.get(), shaderDesc };
 	m_renderer = std::make_unique<Renderer>(rendererDesc);
 
 	// Time

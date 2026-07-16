@@ -1,9 +1,10 @@
 #include <Graphics/Shader.h>
 
-Shader::Shader(const char* vertexFile, const char* fragmentFile)
+Engine::Shader::Shader(const ShaderDesc& desc) : Base(desc.base),
+    m_vertexFile(desc.vertexFile), m_fragmentFile(desc.fragmentFile)
 {
-	std::string vertexCode = get_file_contents(vertexFile);
-	std::string fragmentCode = get_file_contents(fragmentFile);
+	std::string vertexCode = get_file_contents(m_vertexFile);
+	std::string fragmentCode = get_file_contents(m_fragmentFile);
 
 	const char* vertexSource = vertexCode.c_str();
 	const char* fragmentSource = fragmentCode.c_str();
@@ -27,17 +28,17 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile)
     glDeleteShader(fragmentShader);
 }
 
-void Shader::Activate()
-{
-    glUseProgram(ID);
-}
-
-void Shader::Delete()
+Engine::Shader::~Shader()
 {
     glDeleteProgram(ID);
 }
 
-std::string get_file_contents(const char* filename)
+void Engine::Shader::Activate()
+{
+    glUseProgram(ID);
+}
+
+std::string Engine::Shader::get_file_contents(const char* filename)
 {
 	std::ifstream in(filename, std::ios::binary);
 	if (in)
@@ -50,5 +51,24 @@ std::string get_file_contents(const char* filename)
 		in.close();
 		return(contents);
 	}
-	throw(errno);
+    EngineLogErrorAndThrow(std::format("Failed to load file: {}", filename).c_str());
+}
+
+void Engine::Shader::compileErrors(unsigned int shader, const char* type) {
+    GLint hasCompiled;
+    char infoLog[1024];
+    if (type != "PROGRAM") {
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &hasCompiled);
+        if (hasCompiled == GL_FALSE) {
+            glGetShaderInfoLog(shader, 1024, NULL, infoLog);
+            EngineLogErrorAndThrow(std::format("SHADER_COMPILATION_ERROR for: {}", type).c_str());
+        }
+    }
+    else {
+        glGetProgramiv(shader, GL_COMPILE_STATUS, &hasCompiled);
+        if (hasCompiled == GL_FALSE) {
+            glGetProgramInfoLog(shader, 1024, NULL, infoLog);
+            EngineLogErrorAndThrow(std::format("SHADER_LINKING_ERROR for: {}", type).c_str());
+        }
+    }
 }

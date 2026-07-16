@@ -1,16 +1,14 @@
-#ifndef VBO_CLASS_H
-#define VBO_CLASS_H
-
+#pragma once
 #include<ThirdParty/glad/glad.h>
 
-class VBO {
-public:
-	GLuint ID;
-	VBO(GLfloat* vertices, GLsizeiptr size);
+namespace Engine {
+	class VBO {
+	public:
+		GLuint ID;
+		VBO(GLfloat* vertices, GLsizeiptr size);
+		~VBO();
 
-	void Bind();
-	void Unbind();
-	void Delete();
-};
-
-#endif
+		void Bind() const;
+		void Unbind() const;
+	};
+}

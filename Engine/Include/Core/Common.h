@@ -43,9 +43,16 @@ namespace Engine {
 		ActionMap& actionMap; // Pass-through for InputHandler of the Window
 	};
 
+	struct ShaderDesc {
+		BaseDesc base;
+		const char* vertexFile = "default.vert";
+		const char* fragmentFile = "default.frag";
+	};
+
 	struct RendererDesc {
 		BaseDesc base;
 		Window& window;
+		ShaderDesc shaderDesc; // Pass-through
 	};
 
 	struct InputHandlerDesc {

@@ -21,5 +21,7 @@ namespace Engine {
 		VBO m_VBO;
 		EBO m_EBO;
 		VAO m_VAO;
+
+		GLuint m_uniID;
 	};
 }

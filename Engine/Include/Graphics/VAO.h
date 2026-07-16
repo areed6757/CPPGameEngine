@@ -1,18 +1,16 @@
-#ifndef VAO_CLASS_H
-#define VAO_CLASS_H
-
+#pragma once
 #include <ThirdParty/glad/glad.h>
 #include <Graphics/VBO.h>
 
-class VAO {
-public:
-	GLuint ID;
-	VAO();
+namespace Engine {
+	class VAO {
+	public:
+		GLuint ID;
+		VAO();
+		~VAO();
 
-	void LinkVBO(VBO VBO, GLuint layout);
-	void Bind();
-	void Unbind();
-	void Delete();
-};
-
-#endif
+		void LinkAttrib(const VBO& VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
+		void Bind() const;
+		void Unbind() const;
+	};
+}
