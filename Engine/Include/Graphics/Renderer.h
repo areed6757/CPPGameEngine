@@ -1,6 +1,10 @@
 #pragma once
 #include <Core/Common.h>
 #include <Graphics/Window.h>
+#include <Graphics/Shader.h>
+#include <Graphics/VAO.h>
+#include <Graphics/VBO.h>
+#include <Graphics/EBO.h>
 
 namespace Engine {
 	class Renderer : public Base {
@@ -12,6 +16,10 @@ namespace Engine {
 
 	private:
 		Window& m_window;
-		GLuint m_VBO{}, m_VAO{}, m_EBO{}, m_shaderProgram{};
+
+		Shader m_shader;
+		VBO m_VBO;
+		EBO m_EBO;
+		VAO m_VAO;
 	};
 }

@@ -18,98 +18,43 @@ GLuint indices[] =
 };
 
 
-
-
-Engine::Renderer::Renderer(const RendererDesc& desc) : Base(desc.base), m_window(desc.window)
+Engine::Renderer::Renderer(const RendererDesc& desc) : Base(desc.base),
+    m_window(desc.window),
+    m_shader("default.vert", "default.frag"),
+    m_VAO(),
+    m_VBO(vertices, sizeof(vertices)),
+    m_EBO(indices, sizeof(indices))
 {
-    // Vertex shaders process point indices to determine where they should be placed on screen
-    // (Also, they prepare lighting and texture coords for next step)
-    // Create vertex shader and get its reference
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    // Attach vertex shader source to vertex shader object
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    // Compile vertex shader -> machine code
-    glCompileShader(vertexShader);
 
-    // Fragment shaders determine the exact color and appearance of every pixel on screen
-    // Create fragment shader and get its reference
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    // Attach fragment shader source to vertex shader object
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    // Compile fragment shader -> machine code
-    glCompileShader(fragmentShader);
+    m_VAO.Bind();
+    m_EBO.Bind();
 
-    // Create shader program object, get ref
-    m_shaderProgram = glCreateProgram();
-    // Attach vertex+fragment shaders to the program
-    glAttachShader(m_shaderProgram, vertexShader);
-    glAttachShader(m_shaderProgram, fragmentShader);
+    m_VAO.LinkVBO(m_VBO, 0);
 
-    // Wrap-up/link all shaders into the program
-    glLinkProgram(m_shaderProgram);
-
-    // Delete the now useless vertex and fragment shader objects (they live in the program now)
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    // Vertex Array Object (VAO) stores pointers to 1+ VBO and tells OpenGL how to interpret them
-    // Vertex Buffer Object (VBO) - actually normally an array of references not just this one reference integer, passed to GPU to process a buffer
-    // ALWAYS generate VAO first!
-
-    glGenVertexArrays(1, &m_VAO);   //make VAO w/ 1 object only
-    glGenBuffers(1, &m_VBO);        //make VBO w/ 1 object only
-    glGenBuffers(1, &m_EBO);
-    glBindVertexArray(m_VAO);       // makes the VAO the current VAO by binding it
-    
-    glBindBuffer(GL_ARRAY_BUFFER, m_VBO); // bind VBO, define its type
-    // Store vertices in the buffer object
-    // the last arg can be STATIC_, STREAM_, DYNAMIC_ and _DRAW, _READ, _COPY
-    // _STATIC_ is drawn once and used many many times
-    // _STREAM_ is drawn once and used a few times
-    // _DYNAMIC_ is modified many times and used many times
-    // _DRAW means the vertices will be modified and used to draw an image on the screen
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // Introduce vertices to the VBO
-    
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-
-    // Vertex attribute is a way of communicating with a Vertex shader from the outside
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0); // Configs Vertex Attribute so OpenGL can read the VBO
-    glEnableVertexAttribArray(0); // Enables Vertex Attribute so OpenGL knows to use it
-    // Unbind to prevent changing buffers VBO AND VAO with a function
-    glBindBuffer(GL_ARRAY_BUFFER, 0);   // Bind VBO and VAO to 0 to avoid accidentally modifying them
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Unbind EBO AFTER VAO, because EBO is stored in the VAO
+    m_VAO.Unbind();
+    m_VBO.Unbind();
+    m_EBO.Unbind();
 }
 
 Engine::Renderer::~Renderer()
 {
-    glDeleteVertexArrays(1, &m_VAO);
-    glDeleteBuffers(1, &m_VBO);
-    glDeleteBuffers(1, &m_EBO);
-    glDeleteProgram(m_shaderProgram);
+    m_VAO.Delete();
+    m_VBO.Delete();
+    m_EBO.Delete();
+    m_shader.Delete();
 }
 
 void Engine::Renderer::draw()
 {
-    // Set a static color
     glClearColor(0.07f, 0.13f, 0.17f, 1.0f );
     glClear( GL_COLOR_BUFFER_BIT );
 
-    // Tell OpenGL which program to use
-    glUseProgram( m_shaderProgram );
-    // Bind VAO so it is used
-    glBindVertexArray( m_VAO );
-    // Draw object w/ GL_TRIANGLES primitive
-    //glDrawArrays( GL_TRIANGLES, 0, 3 );
+    m_shader.Activate();
+    m_VAO.Bind();
 
-    // Uses the EBO to draw
     glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
     glfwSwapBuffers( m_window.get() );
-
 }
 
 

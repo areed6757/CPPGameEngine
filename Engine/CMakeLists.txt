@@ -3,7 +3,7 @@ file(GLOB_RECURSE ENGINE_HEADERS CONFIGURE_DEPENDS Include/*.h Source/*.h)
 
 message(STATUS "ENGINE_SOURCES: ${ENGINE_SOURCES}")
 
-add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS}  "Include/Graphics/ShaderClass.h" "Source/Graphics/ShaderClass.cpp")
+add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS} )
 
 target_include_directories(Engine
     PUBLIC Include
@@ -26,4 +26,11 @@ target_compile_options(Engine PRIVATE
 target_compile_definitions(Engine PRIVATE
     $<$<CONFIG:Debug>:_DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
+)
+
+add_custom_command(TARGET Engine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_SOURCE_DIR}/Source/Graphics/default.vert
+        ${CMAKE_CURRENT_SOURCE_DIR}/Source/Graphics/default.frag
+        $<TARGET_FILE_DIR:Game>
 )
