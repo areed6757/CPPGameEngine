@@ -1,5 +1,6 @@
 file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS Source/*.cpp Source/*.c)
 file(GLOB_RECURSE ENGINE_HEADERS CONFIGURE_DEPENDS Include/*.h Source/*.h)
+file(GLOB SHADER_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Shaders/*.vert ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Shaders/*.frag)
 
 message(STATUS "ENGINE_SOURCES: ${ENGINE_SOURCES}")
 
@@ -29,8 +30,6 @@ target_compile_definitions(Engine PRIVATE
 )
 
 add_custom_command(TARGET Engine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_SOURCE_DIR}/Source/Graphics/default.vert
-        ${CMAKE_CURRENT_SOURCE_DIR}/Source/Graphics/default.frag
-        $<TARGET_FILE_DIR:Game>
+    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:Game>/Shaders
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SHADER_FILES} $<TARGET_FILE_DIR:Game>/Shaders
 )

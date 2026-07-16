@@ -45,8 +45,8 @@ namespace Engine {
 
 	struct ShaderDesc {
 		BaseDesc base;
-		const char* vertexFile = "default.vert";
-		const char* fragmentFile = "default.frag";
+		const char* vertexFile = "Shaders/default.vert";
+		const char* fragmentFile = "Shaders/default.frag";
 	};
 
 	struct RendererDesc {
