@@ -3,11 +3,11 @@
 
 GLfloat vertices[] =
 {
-    //  Coordinates             Colors
-    -0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,   // Lower left corner
-    -0.5f, 0.5f, 0.0f,      0.0f, 1.0f, 0.0f,   // Upper left corner
-    0.5f, 0.5f, 0.0f,       0.0f, 0.0f, 1.0f,   // Upper right corner
-    0.5f, -0.5f, 0.0f,      1.0f, 1.0f, 1.0f    // Lower left corner
+    //  Coordinates             Colors          Texture Coords
+    -0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,   0.0f, 0.0f,   // Lower left corner
+    -0.5f, 0.5f, 0.0f,      0.0f, 1.0f, 0.0f,   0.0f, 1.0f,   // Upper left corner
+    0.5f, 0.5f, 0.0f,       0.0f, 0.0f, 1.0f,   1.0f, 1.0f,   // Upper right corner
+    0.5f, -0.5f, 0.0f,      1.0f, 1.0f, 1.0f,   1.0f, 0.0f    // Lower left corner
 };
 
 GLuint indices[] =
@@ -20,6 +20,7 @@ GLuint indices[] =
 Engine::Renderer::Renderer(const RendererDesc& desc) : Base(desc.base),
     m_window(desc.window),
     m_shader(desc.shaderDesc),
+    m_texture(desc.textureDesc),
     m_VAO(),
     m_VBO(vertices, sizeof(vertices)),
     m_EBO(indices, sizeof(indices)),
@@ -29,14 +30,19 @@ Engine::Renderer::Renderer(const RendererDesc& desc) : Base(desc.base),
     m_VAO.Bind();
     m_EBO.Bind();
 
-    m_VAO.LinkAttrib(m_VBO, 0, 3, GL_FLOAT, 6* sizeof(float), (void*)0);
-    m_VAO.LinkAttrib(m_VBO, 1, 3, GL_FLOAT, 6* sizeof(float), (void*)(3 * sizeof(float)));
+    m_VAO.LinkAttrib(m_VBO, 0, 3, GL_FLOAT, 8* sizeof(float), (void*)0);
+    m_VAO.LinkAttrib(m_VBO, 1, 3, GL_FLOAT, 8* sizeof(float), (void*)(3 * sizeof(float)));
+    m_VAO.LinkAttrib(m_VBO, 2, 2, GL_FLOAT, 8* sizeof(float), (void*)(6 * sizeof(float)));
+
 
     m_VAO.Unbind();
     m_VBO.Unbind();
     m_EBO.Unbind();
 
-    m_uniID = glGetUniformLocation(m_shader.ID, "scale");
+    m_uniID = glGetUniformLocation(m_shader.ID, "scale"); // Render colored square
+    m_tex0uni = glGetUniformLocation(m_shader.ID, "tex0");
+
+
 }
 
 Engine::Renderer::~Renderer()
@@ -49,8 +55,10 @@ void Engine::Renderer::draw()
     glClear( GL_COLOR_BUFFER_BIT );
 
     m_shader.Activate();
-    glUniform1f(m_uniID, 0.5f);
-
+    glUniform1i(m_tex0uni, 0);
+    glUniform1f(m_uniID, 0.5f); // Render colored square
+    
+    m_texture.Bind();
     m_VAO.Bind();
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

@@ -20,6 +20,7 @@ namespace Engine {
 	class VBO;
 	class VAO;
 	class EBO;
+	class Texture;
 
 	class TickedSystem;
 	class MovementTicks;

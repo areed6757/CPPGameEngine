@@ -10,7 +10,7 @@
 namespace Engine {
 	class Shader : public Base {
 	public:
-		Shader(const ShaderDesc& desc);
+		explicit Shader(const ShaderDesc& desc);
 		~Shader();
 
 		GLuint ID;

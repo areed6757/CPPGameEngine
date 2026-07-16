@@ -12,7 +12,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	Base({ *std::make_unique<Logger>(desc.logLevel).release() }),
 	m_loggerPtr(&m_logger)
 {
-	// Graphics
+	// Graphics / Window / Input
 	GLFWDesc glfwDesc{ { m_logger } };
 	m_glfwContext = std::make_unique<GLFWContext>(glfwDesc);
 	WindowDesc windowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title, m_actionMap };
@@ -20,8 +20,11 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	m_inputHandler = m_window->getInputHandler();
 
+	stbi_set_flip_vertically_on_load(true);
+
 	ShaderDesc shaderDesc{ {m_logger} };
-	RendererDesc rendererDesc{ {m_logger}, *m_window.get(), shaderDesc };
+	TextureDesc textureDesc{ {m_logger} };
+	RendererDesc rendererDesc{ {m_logger}, *m_window.get(), shaderDesc, textureDesc };
 	m_renderer = std::make_unique<Renderer>(rendererDesc);
 
 	// Time

@@ -15,7 +15,8 @@ namespace Engine {
 	constexpr d64 TICK_RATE = { 1.0 / 60.0 }; // 1/60 tickRate is 60 ticks per second ***TODO : fix this to be 60 instead of 1/60
 	constexpr const i32 MAX_ENTITIES = { 1'000'000 };
 
-	
+	// Core classes
+
 	struct BaseDesc {
 		Logger& logger;
 	};
@@ -27,6 +28,8 @@ namespace Engine {
 		i32 windowHeight = { WINDOW_HEIGHT };
 		const char* title = { TITLE }; 
 	};
+
+	// Window and context creation
 
 	struct GLFWDesc {
 		BaseDesc base;
@@ -43,6 +46,21 @@ namespace Engine {
 		ActionMap& actionMap; // Pass-through for InputHandler of the Window
 	};
 
+	struct InputHandlerDesc {
+		BaseDesc base;
+		ActionMap& actionMap;
+	};
+
+	// Graphics
+
+	struct TextureDesc {
+		BaseDesc base;
+		i32 widthImg = {512};
+		i32 heightImg = {512};
+		i32 colorChannels = {4}; // 3 = jpeg, 4 = png
+		const char* imgAddr = "Images/test.png";
+	};
+
 	struct ShaderDesc {
 		BaseDesc base;
 		const char* vertexFile = "Shaders/default.vert";
@@ -53,12 +71,10 @@ namespace Engine {
 		BaseDesc base;
 		Window& window;
 		ShaderDesc shaderDesc; // Pass-through
+		TextureDesc textureDesc; // Pass-through
 	};
 
-	struct InputHandlerDesc {
-		BaseDesc base;
-		ActionMap& actionMap;
-	};
+	// Utilities
 
 	struct GameClockDesc {
 		BaseDesc base;
@@ -70,6 +86,8 @@ namespace Engine {
 		d64 tickRate{ TICK_RATE }; 
 	};
 
+	// Systems
+
 	struct GraphicsTicksDesc {
 		BaseDesc base;
 	};
@@ -78,6 +96,9 @@ namespace Engine {
 		BaseDesc base;
 		ECSWrapper& ecs;
 	};
+
+
+	// ECS
 
 	struct EntityRegisterDesc {
 		BaseDesc base;
@@ -95,7 +116,10 @@ namespace Engine {
 		ComponentDesc& compDesc; // Pass-through for component pools owned by the ECSWrapper
 	};
 
+
+
 	// Test Descriptions
+
 	struct EntityStressTestDesc {
 		BaseDesc base;
 		ECSWrapper& ecsWrapper;
