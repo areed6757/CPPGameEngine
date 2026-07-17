@@ -84,18 +84,7 @@ namespace Engine {
 	struct SchedulerDesc {
 		BaseDesc base;
 		GameClock& gameClock;
-		d64 tickRate{ TICK_RATE }; 
-	};
-
-	// Systems
-
-	struct GraphicsTicksDesc {
-		BaseDesc base;
-	};
-
-	struct MovementTicksDesc {
-		BaseDesc base;
-		ECSWrapper& ecs;
+		d64 tickRate{ TICK_RATE };
 	};
 
 
@@ -116,15 +105,5 @@ namespace Engine {
 		EntityRegister& entityRegister;
 		ComponentDesc& compDesc; // Pass-through for component pools owned by the ECSWrapper
 	};
-
-
-
-	// Test Descriptions
-
-	struct EntityStressTestDesc {
-		BaseDesc base;
-		ECSWrapper& ecsWrapper;
-	};
-
 }
 

@@ -1,6 +1,8 @@
 #pragma once
 #include <Core/Common.h>
 #include <ECS/TickedSystem.h>
+#include <GameDescs.h>
+#include <GameECS.h>
 
 // TODO: THIS CLASS IS FOR TESTING. IT WILL HANDLE GRAPHICS UPDATES LATER
 namespace Engine{

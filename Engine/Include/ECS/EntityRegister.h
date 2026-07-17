@@ -14,7 +14,7 @@ namespace Engine {
 
 	class EntityRegister : public Base {
 	public:
-		friend class ECSWrapper;
+		template <typename T> friend class ECSWrapper;
 
 		explicit EntityRegister(const EntityRegisterDesc& desc);
 		~EntityRegister();

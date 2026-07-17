@@ -10,12 +10,14 @@
 #include <Systems/GraphicsTicks.h>
 #include <Systems/MovementTicks.h>
 #include <ECS/EntityRegister.h>
-#include <ECSWrapper.h>
+#include <ECS/ECSWrapper.h>
 #include <Components/Position.h>
 #include <Physics/Vector3double.h>
 #include <Test/EntityStressTest.h>
 #include <Components/Movement.h>
 #include <Graphics/Renderer.h>
+#include <GameDescs.h>
+#include <GameECS.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -44,7 +46,7 @@ namespace Engine {
 
 		// ECS
 		std::unique_ptr<EntityRegister> m_entityRegister{};
-		std::unique_ptr<ECSWrapper> m_ecsWrapper{};
+		std::unique_ptr<GameECSWrapper> m_ecsWrapper{};
 		InputHandler* m_inputHandler{};
 		ActionMap m_actionMap{};
 		bool m_isRunning{ true };

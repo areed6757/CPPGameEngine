@@ -2,7 +2,7 @@
 #include <chrono>
 #include <Core/Logger.h>
 #include <ECS/EntityRegister.h>
-#include <ECSWrapper.h>
+#include <GameDescs.h>
 #include <Components/Position.h>
 
 using namespace Engine;
@@ -11,7 +11,7 @@ TEST_CASE("one million entity creation completes within a reasonable time budget
     Logger logger{ Logger::LogLevel::Info };
     EntityRegister entityReg{ EntityRegisterDesc{ { logger }, 1'000'000 } };
     ComponentDesc compDesc{ { logger }, 1'000'000 };
-    ECSWrapper ecs{ ECSWrapperDesc{ { logger }, entityReg, compDesc } };
+    GameECSWrapper ecs{ ECSWrapperDesc{ { logger }, entityReg, compDesc } };
 
     auto start = std::chrono::high_resolution_clock::now();
     for (int i = 0; i < 1'000'000; ++i) {
@@ -22,5 +22,5 @@ TEST_CASE("one million entity creation completes within a reasonable time budget
         std::chrono::high_resolution_clock::now() - start).count();
 
     INFO("Took " << ms << "ms");
-    REQUIRE(ms < 2000); // Catches egregious performance faults
+    REQUIRE(ms < 1000); // Catches egregious performance faults
 }
