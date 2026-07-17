@@ -4,6 +4,7 @@ list(FILTER GAME_LIB_SOURCES EXCLUDE REGEX ".*main\\.cpp$")
 add_executable(GameTests
     test_ecswrapper.cpp
     test_movementticks.cpp
+    test_performance.cpp
     ${GAME_LIB_SOURCES}
 )
 target_include_directories(GameTests PRIVATE
