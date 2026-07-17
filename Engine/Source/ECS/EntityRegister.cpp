@@ -22,7 +22,7 @@ Engine::EntityRegister::~EntityRegister()
 
 Engine::EntityID Engine::EntityRegister::create()
 {
-	if (m_freeIndices.empty()) { return EntityID{ 0, 0 }; }
+	if (m_freeIndices.empty()) { return EntityID{ INVALID_SENTINEL, INVALID_SENTINEL }; }
 	i32 index = m_freeIndices.back();
 	m_freeIndices.pop_back();
 
@@ -48,8 +48,15 @@ void Engine::EntityRegister::destroy(EntityID id)
 bool Engine::EntityRegister::isValid(EntityID id) const noexcept
 {
 	if (id.id >= m_generations.size() || id.id <= 0) { 
-		EngineLogError(std::format("Invalid EntityID check id: {} generation: {}", id.id, id.generation).c_str());
 		return false; 
 	}
-	return (id.generation == m_generations.at(id.id));
+	return (id.generation == m_generations[id.id]);
+}
+
+Engine::i32 Engine::EntityRegister::generationAt(i32 index) const noexcept
+{
+	if (index >= m_generations.size() || index <= 0) {
+		return INVALID_SENTINEL;
+	}
+	return m_generations[index];
 }

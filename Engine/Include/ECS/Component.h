@@ -1,13 +1,24 @@
 #pragma once
+#include <Core/Assert.h>
 #include <Core/Common.h>
 #include <format>
-//#include <cassert>
 #include <typeinfo>
-#include <Core/Assert.h>
 
+/// <summary>
+///		Component<T&> is sparse/dense set storage pool for a single component type T.
+///	A sparse set lookup array maps an entity index directly to its position in the dense
+///	array, the dense array is a memory-contiguous storage for entities that hold this component,
+///	and m_backRef maps a dense position back to the entity that owns it for swap/pop removal.
+/// 
+///		All mutating access (add/remove) and read access (has/get/size/entityAt) is private and
+///	reachable only through ECSWrapper friend class. No other classes should ever
+///	touch Component pools directly. This ensures entity signatures and component storage
+///	are guaranteed to be in-sync.
+/// 
+///		T is expected to be a plain, copyable data struct, no logic or inheritance. This
+///	follows a strict ECS implementation plan, components are pure data, systems perform logic.
+/// </summary>
 namespace Engine {
-	constexpr i32 INVALID_INDEX{ -1 };
-
 	template <typename T>
 	class Component : public Base {
 	public:
@@ -15,7 +26,7 @@ namespace Engine {
 
 		explicit Component(const ComponentDesc& desc) : Base(desc.base) {
 			m_maxEntities = desc.maxEntities;
-			m_sparse.assign(m_maxEntities + 1, INVALID_INDEX);
+			m_sparse.assign(m_maxEntities + 1, INVALID_SENTINEL);
 		}
 		~Component() {};
 	
@@ -25,7 +36,7 @@ namespace Engine {
 				EngineLogError(std::format("Invalid attempt to add component to index {}", index).c_str());
 				return;
 			}
-			if (m_sparse.at(index) != INVALID_INDEX) {
+			if (m_sparse.at(index) != INVALID_SENTINEL) {
 				EngineLogWarning(std::format("Entity {} already has this component.", index).c_str());
 				return;
 			}
@@ -47,25 +58,26 @@ namespace Engine {
 
 			m_dense.pop_back();
 			m_backRef.pop_back();
-			m_sparse.at(index) = INVALID_INDEX;
+			m_sparse.at(index) = INVALID_SENTINEL;
 
 			EngineLogDebug(std::format("Entity {} destroyed {} component.", index, typeid(T).name()).c_str());
 		}
 
-		bool has(i32 index) const noexcept {
-			return m_sparse.at(index) != INVALID_INDEX;
+		[[nodiscard]] bool has(i32 index) const noexcept {
+			if (index < 0 || index >= static_cast<i32>(m_sparse.size())) { return false;  }
+			return m_sparse.at(index) != INVALID_SENTINEL;
 		}
 
-		T& get(i32 index) {
+		[[nodiscard]] T& get(i32 index) {
 			ENGINE_ASSERT(has(index), "get() called on entity with no component of type");
 			return m_dense.at(m_sparse.at(index));
 		}
 
-		i32 size() {
+		[[nodiscard]] i32 size() const {
 			return m_dense.size();
 		}
 
-		i32 entityAt(i32 denseIndex) const {
+		[[nodiscard]] i32 entityAt(i32 denseIndex) const {
 			return m_backRef.at(denseIndex);
 		}
 

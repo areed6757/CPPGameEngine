@@ -1,11 +1,11 @@
 #pragma once
-#include <bitset>
-#include <format>
-#include <Core/Common.h>
-#include <ECSWrapper.h>
-#include <ECS/TickedSystem.h>
 #include <Components/Movement.h>
 #include <Components/Position.h>
+#include <Core/Common.h>
+#include <ECS/TickedSystem.h>
+#include <ECSWrapper.h>
+#include <bitset>
+#include <format>
 
 namespace Engine {
 	class MovementTicks final : public Base, public TickedSystem {

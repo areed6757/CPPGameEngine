@@ -1,5 +1,5 @@
-#include <bitset>
 #include <Systems/MovementTicks.h>
+#include <bitset>
 
 Engine::MovementTicks::MovementTicks(const MovementTicksDesc& desc) : Base(desc.base), m_ecs(desc.ecs)
 {
@@ -12,9 +12,8 @@ Engine::MovementTicks::~MovementTicks()
 
 void Engine::MovementTicks::Update(d64 dt)
 {
-	i32 c = m_ecs.sizeComponentPool<Movement>();
-
-	for (i32 i = 0; i < c; i++) {
+	// Concrete selection of Movement Component pool size, as it will necessarily be smaller than Position
+	for (i32 i = 0; i < m_ecs.sizeComponentPool<Movement>(); i++) {
 		i32 entityIndex = m_ecs.entityAtDenseIndex<Movement>(i);
 		EntityID id = m_ecs.entityFromIndex(entityIndex);
 

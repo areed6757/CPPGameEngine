@@ -1,6 +1,6 @@
 {
-    "name": "auctoritas",
+    "name": "station-authority",
     "version": "0.1.0",
     "builtin-baseline": "f6aa95f283a88921d326d2a7093602ff984b20f8",
-    "dependencies": [ "glfw3" ]
+    "dependencies": [ "glfw3", "catch2" ]
 }
