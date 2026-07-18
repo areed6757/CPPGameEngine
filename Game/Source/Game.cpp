@@ -45,11 +45,11 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	ComponentDesc compDesc = { {m_logger} };
 	ECSWrapperDesc ecsDesc = { {m_logger}, *m_entityRegister.get(), compDesc };
-	m_ecsWrapper = std::make_unique<ECSWrapper>(ecsDesc);
+	m_ecsWrapper = std::make_unique<GameECSWrapper>(ecsDesc);
 	if (!m_ecsWrapper) { EngineLogErrorAndThrow("ECSWrapper failed to initialize."); }
 
 	// TickedSystems
-	GraphicsTicksDesc gfxTicksDesc = { {m_logger} };
+	GraphicsTicksDesc gfxTicksDesc = { {m_logger}, *m_ecsWrapper.get() };
 	m_gfxTicks = std::make_unique<GraphicsTicks>(gfxTicksDesc);
 	if (!m_gfxTicks) { EngineLogErrorAndThrow("GraphicsTicks failed to initialize.") };
 

@@ -22,15 +22,14 @@ namespace Engine {
 	template <typename T>
 	class Component : public Base {
 	public:
-		friend class ECSWrapper;
 
 		explicit Component(const ComponentDesc& desc) : Base(desc.base) {
 			m_maxEntities = desc.maxEntities;
-			m_sparse.assign(m_maxEntities + 1, INVALID_SENTINEL);
+			m_sparse.assign(static_cast<size_t>(m_maxEntities) + 1, INVALID_SENTINEL);
 		}
 		~Component() {};
-	
-	private:
+
+
 		void add(i32 index, const T& component) {
 			if (!(index > 0 && index <= m_maxEntities)) {
 				EngineLogError(std::format("Invalid attempt to add component to index {}", index).c_str());
@@ -73,8 +72,15 @@ namespace Engine {
 			return m_dense.at(m_sparse.at(index));
 		}
 
+		[[nodiscard]] T* tryGet(i32 index) noexcept {
+			if (index < 0 || index >= static_cast<i32>(m_sparse.size())) { return nullptr; }
+			i32 denseIndex = m_sparse[index];
+			if (denseIndex == INVALID_SENTINEL) { return nullptr; }
+			return &m_dense[denseIndex];
+		}
+
 		[[nodiscard]] i32 size() const {
-			return m_dense.size();
+			return static_cast<i32>(m_dense.size());
 		}
 
 		[[nodiscard]] i32 entityAt(i32 denseIndex) const {

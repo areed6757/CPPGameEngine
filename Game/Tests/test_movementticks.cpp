@@ -1,7 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <Core/Logger.h>
 #include <ECS/EntityRegister.h>
-#include <ECSWrapper.h>
+#include <GameDescs.h>
 #include <Systems/MovementTicks.h>
 #include <Components/Position.h>
 #include <Components/Movement.h>
@@ -12,7 +12,7 @@ struct MovementFixture {
     Logger logger{ Logger::LogLevel::Debug };
     EntityRegister entityReg{ EntityRegisterDesc{ { logger }, 100 } };
     ComponentDesc compDesc{ { logger }, 100 };
-    ECSWrapper ecs{ ECSWrapperDesc{ { logger }, entityReg, compDesc } };
+    GameECSWrapper ecs{ ECSWrapperDesc{ { logger }, entityReg, compDesc } };
     MovementTicks movementSystem{ MovementTicksDesc{ { logger }, ecs } };
 };
 

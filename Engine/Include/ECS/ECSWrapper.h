@@ -1,6 +1,4 @@
 #pragma once
-#include <Components/Position.h>
-#include <Components/Movement.h>
 #include <Core/Common.h>
 #include <ECS/Component.h>
 #include <ECS/EntityRegister.h>
@@ -13,32 +11,12 @@
 /// as the logic for efficiently handling creation and deletion of both entities and components. All ticked systems will interface with this class
 /// per their own automated loops that are called in update() cycles.
 /// 
-/// NOTE: (for now) When adding a new Component type, #include the file, add it to the ComponentPools struct and initialize it there, add it to getPool(), and create a 
-///	ComponentBit struct in the template list below.
-/// 
 /// Entity signatures are generated in the form of a bitset so that external systems updating per tick can lookup a signature set instead of parsing
 /// every component on every entity to find entities that require their update service. i.e. Movement and Position are required components for the
 /// MovementSystem to update an entity, it will simply look for bitset signatures *11 then update matches.
 /// 
-/// TODO:
-///		This class should be stripped of concrete components by creating a type-erased interface
-///		Following the above, move ECSWrapper files into Engine directory
 /// </summary>
 namespace Engine {
-
-	/// <summary>
-	/// Owns one Component<T&> pool per registered component type. This is the one place in the
-	///		engine that names every concrete component type explicitly, ref. to class-level notes above
-	///		for what touching a new component type requires.
-	/// </summary>
-	struct ComponentPools {
-		Component<Position> positions;
-		Component<Movement> movements;
-		Component<Renderable> renders;
-
-		explicit ComponentPools(const ComponentDesc& desc) : positions(desc), movements(desc) {}
-	};
-
 
 	/// <summary>
 	/// Maps a component type to a fixed bit index within an entity's 64-bit signature. No default
@@ -49,44 +27,20 @@ namespace Engine {
 	template <typename T>
 	struct ComponentBit;
 
-	template <> struct ComponentBit<Position> { static constexpr i32 value = 0; };
-	template <> struct ComponentBit<Movement> { static constexpr i32 value = 1; };
-	template <> struct ComponentBit<Renderable> { static constexpr i32 value = 2; };
-
+	template <typename TPools>
 	class ECSWrapper : public Base {
 	private:
 		EntityRegister& m_entityReg;
-		ComponentPools m_pools;
+		TPools m_pools;
 		std::vector<std::bitset<64>> m_entitySignatures{}; // Per-entity component signature
 
-		/// <summary>
-		/// Mutable pool access used by addComponent/ removeComponent
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		template<typename T>
-		Component<T>& getPool() {
-			if constexpr (std::is_same_v<T, Position>) return m_pools.positions;
-			else if constexpr (std::is_same_v<T, Movement>) return m_pools.movements;
-			else static_assert(sizeof(T) == 0, "getPool: unregistered component type");
-		}
-
-		/// <summary>
-		/// Read-only pool access, used by hasComponent, sizeComponentPool, entityAtDenseIndex,
-		///		called from const methods
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <returns></returns>
-		template<typename T>
-		const Component<T>& getPool() const {
-			if constexpr (std::is_same_v<T, Position>) return m_pools.positions;
-			else if constexpr (std::is_same_v<T, Movement>) return m_pools.movements;
-			else static_assert(sizeof(T) == 0, "getPool: unregistered component type");
-		}
-
 	public:
-		explicit ECSWrapper(const ECSWrapperDesc& desc);
-		~ECSWrapper();
+		explicit ECSWrapper(const ECSWrapperDesc& desc) :
+			Base(desc.base),
+			m_entityReg(desc.entityRegister),
+			m_pools(desc.compDesc),
+			m_entitySignatures(desc.compDesc.maxEntities + 1) {}
+		~ECSWrapper() {}
 
 		/// <summary>
 		/// Allocates a fresh entity id from the underlying EntityRegister.
@@ -113,9 +67,8 @@ namespace Engine {
 				return;
 			}
 			
-			if (m_pools.positions.has(id.id)) { removeComponent<Position>(id); }
-			if (m_pools.movements.has(id.id)) { removeComponent<Movement>(id); }
-
+			m_pools.removeAll(id.id);
+			m_entitySignatures.at(id.id).reset();
 			m_entityReg.destroy(id); 
 		}
 
@@ -128,8 +81,8 @@ namespace Engine {
 		/// <returns></returns>
 		template <typename T>
 		[[nodiscard]] bool hasComponent(EntityID id) const {
-			if (!isValidEntity(id)) { return false; } // TODO: handle fail
-			return getPool<T>().has(id.id);
+			if (!isValidEntity(id)) { return false; }
+			return m_pools.template getPool<T>().has(id.id);
 		}
 
 		/// <summary>
@@ -142,8 +95,8 @@ namespace Engine {
 		/// <param name="component"></param>
 		template <typename T>
 		void addComponent(EntityID id, const T& component) {
-			if (!isValidEntity(id)) { return; } // TODO: handle fail
-			getPool<T>().add(id.id, component);
+			if (!isValidEntity(id)) { return; }
+			m_pools.template getPool<T>().add(id.id, component);
 			m_entitySignatures.at(id.id).set(ComponentBit<T>::value);
 		}
 
@@ -156,7 +109,7 @@ namespace Engine {
 		template <typename T>
 		void removeComponent(EntityID id) {
 			if (!isValidEntity(id)) { return; } // TODO: handle fail
-			getPool<T>().remove(id.id);
+			m_pools.template getPool<T>().remove(id.id);
 			m_entitySignatures.at(id.id).reset(ComponentBit<T>::value);
 		}
 
@@ -170,7 +123,21 @@ namespace Engine {
 		/// <returns></returns>
 		template <typename T>
 		[[nodiscard]] T& getComponent(EntityID id) {
-			return getPool<T>().get(id.id);
+			return m_pools.template getPool<T>().get(id.id);
+		}
+
+		/// <summary>
+		/// Safe get component method, should be used to verify component exists for an entity and to return the component reference.
+		///		Called as 
+		///		auto& comp = ecs.tryGetComponent<T>(id)
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		template <typename T>
+		[[nodiscard]] T* tryGetComponent(EntityID id) {
+			if (isValidEntity(id)) { return nullptr; }
+			return m_pools.template getPool<T>().tryGet(id.id);
 		}
 
 		/// <summary>
@@ -182,7 +149,7 @@ namespace Engine {
 		/// <returns></returns>
 		template <typename T>
 		[[nodiscard]] i32 sizeComponentPool() const noexcept {
-			return getPool<T>().size();
+			return m_pools.template getPool<T>().size();
 		}
 
 		/// <summary>
@@ -195,7 +162,7 @@ namespace Engine {
 		/// <returns></returns>
 		template <typename T>
 		[[nodiscard]] i32 entityAtDenseIndex(i32 denseIndex) const {
-			return getPool<T>().entityAt(denseIndex);
+			return m_pools.template getPool<T>().entityAt(denseIndex);
 		}
 
 		/// <summary>

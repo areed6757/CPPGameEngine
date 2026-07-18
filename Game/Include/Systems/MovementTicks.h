@@ -3,7 +3,8 @@
 #include <Components/Position.h>
 #include <Core/Common.h>
 #include <ECS/TickedSystem.h>
-#include <ECSWrapper.h>
+#include <GameDescs.h>
+#include <GameECS.h>
 #include <bitset>
 #include <format>
 
@@ -16,7 +17,7 @@ namespace Engine {
 		void Update(d64 deltaTime) override;
 
 	private:
-		ECSWrapper& m_ecs;
+		GameECSWrapper& m_ecs;
 		std::bitset<64> m_entityMask;
 		i32 m_tickCount = 0;
 	};
