@@ -34,6 +34,7 @@ namespace Engine {
 	struct ComponentPools {
 		Component<Position> positions;
 		Component<Movement> movements;
+		Component<Renderable> renders;
 
 		explicit ComponentPools(const ComponentDesc& desc) : positions(desc), movements(desc) {}
 	};
@@ -50,7 +51,7 @@ namespace Engine {
 
 	template <> struct ComponentBit<Position> { static constexpr i32 value = 0; };
 	template <> struct ComponentBit<Movement> { static constexpr i32 value = 1; };
-
+	template <> struct ComponentBit<Renderable> { static constexpr i32 value = 2; };
 
 	class ECSWrapper : public Base {
 	private:

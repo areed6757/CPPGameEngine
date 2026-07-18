@@ -2,8 +2,8 @@
 #include <stdexcept>
 #include <memory>
 
-// Forward declarations and common typedefs
 namespace Engine {
+	// Engine declarations
 	class Base;
 	class Logger;
 	class Game;
@@ -21,9 +21,7 @@ namespace Engine {
 	class VAO;
 	class EBO;
 	class Texture;
-
 	class TickedSystem;
-	class MovementTicks;
 
 	struct ActionMap;
 	struct KeyStates;
@@ -32,9 +30,20 @@ namespace Engine {
 	struct EntityID;
 	struct ComponentPools;
 
+
+	// Game declarations
+	class MeshRegistry;
+	class TextureRegistry;
+	class MovementTicks;
+	class Mesh;
+
 	struct Movement;
 	struct Position;
+	struct Renderable;
+
 	
+
+	// Common types
 	using i32 = std::int32_t;
 	using i64 = std::int64_t;
 	using ui32 = std::uint32_t;

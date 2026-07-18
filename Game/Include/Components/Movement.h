@@ -1,12 +1,13 @@
 #pragma once
 #include <Core/Common.h>
+#include <Physics/Vector2float.h>
 
 namespace Engine {
 	struct Movement {
-		f32 linearVelocity;
+		Vector2float linearVelocity;
 		f32 angularVelocity;
 
-		f32 linearAcceleration;
+		Vector2float linearAcceleration;
 		f32 angularAcceleration;
 	};
 }
