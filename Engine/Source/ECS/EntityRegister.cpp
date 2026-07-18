@@ -37,7 +37,7 @@ void Engine::EntityRegister::destroy(EntityID id)
 {
 	if (isValid(id)) {
 		EngineLogDebug(std::format("Entity destroyed id: {} generation: {}", id.id, id.generation).c_str());
-		m_generations.at(id.id)++;
+		m_generations[id.id]++;
 		m_freeIndices.push_back(id.id);
 	}
 	else {

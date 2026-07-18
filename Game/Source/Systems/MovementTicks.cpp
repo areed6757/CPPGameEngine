@@ -17,8 +17,11 @@ void Engine::MovementTicks::Update(d64 dt)
 		i32 entityIndex = m_ecs.entityAtDenseIndex<Movement>(i);
 		EntityID id = m_ecs.entityFromIndex(entityIndex);
 		if ((m_ecs.getSignature(id) & m_entityMask) != m_entityMask) { continue; } // Skips entities without both positon and movement
+		
+		// Movement is the dense array being parse, so entity dense index is known to be i
+		// Position must still perform a lookup based on id
 		auto& tform = m_ecs.getComponent<Position>(id);
-		auto& movement = m_ecs.getComponent<Movement>(id);
+		auto& movement = m_ecs.getComponentAtDenseIndex<Movement>(i);
 
 		f32 fdt = static_cast<f32>(dt);
 		movement.linearVelocity += movement.linearAcceleration * fdt;

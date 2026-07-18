@@ -165,6 +165,12 @@ namespace Engine {
 			return m_pools.template getPool<T>().entityAt(denseIndex);
 		}
 
+
+		template <typename T>
+		[[nodiscard]] T& getComponentAtDenseIndex(i32 denseIndex) {
+			return m_pools.template getPool<T>().getAtDenseIndex(denseIndex);
+		}
+
 		/// <summary>
 		/// Reconstructs a full EntityID (index + generation) from a raw entity index.
 		/// </summary>

@@ -35,41 +35,41 @@ namespace Engine {
 				EngineLogError(std::format("Invalid attempt to add component to index {}", index).c_str());
 				return;
 			}
-			if (m_sparse.at(index) != INVALID_SENTINEL) {
+			if (m_sparse[index] != INVALID_SENTINEL) {
 				EngineLogWarning(std::format("Entity {} already has this component.", index).c_str());
 				return;
 			}
 			m_dense.push_back(component);
 			m_backRef.push_back(index);
-			m_sparse.at(index) = static_cast<i32> (m_dense.size() - 1);
+			m_sparse[index] = static_cast<i32> (m_dense.size() - 1);
 			EngineLogDebug(std::format("Entity {} added {} component", index, typeid(T).name()).c_str());
 		}
 
 		void remove(i32 index) {
 			ENGINE_ASSERT(has(index), "remove() called on entity with no component");
-			i32 denseIndex = m_sparse.at(index);
+			i32 denseIndex = m_sparse[index];
 			i32 lastDenseIndex = static_cast<i32>(m_dense.size() - 1);
-			i32 lastEntity = m_backRef.at(lastDenseIndex);
+			i32 lastEntity = m_backRef[lastDenseIndex];
 
-			m_dense.at(denseIndex) = m_dense.at(lastDenseIndex);
-			m_backRef.at(denseIndex) = lastEntity;
-			m_sparse.at(lastEntity) = denseIndex;
+			m_dense[denseIndex] = m_dense[lastDenseIndex];
+			m_backRef[denseIndex] = lastEntity;
+			m_sparse[lastEntity] = denseIndex;
 
 			m_dense.pop_back();
 			m_backRef.pop_back();
-			m_sparse.at(index) = INVALID_SENTINEL;
+			m_sparse[index] = INVALID_SENTINEL;
 
 			EngineLogDebug(std::format("Entity {} destroyed {} component.", index, typeid(T).name()).c_str());
 		}
 
 		[[nodiscard]] bool has(i32 index) const noexcept {
 			if (index < 0 || index >= static_cast<i32>(m_sparse.size())) { return false;  }
-			return m_sparse.at(index) != INVALID_SENTINEL;
+			return m_sparse[index] != INVALID_SENTINEL;
 		}
 
 		[[nodiscard]] T& get(i32 index) {
 			ENGINE_ASSERT(has(index), "get() called on entity with no component of type");
-			return m_dense.at(m_sparse.at(index));
+			return m_dense[m_sparse[index]];
 		}
 
 		[[nodiscard]] T* tryGet(i32 index) noexcept {
@@ -79,12 +79,18 @@ namespace Engine {
 			return &m_dense[denseIndex];
 		}
 
+		[[nodiscard]] T& getAtDenseIndex(i32 denseIndex) {
+			ENGINE_ASSERT(denseIndex >= 0 && denseIndex < static_cast<i32>(m_dense.size()), "getAtDenseIndex: index out of range");
+			return m_dense[denseIndex];
+		}
+
 		[[nodiscard]] i32 size() const {
 			return static_cast<i32>(m_dense.size());
 		}
 
 		[[nodiscard]] i32 entityAt(i32 denseIndex) const {
-			return m_backRef.at(denseIndex);
+			ENGINE_ASSERT(denseIndex >= 0 && denseIndex < static_cast<i32>(m_backRef.size()), "entityAt: index out of range");
+			return m_backRef[denseIndex];
 		}
 
 		i32 m_maxEntities{};
