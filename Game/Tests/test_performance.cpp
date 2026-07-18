@@ -21,6 +21,6 @@ TEST_CASE("one million entity creation completes within a reasonable time budget
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::high_resolution_clock::now() - start).count();
 
-    INFO("Took " << ms << "ms");
+    WARN("Took " << ms << "ms"); // Can change back to INFO, just for me to see it
     REQUIRE(ms < 1000); // Catches egregious performance faults
 }

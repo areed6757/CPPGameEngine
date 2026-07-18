@@ -27,7 +27,7 @@ TEST_CASE_METHOD(MovementFixture, "entity with Position+Movement integrates over
     EntityID id = ecs.createEntity();
     ecs.addComponent(id, Position{});
     Movement m{};
-    m.linearVelocity = 2.0f; // NOTE: adjust field names/types to match the actual current Movement struct
+    m.linearVelocity = { 2.0f, 2.0f }; // NOTE: adjust field names/types to match the actual current Movement struct
     ecs.addComponent(id, m);
 
     movementSystem.Update(1.0);

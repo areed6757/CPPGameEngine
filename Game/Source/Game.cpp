@@ -12,6 +12,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	Base({ *std::make_unique<Logger>(desc.logLevel).release() }),
 	m_loggerPtr(&m_logger)
 {
+
 	// Graphics / Window / Input
 	GLFWDesc glfwDesc{ { m_logger } };
 	m_glfwContext = std::make_unique<GLFWContext>(glfwDesc);
