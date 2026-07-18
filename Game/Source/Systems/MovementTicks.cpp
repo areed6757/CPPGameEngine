@@ -14,6 +14,8 @@ void Engine::MovementTicks::Update(d64 dt)
 {
 	// Concrete selection of Movement Component pool size, as it will necessarily be smaller than Position
 	for (i32 i = 0; i < m_ecs.sizeComponentPool<Movement>(); i++) {
+		
+		// Acquire components
 		i32 entityIndex = m_ecs.entityAtDenseIndex<Movement>(i);
 		EntityID id = m_ecs.entityFromIndex(entityIndex);
 		if ((m_ecs.getSignature(id) & m_entityMask) != m_entityMask) { continue; } // Skips entities without both positon and movement
@@ -23,6 +25,8 @@ void Engine::MovementTicks::Update(d64 dt)
 		auto& tform = m_ecs.getComponent<Position>(id);
 		auto& movement = m_ecs.getComponentAtDenseIndex<Movement>(i);
 
+
+		// Update components
 		f32 fdt = static_cast<f32>(dt);
 		movement.linearVelocity += movement.linearAcceleration * fdt;
 		movement.angularVelocity += movement.angularAcceleration * fdt;
@@ -30,6 +34,8 @@ void Engine::MovementTicks::Update(d64 dt)
 		tform.transform += Vector2double(movement.linearVelocity * fdt);
 		tform.rotation += movement.angularVelocity * fdt;
 
+
+		// Debug
 		// EngineLogInfo(std::format("Entity: {} moved to position: x {} y {}, velocity: ({}, {})", id.id, tform.transform.x, tform.transform.y, movement.linearVelocity).c_str());
 	}
 }

@@ -58,8 +58,8 @@ namespace Engine {
 		BaseDesc base;
 		i32 widthImg = {512};
 		i32 heightImg = {512};
-		i32 colorChannels = {4}; // 3 = jpeg, 4 = png
-		const char* imgAddr = "Images/test.png";
+		i32 colorChannels = {4}; // 3 = jpeg, 4 = png, currently concretely set in Texture instantiation to 4
+		const char* imgAddr;
 	};
 
 	struct ShaderDesc {
@@ -72,7 +72,6 @@ namespace Engine {
 		BaseDesc base;
 		Window& window;
 		ShaderDesc shaderDesc; // Pass-through
-		TextureDesc textureDesc; // Pass-through
 	};
 
 	// Utilities

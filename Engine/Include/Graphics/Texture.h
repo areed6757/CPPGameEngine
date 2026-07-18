@@ -7,6 +7,12 @@ namespace Engine {
 	class Texture : public Base {
 	public:
 		explicit Texture(const TextureDesc& desc);
+
+		Texture(const Texture&) = delete;
+		Texture& operator=(const Texture&) = delete;
+		Texture(Texture&&) = default;
+		Texture& operator=(Texture&&) = default;
+
 		~Texture();
 
 		void Bind() const;

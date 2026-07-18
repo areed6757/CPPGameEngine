@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/Common.h>
+#include <GLFW/glfw3.h>
 
 // Maps key presses to actions as GLFW_KEY_<label>, "ActionString"
 // This uses a vector of pairs implementation to avoid overhead from unordered_map lookups

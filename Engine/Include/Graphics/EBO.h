@@ -5,7 +5,7 @@ namespace Engine{
 	class EBO {
 	public:
 		GLuint ID{};
-		EBO(GLuint* indices, GLsizeiptr size);
+		EBO(const GLuint* indices, GLsizeiptr size);
 		~EBO();
 
 		void Bind() const;

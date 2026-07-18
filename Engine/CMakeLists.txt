@@ -5,7 +5,7 @@ file(GLOB IMAGE_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Image
 
 message(STATUS "ENGINE_SOURCES: ${ENGINE_SOURCES}")
 
-add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS}  "Source/ThirdParty/stb/stb.cpp" "Include/Graphics/Texture.h" "Source/Graphics/Texture.cpp")
+add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS} )
 
 target_include_directories(Engine
     PUBLIC Include

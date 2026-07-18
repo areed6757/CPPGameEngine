@@ -1,11 +1,13 @@
 #pragma once
 #include <Core/Common.h>
 #include <Graphics/MeshID.h>
+#include <Graphics/Mesh.h>
+#include <ThirdParty/glad/glad.h>
 #include <array>
 
 namespace Engine {
 	struct MeshRegistryDesc {
-		Base base;
+		BaseDesc base;
 	};
 
 	// Private namespace

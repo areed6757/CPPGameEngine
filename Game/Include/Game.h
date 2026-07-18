@@ -18,6 +18,12 @@
 #include <Graphics/Renderer.h>
 #include <GameDescs.h>
 #include <GameECS.h>
+#include <Graphics/Mesh.h>
+#include <Graphics/Texture.h>
+#include <Graphics/TextureRegistry.h>
+#include <Graphics/TextureID.h>
+#include <Graphics/MeshRegistry.h>
+#include <Graphics/MeshID.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -37,7 +43,7 @@ namespace Engine {
 		std::unique_ptr<GLFWContext> m_glfwContext{};
 		std::unique_ptr<Window> m_window{};
 		std::unique_ptr<Renderer> m_renderer{};
-		
+
 		// Ticked Systems + clock/scheduler
 		std::unique_ptr<GameClock> m_gameClock{};
 		std::unique_ptr<Scheduler> m_scheduler{};
@@ -47,6 +53,12 @@ namespace Engine {
 		// ECS
 		std::unique_ptr<EntityRegister> m_entityRegister{};
 		std::unique_ptr<GameECSWrapper> m_ecsWrapper{};
+
+		// Graphics
+		std::unique_ptr<TextureRegistry> m_textureRegistry{};
+		std::unique_ptr<MeshRegistry> m_meshRegistry{};
+
+
 		InputHandler* m_inputHandler{};
 		ActionMap m_actionMap{};
 		bool m_isRunning{ true };

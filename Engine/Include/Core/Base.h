@@ -11,7 +11,7 @@ namespace Engine {
         virtual Logger& getLogger() const noexcept final;
     protected:
         Base(const Base&) = delete;
-        Base(Base&&) = delete;
+        Base(Base&&) noexcept;
         Base& operator = (const Base&) = delete;
         Base& operator = (Base&&) = delete;
     protected:

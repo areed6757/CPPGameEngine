@@ -16,9 +16,6 @@ Engine::Texture::Texture(const TextureDesc& desc) : Base(desc.base),
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	float flatColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, flatColor);
-
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_widthImg, m_heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_bytes);
 
 	glGenerateMipmap(GL_TEXTURE_2D);

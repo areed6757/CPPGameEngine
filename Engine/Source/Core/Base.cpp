@@ -6,6 +6,8 @@ Engine::Base::Base(const BaseDesc& desc): m_logger(desc.logger)
 {
 }	
 
+Engine::Base::Base(Base&& other) noexcept : m_logger(other.m_logger) {}
+
 Engine::Base::~Base()
 {
 }

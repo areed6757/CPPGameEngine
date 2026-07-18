@@ -3,10 +3,16 @@
 #include <Graphics/EBO.h>
 #include <Graphics/VAO.h>
 #include <Graphics/VBO.h>
+#include <ThirdParty/glad/glad.h>
 
 namespace Engine {
 	struct MeshDesc {
-		Base base;
+		BaseDesc base;
+		const GLfloat* vertices;
+		GLsizeiptr verticesSize;
+		const GLuint* indices;
+		GLsizeiptr indicesSize;
+		GLsizei indexCount;
 	};
 
 	class Mesh : public Base {
@@ -25,6 +31,6 @@ namespace Engine {
 		VAO m_VAO;
 		VBO m_VBO;
 		EBO m_EBO;
-		GLSizei m_indexCount{};
+		GLsizei m_indexCount{};
 	};
 }

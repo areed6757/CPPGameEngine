@@ -19,8 +19,9 @@ namespace Engine {
 	class VBO;
 	class VAO;
 	class EBO;
-	class Texture;
 	class TickedSystem;
+	class Mesh;
+	class Texture;
 
 	struct ActionMap;
 	struct KeyStates;
@@ -34,7 +35,6 @@ namespace Engine {
 	class MeshRegistry;
 	class TextureRegistry;
 	class MovementTicks;
-	class Mesh;
 
 	struct Movement;
 	struct Position;

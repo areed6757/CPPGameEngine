@@ -15,7 +15,7 @@ namespace Engine {
 
         for (i32 i = 0; i < count; ++i) {
             EntityID id = m_ecs.createEntity();
-            m_ecs.addComponent(id, Position{ .transform = Vector3double{0.0, 0.0, 0.0}, .rotation = 0.0f });
+            m_ecs.addComponent(id, Position{ .transform = Vector2double{0.0, 0.0}, .rotation = 0.0f });
             ids.push_back(id);
         }
 
@@ -35,7 +35,7 @@ namespace Engine {
         // Seed a working population first — churn against a "live" set, not an empty one
         for (i32 i = 0; i < initialCount; ++i) {
             EntityID id = m_ecs.createEntity();
-            m_ecs.addComponent(id, Position{ .transform = Vector3double{0.0, 0.0, 0.0}, .rotation = 0.0f });
+            m_ecs.addComponent(id, Position{ .transform = Vector2double{0.0, 0.0}, .rotation = 0.0f });
             ids.push_back(id);
         }
 
@@ -51,7 +51,7 @@ namespace Engine {
             m_ecs.destroyEntity(victim);
 
             EntityID replacement = m_ecs.createEntity();
-            m_ecs.addComponent(replacement, Position{ .transform = Vector3double{0.0, 0.0, 0.0}, .rotation = 0.0f });
+            m_ecs.addComponent(replacement, Position{ .transform = Vector2double{0.0, 0.0}, .rotation = 0.0f });
             ids[victimIndex] = replacement;
 
             // exercise add/remove churn on a still-alive neighbor too — the actual

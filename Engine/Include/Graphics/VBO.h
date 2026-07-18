@@ -5,7 +5,7 @@ namespace Engine {
 	class VBO {
 	public:
 		GLuint ID;
-		VBO(GLfloat* vertices, GLsizeiptr size);
+		VBO(const GLfloat* vertices, GLsizeiptr size);
 		~VBO();
 
 		void Bind() const;

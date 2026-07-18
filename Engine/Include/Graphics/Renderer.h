@@ -3,9 +3,9 @@
 #include <Graphics/Window.h>
 #include <Graphics/Shader.h>
 #include <Graphics/Texture.h>
-#include <Graphics/VAO.h>
-#include <Graphics/VBO.h>
-#include <Graphics/EBO.h>
+#include <Graphics/Mesh.h>
+#include <ThirdParty/glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace Engine {
 	class Renderer : public Base {
@@ -13,16 +13,12 @@ namespace Engine {
 		explicit Renderer(const RendererDesc& desc);
 		~Renderer();
 
-		void draw();
+		void draw(const Mesh& mesh, const Texture& texture);
 
 	private:
 		Window& m_window;
 
 		Shader m_shader;
-		Texture m_texture;
-		VBO m_VBO;
-		EBO m_EBO;
-		VAO m_VAO;
 
 		GLuint m_uniID;
 		GLuint m_tex0uni;

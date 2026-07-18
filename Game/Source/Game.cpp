@@ -24,8 +24,17 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	ShaderDesc shaderDesc{ {m_logger} };
 	TextureDesc textureDesc{ {m_logger} };
-	RendererDesc rendererDesc{ {m_logger}, *m_window.get(), shaderDesc, textureDesc };
+	RendererDesc rendererDesc{ {m_logger}, *m_window.get(), shaderDesc};
 	m_renderer = std::make_unique<Renderer>(rendererDesc);
+
+	TextureRegistryDesc textureRegDesc{ {m_logger} };
+	m_textureRegistry = std::make_unique<TextureRegistry>(textureRegDesc);
+
+	MeshRegistryDesc meshRegDesc{ {m_logger} };
+	m_meshRegistry = std::make_unique<MeshRegistry>(meshRegDesc);
+
+	const Mesh& mesh = m_meshRegistry->get(MeshID::Quad);
+	const Texture& text = m_textureRegistry->get(TextureID::Test);
 
 	// Time
 
@@ -63,7 +72,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler->registerSystem(m_moveTicks.get());
 
 	// Check Renderer
-	m_renderer->draw();
+	m_renderer->draw(mesh, text);
 
 	// MOVEMENT TEST
 	//EntityID e1 = m_ecsWrapper->createEntity();
