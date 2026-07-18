@@ -8,11 +8,12 @@ Engine::MeshRegistry::MeshRegistry(const MeshRegistryDesc& desc) :
 		Mesh{ MeshDesc{desc.base, triangleVertices, sizeof(triangleVertices), triangleIndices, sizeof(triangleIndices), 3} },
 	}
 {
-
+	EngineLogInfo("Mesh registry created.");
 }
 
 Engine::MeshRegistry::~MeshRegistry()
 {
+	EngineLogInfo("Mesh registry destroyed.")
 }
 
 const Engine::Mesh& Engine::MeshRegistry::get(MeshID id) const
