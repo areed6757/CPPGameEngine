@@ -9,7 +9,15 @@
 namespace Engine {
 	struct ActionMap {
 		std::vector<std::pair<i32, std::string>> bindings = {
-						{GLFW_KEY_SPACE, "pause"}
+			{GLFW_KEY_SPACE, "pause"},
+			{GLFW_KEY_W, "panup"},
+			{GLFW_KEY_S, "pandown"},
+			{GLFW_KEY_A, "panleft"},
+			{GLFW_KEY_D, "panright"},
+			{GLFW_KEY_Q, "rotatel"},
+			{GLFW_KEY_R, "rotater"},
+			{GLFW_KEY_UP, "zoomout"},
+			{GLFW_KEY_DOWN, "zoomin"}
 		};
 
 		/* Unused Keys

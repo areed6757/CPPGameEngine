@@ -25,6 +25,7 @@
 #include <Graphics/MeshID.h>
 #include <Systems/RenderSystem.h>
 #include <Graphics/Camera.h>
+#include <Systems/CameraController.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -44,6 +45,7 @@ namespace Engine {
 		std::unique_ptr<GLFWContext> m_glfwContext{};
 		std::unique_ptr<Window> m_window{};
 		std::unique_ptr<Camera> m_camera{};
+		std::unique_ptr<CameraController> m_cameraController{};
 		std::unique_ptr<Renderer> m_renderer{};
 
 		// Ticked Systems + clock/scheduler

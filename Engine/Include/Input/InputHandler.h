@@ -14,7 +14,7 @@ namespace Engine {
 
 	class InputHandler final : public Base {
 	public:
-		explicit InputHandler(InputHandlerDesc& desc);
+		explicit InputHandler(const InputHandlerDesc& desc);
 		~InputHandler();
 			
 		InputHandler(const InputHandler&) = delete;
@@ -25,6 +25,7 @@ namespace Engine {
 		void endFrame() noexcept;
 
 		bool isKeyDown(i32 key) const noexcept;
+		[[nodiscard]] bool isKeyDown(std::string_view eventName) const noexcept;
 		bool wasKeyJustPressed(i32 key) const noexcept;
 
 	private:

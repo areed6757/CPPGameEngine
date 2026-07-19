@@ -23,6 +23,7 @@ namespace Engine {
 	class Mesh;
 	class Texture;
 	class Camera;
+	class CameraController;
 
 	struct ActionMap;
 	struct KeyStates;

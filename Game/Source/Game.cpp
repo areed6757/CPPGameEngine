@@ -18,24 +18,35 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_glfwContext = std::make_unique<GLFWContext>(glfwDesc);
 	WindowDesc windowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title, m_actionMap };
 	m_window = std::make_unique<Window>(windowDesc);
+	if (!m_window) { EngineLogErrorAndThrow("Window failed to initialize.") };
 
 	m_inputHandler = m_window->getInputHandler();
+	if (!m_inputHandler) { EngineLogErrorAndThrow("InputHandler failed to initialize.") };
 
 	stbi_set_flip_vertically_on_load(true);
 
 	CameraDesc camDesc{ {m_logger} };
 	m_camera = std::make_unique<Camera>(camDesc);
+	if (!m_camera) { EngineLogErrorAndThrow("Camera failed to initialize.") };
+
+	CameraControllerDesc camContrDesc{ {m_logger}, *m_camera.get(), *m_window->getInputHandler() };
+	m_cameraController = std::make_unique<CameraController>(camContrDesc);
+	if (!m_cameraController) { EngineLogErrorAndThrow("CameraController failed to initialize.") };
 
 	ShaderDesc shaderDesc{ {m_logger} };
 	TextureDesc textureDesc{ {m_logger} };
-	RendererDesc rendererDesc{ {m_logger}, *m_window.get(), shaderDesc, *m_camera.get() };
+	RendererDesc rendererDesc{ {m_logger}, *m_window.get(), shaderDesc, *m_camera.get()};
 	m_renderer = std::make_unique<Renderer>(rendererDesc);
+	if (!m_renderer) { EngineLogErrorAndThrow("Renderer failed to initialize.") };
 
 	TextureRegistryDesc textureRegDesc{ {m_logger} };
 	m_textureRegistry = std::make_unique<TextureRegistry>(textureRegDesc);
+	if (!m_textureRegistry) { EngineLogErrorAndThrow("TextureRegistry failed to initialize.") };
 
 	MeshRegistryDesc meshRegDesc{ {m_logger} };
 	m_meshRegistry = std::make_unique<MeshRegistry>(meshRegDesc);
+	if (!m_meshRegistry) { EngineLogErrorAndThrow("MeshRegistry failed to initialize.") };
+
 
 	const Mesh& mesh = m_meshRegistry->get(MeshID::Quad);
 	const Texture& text = m_textureRegistry->get(TextureID::Test);
@@ -73,13 +84,14 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	// Register TickedSystems
 	m_scheduler->registerFrameSystem(m_renderSystem.get()); // Frame based update not backend ticks, smooths lag and stops buffer queueing stutter
+	m_scheduler->registerFrameSystem(m_cameraController.get());
 	m_scheduler->registerSystem(m_moveTicks.get());
 
 	// Renderable entity test
 	EntityID testEntity = m_ecsWrapper->createEntity();
 	m_ecsWrapper->addComponent(testEntity, Position{ .transform = {0.0, 0.0}, .rotation = 0.0f });
 	m_ecsWrapper->addComponent(testEntity, Renderable{ .mesh = MeshID::Quad, .texture = std::nullopt });
-	m_ecsWrapper->addComponent(testEntity, Movement{ {-2.5, 0.0}, 0.0, {0.0, 0.0}, 0.0 });
+	m_ecsWrapper->addComponent(testEntity, Movement{ {0.0, 0.0}, 0.0, {0.0, 0.0}, 0.0 });
 
 	//if (auto* movement = m_ecsWrapper->tryGetComponent<Movement>(testEntity)) { movement->linearAcceleration.x += 0.5f; movement->angularAcceleration += 0.5f; }
 

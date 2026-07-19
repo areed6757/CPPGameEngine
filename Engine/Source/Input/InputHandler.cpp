@@ -1,7 +1,7 @@
 #include <Input/InputHandler.h>
 #include <format>
 
-Engine::InputHandler::InputHandler(InputHandlerDesc& desc) : Base(desc.base), m_actionMap(desc.actionMap), m_keyStates(GLFW_KEY_LAST + 1, {false, false})
+Engine::InputHandler::InputHandler(const InputHandlerDesc& desc) : Base(desc.base), m_actionMap(desc.actionMap), m_keyStates(GLFW_KEY_LAST + 1, {false, false})
 {
 	m_actionMap.bindings.shrink_to_fit();
 	EngineLogInfo("InputHandler created.");
@@ -62,6 +62,17 @@ void Engine::InputHandler::onKey(i32 key, i32 scancode, i32 action, i32 mods)
 bool Engine::InputHandler::isKeyDown(i32 key) const noexcept
 {
 	return m_keyStates[key].isDown;
+}
+
+bool Engine::InputHandler::isKeyDown(std::string_view eventName) const noexcept
+{
+	for (const auto& [key, action] : m_actionMap.bindings) {
+		if (action == eventName) {
+			return isKeyDown(key);
+		}
+	}
+	EngineLogError("isKeyDown in InputHandler called with invalid eventName");
+	return false;
 }
 
 bool Engine::InputHandler::wasKeyJustPressed(i32 key) const noexcept
