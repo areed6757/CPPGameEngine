@@ -24,6 +24,7 @@
 #include <Graphics/MeshRegistry.h>
 #include <Graphics/MeshID.h>
 #include <Systems/RenderSystem.h>
+#include <Graphics/Camera.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -42,6 +43,7 @@ namespace Engine {
 		std::unique_ptr<Logger> m_loggerPtr{};
 		std::unique_ptr<GLFWContext> m_glfwContext{};
 		std::unique_ptr<Window> m_window{};
+		std::unique_ptr<Camera> m_camera{};
 		std::unique_ptr<Renderer> m_renderer{};
 
 		// Ticked Systems + clock/scheduler
@@ -57,7 +59,6 @@ namespace Engine {
 		std::unique_ptr<TextureRegistry> m_textureRegistry{};
 		std::unique_ptr<MeshRegistry> m_meshRegistry{};
 		std::unique_ptr<RenderSystem> m_renderSystem{};
-
 
 		InputHandler* m_inputHandler{};
 		ActionMap m_actionMap{};

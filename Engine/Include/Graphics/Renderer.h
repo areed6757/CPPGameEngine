@@ -6,6 +6,8 @@
 #include <Graphics/Mesh.h>
 #include <ThirdParty/glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <Graphics/Camera.h>
 
 namespace Engine {
 	class Renderer : public Base {
@@ -14,16 +16,17 @@ namespace Engine {
 		~Renderer();
 		
 		void beginFrame();
-		void draw(const Mesh& mesh, const Texture* texture);
+		void draw(const Mesh& mesh, const Texture* texture, const glm::mat4& model);
 		void endFrame();
 
 	private:
 		Window& m_window;
-
 		Shader m_shader;
+		Camera& m_camera;
 
-		GLuint m_uniID;
+		GLuint m_modelUni;
 		GLuint m_tex0uni;
 		GLuint m_useTextureUni{};
+		GLuint m_projectionUni{};
 	};
 }

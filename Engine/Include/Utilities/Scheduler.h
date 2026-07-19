@@ -12,6 +12,7 @@ namespace Engine {
 		Scheduler& operator = (const Scheduler&) = delete;
 
 		void registerSystem(TickedSystem* sys);
+		void registerFrameSystem(TickedSystem* sys);
 
 		void advance();
 
@@ -21,6 +22,7 @@ namespace Engine {
 		GameClock& m_clock;
 		d64 m_fixedTimestep;
 		std::vector<TickedSystem*> m_systems{};
+		std::vector<TickedSystem*> m_frameSystems{};
 		d64 m_accumulator;
 
 		bool m_paused {false};

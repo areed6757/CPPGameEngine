@@ -3,7 +3,7 @@
 
 // Wrapper to handle creation and destruction of OpenGL windows via GLFW/glad
 Engine::Window::Window(const WindowDesc& desc) : Base(desc.base){
-    GLFWwindow* rawWindow(glfwCreateWindow(desc.windowWidth, desc.windowHeight, desc.title, NULL, NULL));
+    GLFWwindow* rawWindow(glfwCreateWindow(desc.windowWidth, desc.windowHeight, desc.title, NULL, NULL));   
     if (!rawWindow) {
         EngineLogErrorAndThrow("GLFW window creation failed.");
     }
@@ -37,6 +37,8 @@ Engine::Window::Window(const WindowDesc& desc) : Base(desc.base){
 
     i32 width, height;
     glfwGetFramebufferSize(m_window.get(), &width, &height);
+    m_width = width;
+    m_height = height;
     glViewport(0, 0, width, height); // From x = 0, y = 0 -> x = width, y = height
 
     glfwSetWindowUserPointer(m_window.get(), this);
@@ -71,4 +73,9 @@ void Engine::Window::key_callback(GLFWwindow* window, int key, int scancode, int
 
 void Engine::Window::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+    auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    if (self) { self->m_width = width; self->m_height = height; }
 }
+
+Engine::i32 Engine::Window::getHeight() const noexcept { return m_height; }
+Engine::i32 Engine::Window::getWidth() const noexcept { return m_width; }

@@ -19,10 +19,16 @@ void Engine::Scheduler::registerSystem(TickedSystem* sys)
 	EngineLogInfo(std::format("Scheduler registered TickedSystem type: {}", typeid(*sys).name()).c_str());
 }
 
+void Engine::Scheduler::registerFrameSystem(TickedSystem* sys) {
+	m_frameSystems.push_back(sys);
+	EngineLogInfo(std::format("Scheduler registered Frame-based TickedSystem type: {}", typeid(*sys).name()).c_str());
+}
+
 void Engine::Scheduler::advance()
 {
 	m_clock.tick();
-	m_accumulator += m_clock.getDelta();
+	d64 dt = m_clock.getDelta();
+	m_accumulator += dt;
 	if (m_paused) { m_accumulator = 0; };
 
 	while (m_accumulator >= m_fixedTimestep) {
@@ -31,6 +37,10 @@ void Engine::Scheduler::advance()
 		}
 		m_accumulator -= m_fixedTimestep;
 		// EngineLogInfo("______________Tick______________"); // Uncomment to view tick-delineated logging
+	}
+
+	for (auto* sys : m_frameSystems) {
+		sys->Update(dt);
 	}
 }
 

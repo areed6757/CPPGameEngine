@@ -59,7 +59,7 @@ std::string Engine::Shader::get_file_contents(const char* filename)
 void Engine::Shader::compileErrors(unsigned int shader, const char* type) {
     GLint hasCompiled;
     char infoLog[1024];
-    if (type != "PROGRAM") {
+    if (strcmp(type, "PROGRAM") != 0) {
         glGetShaderiv(shader, GL_COMPILE_STATUS, &hasCompiled);
         if (hasCompiled == GL_FALSE) {
             glGetShaderInfoLog(shader, 1024, NULL, infoLog);

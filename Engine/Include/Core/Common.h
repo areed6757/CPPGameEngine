@@ -73,6 +73,7 @@ namespace Engine {
 		BaseDesc base;
 		Window& window;
 		ShaderDesc shaderDesc; // Pass-through
+		Camera& camera;
 	};
 
 	struct CameraDesc {

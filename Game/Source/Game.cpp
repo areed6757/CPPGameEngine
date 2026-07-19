@@ -23,9 +23,12 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	stbi_set_flip_vertically_on_load(true);
 
+	CameraDesc camDesc{ {m_logger} };
+	m_camera = std::make_unique<Camera>(camDesc);
+
 	ShaderDesc shaderDesc{ {m_logger} };
 	TextureDesc textureDesc{ {m_logger} };
-	RendererDesc rendererDesc{ {m_logger}, *m_window.get(), shaderDesc};
+	RendererDesc rendererDesc{ {m_logger}, *m_window.get(), shaderDesc, *m_camera.get()};
 	m_renderer = std::make_unique<Renderer>(rendererDesc);
 
 	TextureRegistryDesc textureRegDesc{ {m_logger} };
@@ -59,7 +62,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	if (!m_ecsWrapper) { EngineLogErrorAndThrow("ECSWrapper failed to initialize."); }
 
 	// TickedSystems
-	RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get() };
+	RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get(), *m_camera.get()};
 	m_renderSystem = std::make_unique<RenderSystem>(renderSysDesc);
 	if (!m_renderSystem) { EngineLogErrorAndThrow("Render system failed to initialize."); }
 
@@ -69,14 +72,14 @@ Engine::Game::Game(const GameDesc& desc) :
 	
 
 	// Register TickedSystems
-	m_scheduler->registerSystem(m_renderSystem.get());
+	m_scheduler->registerFrameSystem(m_renderSystem.get()); // Frame based update not backend ticks, smooths lag and stops buffer queueing stutter
 	m_scheduler->registerSystem(m_moveTicks.get());
 
 	// Renderable entity test
 	EntityID testEntity = m_ecsWrapper->createEntity();
 	m_ecsWrapper->addComponent(testEntity, Position{ .transform = {0.0, 0.0}, .rotation = 0.0f });
-	//m_ecsWrapper->addComponent(testEntity, Renderable{ .mesh = MeshID::Quad, .texture = std::nullopt });
-	m_ecsWrapper->addComponent(testEntity, Renderable{ .mesh = MeshID::Quad, .texture = TextureID::Test });
+	m_ecsWrapper->addComponent(testEntity, Renderable{ .mesh = MeshID::Quad, .texture = std::nullopt });
+	//m_ecsWrapper->addComponent(testEntity, Renderable{ .mesh = MeshID::Quad, .texture = TextureID::Test });
 
 
 	// MOVEMENT TEST
