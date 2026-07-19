@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/Common.h>
+#include <Physics/Vector2float.h>
 #include <cmath>
 
 namespace Engine {

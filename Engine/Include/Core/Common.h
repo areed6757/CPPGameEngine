@@ -2,6 +2,7 @@
 #include <Core/Core.h>
 #include <Core/Base.h>
 #include <Core/Logger.h>
+#include <Physics/Vector2double.h>
 #include <vector>
 
 // Descriptions for dependency injection, constructors should only take these structs as args
