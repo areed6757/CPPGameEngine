@@ -22,6 +22,7 @@ namespace Engine {
 	class TickedSystem;
 	class Mesh;
 	class Texture;
+	class Camera;
 
 	struct ActionMap;
 	struct KeyStates;

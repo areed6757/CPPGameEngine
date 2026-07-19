@@ -3,16 +3,18 @@ file(GLOB_RECURSE ENGINE_HEADERS CONFIGURE_DEPENDS Include/*.h Source/*.h)
 
 message(STATUS "ENGINE_SOURCES: ${ENGINE_SOURCES}")
 
-add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS} )
+add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS}  "Source/Graphics/Camera.cpp")
 
 target_include_directories(Engine
     PUBLIC Include
     PRIVATE Source
 )
 
+find_package(glm CONFIG REQUIRED)
 find_package(glfw3 REQUIRED)
 target_link_libraries(Engine PUBLIC
     glfw
+    glm::glm
 )
 
 target_compile_definitions(Engine PUBLIC

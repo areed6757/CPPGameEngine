@@ -74,6 +74,12 @@ namespace Engine {
 		ShaderDesc shaderDesc; // Pass-through
 	};
 
+	struct CameraDesc {
+		BaseDesc base;
+		Vector2double position{0.0, 0.0};
+		f32 zoom{ 1.0f };
+	};
+
 	// Utilities
 
 	struct GameClockDesc {
