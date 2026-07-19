@@ -28,7 +28,7 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	ShaderDesc shaderDesc{ {m_logger} };
 	TextureDesc textureDesc{ {m_logger} };
-	RendererDesc rendererDesc{ {m_logger}, *m_window.get(), shaderDesc, *m_camera.get()};
+	RendererDesc rendererDesc{ {m_logger}, *m_window.get(), shaderDesc, *m_camera.get() };
 	m_renderer = std::make_unique<Renderer>(rendererDesc);
 
 	TextureRegistryDesc textureRegDesc{ {m_logger} };
@@ -51,7 +51,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	if (!m_scheduler) { EngineLogErrorAndThrow("Scheduler failed to initialize.") };
 
 	// ECS
-	
+
 	EntityRegisterDesc eRegDesc = { {m_logger} };
 	m_entityRegister = std::make_unique<EntityRegister>(eRegDesc);
 	if (!m_entityRegister) { EngineLogErrorAndThrow("EntityRegister failed to initialize.") }
@@ -62,14 +62,14 @@ Engine::Game::Game(const GameDesc& desc) :
 	if (!m_ecsWrapper) { EngineLogErrorAndThrow("ECSWrapper failed to initialize."); }
 
 	// TickedSystems
-	RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get(), *m_camera.get()};
+	RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get(), *m_camera.get() };
 	m_renderSystem = std::make_unique<RenderSystem>(renderSysDesc);
 	if (!m_renderSystem) { EngineLogErrorAndThrow("Render system failed to initialize."); }
 
 	MovementTicksDesc mvTicksDesc = { {m_logger}, *m_ecsWrapper.get() };
 	m_moveTicks = std::make_unique<MovementTicks>(mvTicksDesc);
 	if (!m_moveTicks) { EngineLogErrorAndThrow("MoveTicks failed to initialize.") };
-	
+
 
 	// Register TickedSystems
 	m_scheduler->registerFrameSystem(m_renderSystem.get()); // Frame based update not backend ticks, smooths lag and stops buffer queueing stutter
@@ -79,13 +79,9 @@ Engine::Game::Game(const GameDesc& desc) :
 	EntityID testEntity = m_ecsWrapper->createEntity();
 	m_ecsWrapper->addComponent(testEntity, Position{ .transform = {0.0, 0.0}, .rotation = 0.0f });
 	m_ecsWrapper->addComponent(testEntity, Renderable{ .mesh = MeshID::Quad, .texture = std::nullopt });
-	//m_ecsWrapper->addComponent(testEntity, Renderable{ .mesh = MeshID::Quad, .texture = TextureID::Test });
+	m_ecsWrapper->addComponent(testEntity, Movement{ {-2.5, 0.0}, 0.0, {0.0, 0.0}, 0.0 });
 
-
-	// MOVEMENT TEST
-	//EntityID e1 = m_ecsWrapper->createEntity();
-	//m_ecsWrapper->addComponent(e1, Movement{1.0, 0.0, 5.0, 0.0} );
-	//m_ecsWrapper->addComponent(e1, Position{ {0.0, 0.0, 0.0}, 0.0 });
+	//if (auto* movement = m_ecsWrapper->tryGetComponent<Movement>(testEntity)) { movement->linearAcceleration.x += 0.5f; movement->angularAcceleration += 0.5f; }
 
 	EngineLogInfo("Game initialized successfully.");
 

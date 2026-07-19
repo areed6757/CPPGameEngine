@@ -136,7 +136,7 @@ namespace Engine {
 		/// <returns></returns>
 		template <typename T>
 		[[nodiscard]] T* tryGetComponent(EntityID id) {
-			if (isValidEntity(id)) { return nullptr; }
+			if (!isValidEntity(id)) { return nullptr; }
 			return m_pools.template getPool<T>().tryGet(id.id);
 		}
 
