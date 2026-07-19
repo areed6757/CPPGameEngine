@@ -59,9 +59,9 @@ Engine::Game::Game(const GameDesc& desc) :
 	if (!m_ecsWrapper) { EngineLogErrorAndThrow("ECSWrapper failed to initialize."); }
 
 	// TickedSystems
-	GraphicsTicksDesc gfxTicksDesc = { {m_logger}, *m_ecsWrapper.get() };
-	m_gfxTicks = std::make_unique<GraphicsTicks>(gfxTicksDesc);
-	if (!m_gfxTicks) { EngineLogErrorAndThrow("GraphicsTicks failed to initialize.") };
+	RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get() };
+	m_renderSystem = std::make_unique<RenderSystem>(renderSysDesc);
+	if (!m_renderSystem) { EngineLogErrorAndThrow("Render system failed to initialize."); }
 
 	MovementTicksDesc mvTicksDesc = { {m_logger}, *m_ecsWrapper.get() };
 	m_moveTicks = std::make_unique<MovementTicks>(mvTicksDesc);
@@ -69,11 +69,15 @@ Engine::Game::Game(const GameDesc& desc) :
 	
 
 	// Register TickedSystems
-	m_scheduler->registerSystem(m_gfxTicks.get());
+	m_scheduler->registerSystem(m_renderSystem.get());
 	m_scheduler->registerSystem(m_moveTicks.get());
 
-	// Check Renderer
-	m_renderer->draw(mesh, text);
+	// Renderable entity test
+	EntityID testEntity = m_ecsWrapper->createEntity();
+	m_ecsWrapper->addComponent(testEntity, Position{ .transform = {0.0, 0.0}, .rotation = 0.0f });
+	//m_ecsWrapper->addComponent(testEntity, Renderable{ .mesh = MeshID::Quad, .texture = std::nullopt });
+	m_ecsWrapper->addComponent(testEntity, Renderable{ .mesh = MeshID::Quad, .texture = TextureID::Test });
+
 
 	// MOVEMENT TEST
 	//EntityID e1 = m_ecsWrapper->createEntity();

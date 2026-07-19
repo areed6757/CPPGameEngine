@@ -7,11 +7,6 @@ namespace Engine {
 		GameECSWrapper& ecs;
 	};
 
-	struct GraphicsTicksDesc {
-		BaseDesc base;
-		GameECSWrapper& ecs;
-	};
-
 	struct EntityStressTestDesc {
 		BaseDesc base;
 		GameECSWrapper& ecs;

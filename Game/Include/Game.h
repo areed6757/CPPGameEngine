@@ -7,7 +7,6 @@
 #include <Input/ActionMap.h>
 #include <Utilities/GameClock.h>
 #include <Utilities/Scheduler.h>
-#include <Systems/GraphicsTicks.h>
 #include <Systems/MovementTicks.h>
 #include <ECS/EntityRegister.h>
 #include <ECS/ECSWrapper.h>
@@ -24,6 +23,7 @@
 #include <Graphics/TextureID.h>
 #include <Graphics/MeshRegistry.h>
 #include <Graphics/MeshID.h>
+#include <Systems/RenderSystem.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -47,7 +47,6 @@ namespace Engine {
 		// Ticked Systems + clock/scheduler
 		std::unique_ptr<GameClock> m_gameClock{};
 		std::unique_ptr<Scheduler> m_scheduler{};
-		std::unique_ptr<GraphicsTicks> m_gfxTicks{};
 		std::unique_ptr<MovementTicks> m_moveTicks{};
 
 		// ECS
@@ -57,6 +56,7 @@ namespace Engine {
 		// Graphics
 		std::unique_ptr<TextureRegistry> m_textureRegistry{};
 		std::unique_ptr<MeshRegistry> m_meshRegistry{};
+		std::unique_ptr<RenderSystem> m_renderSystem{};
 
 
 		InputHandler* m_inputHandler{};

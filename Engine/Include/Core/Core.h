@@ -35,6 +35,7 @@ namespace Engine {
 	class MeshRegistry;
 	class TextureRegistry;
 	class MovementTicks;
+	class RenderSystem;
 
 	struct Movement;
 	struct Position;

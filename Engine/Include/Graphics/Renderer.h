@@ -12,8 +12,10 @@ namespace Engine {
 	public:
 		explicit Renderer(const RendererDesc& desc);
 		~Renderer();
-
-		void draw(const Mesh& mesh, const Texture& texture);
+		
+		void beginFrame();
+		void draw(const Mesh& mesh, const Texture* texture);
+		void endFrame();
 
 	private:
 		Window& m_window;
@@ -22,5 +24,6 @@ namespace Engine {
 
 		GLuint m_uniID;
 		GLuint m_tex0uni;
+		GLuint m_useTextureUni{};
 	};
 }
