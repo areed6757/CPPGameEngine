@@ -42,6 +42,7 @@ Engine::Window::Window(const WindowDesc& desc) : Base(desc.base){
 
     glfwSetWindowUserPointer(m_window.get(), this);
     glfwSetKeyCallback(m_window.get(), Window::key_callback);
+    glfwSetFramebufferSizeCallback(m_window.get(), Window::framebuffer_size_callback);
 
     EngineLogInfo("GLFW window created.");
 }
@@ -67,4 +68,8 @@ void Engine::Window::key_callback(GLFWwindow* window, int key, int scancode, int
     if (self && self->m_inputHandler) {
         self->m_inputHandler->onKey(key, scancode, action, mods);
     }
+}
+
+void Engine::Window::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
 }

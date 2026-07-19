@@ -20,6 +20,8 @@ namespace Engine {
 
 		InputHandler* getInputHandler() const noexcept { return m_inputHandler.get(); };
 
+		static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
 	private:
 		struct GLFWwindowDeleter {
 			void operator()(GLFWwindow* window) const {
