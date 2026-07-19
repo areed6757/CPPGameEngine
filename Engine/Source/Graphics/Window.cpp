@@ -35,7 +35,6 @@ Engine::Window::Window(const WindowDesc& desc) : Base(desc.base){
     i32 left, top, right, bottom;
     glfwGetWindowFrameSize(m_window.get(), &left, &top, &right, &bottom);
 
-    // Frame buffer size, TODO: handle window resizing via callback
     i32 width, height;
     glfwGetFramebufferSize(m_window.get(), &width, &height);
     glViewport(0, 0, width, height); // From x = 0, y = 0 -> x = width, y = height
