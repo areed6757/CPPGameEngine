@@ -34,10 +34,14 @@ Engine::Game::Game(const GameDesc& desc) :
 	if (!m_cameraController) { EngineLogErrorAndThrow("CameraController failed to initialize.") };
 
 	ShaderDesc shaderDesc{ {m_logger} };
-	TextureDesc textureDesc{ {m_logger} };
 	RendererDesc rendererDesc{ {m_logger}, *m_window.get(), shaderDesc, *m_camera.get()};
 	m_renderer = std::make_unique<Renderer>(rendererDesc);
 	if (!m_renderer) { EngineLogErrorAndThrow("Renderer failed to initialize.") };
+
+	ShaderDesc debugLineShaderDesc{ {m_logger}, "Shaders/debugline.vert", "Shaders/debugline.frag" };
+	DebugLineRendererDesc debugLineRendererDesc{ {m_logger}, debugLineShaderDesc };
+	m_debugLineRenderer = std::make_unique<DebugLineRenderer>(debugLineRendererDesc);
+	if (!m_debugLineRenderer) { EngineLogErrorAndThrow("DebugLineRenderer failed to initialize.") };
 
 	TextureRegistryDesc textureRegDesc{ {m_logger} };
 	m_textureRegistry = std::make_unique<TextureRegistry>(textureRegDesc);
@@ -47,11 +51,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_meshRegistry = std::make_unique<MeshRegistry>(meshRegDesc);
 	if (!m_meshRegistry) { EngineLogErrorAndThrow("MeshRegistry failed to initialize.") };
 
-
-	const Mesh& mesh = m_meshRegistry->get(MeshID::Quad);
-	const Texture& text = m_textureRegistry->get(TextureID::Test);
-
-	// Time
+	// Time + Space
 
 	GameClockDesc clockDesc = { {m_logger} };
 	m_gameClock = std::make_unique<GameClock>(clockDesc);
@@ -60,6 +60,14 @@ Engine::Game::Game(const GameDesc& desc) :
 	SchedulerDesc schedulerDesc = { {m_logger}, *m_gameClock };
 	m_scheduler = std::make_unique<Scheduler>(schedulerDesc);
 	if (!m_scheduler) { EngineLogErrorAndThrow("Scheduler failed to initialize.") };
+
+	QuadTreeDesc qtDesc = { {m_logger}, Vector2double{-50.0, -50.0}, Vector2double{50.0, 50.0} };
+	m_quadtree = std::make_unique<QuadTree>(qtDesc);
+	if (!m_quadtree) { EngineLogErrorAndThrow("Quadtree failed to initialize") };
+
+	QuadtreeDebugSystemDesc qtDebugDesc{ {m_logger}, *m_quadtree.get(), *m_camera.get(), *m_window.get(), *m_debugLineRenderer.get() };
+	m_quadtreeDebugSystem = std::make_unique<QuadtreeDebugSystem>(qtDebugDesc);
+	if (!m_quadtreeDebugSystem) { EngineLogErrorAndThrow("QuadtreeDebugSystem failed to initialize.") };
 
 	// ECS
 
@@ -81,11 +89,17 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_moveTicks = std::make_unique<MovementTicks>(mvTicksDesc);
 	if (!m_moveTicks) { EngineLogErrorAndThrow("MoveTicks failed to initialize.") };
 
+	CollisionSystemDesc collisionSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_quadtree.get() };
+	m_collisionSystem = std::make_unique<CollisionSystem>(collisionSysDesc);
+	if (!m_collisionSystem) { EngineLogErrorAndThrow("CollisionSystem failed to initialize.") };
 
 	// Register TickedSystems
 	m_scheduler->registerFrameSystem(m_renderSystem.get()); // Frame based update not backend ticks, smooths lag and stops buffer queueing stutter
 	m_scheduler->registerFrameSystem(m_cameraController.get());
+	m_scheduler->registerFrameSystem(m_quadtreeDebugSystem.get());
+
 	m_scheduler->registerSystem(m_moveTicks.get());
+	m_scheduler->registerSystem(m_collisionSystem.get());
 
 	EngineLogInfo("Game initialized successfully.");
 

@@ -83,6 +83,11 @@ namespace Engine {
 		f32 zoom{ 10.0f };
 	};
 
+	struct DebugLineRendererDesc {
+		BaseDesc base;
+		ShaderDesc shaderDesc;
+	};
+
 	// Utilities
 
 	struct GameClockDesc {
@@ -118,10 +123,10 @@ namespace Engine {
 
 	struct QuadTreeDesc {
 		BaseDesc base;
-		Vector2double boundsMin;
-		Vector2double boundsMax;
+		Vector2double boundsMin{ -500.0, -500.0 };
+		Vector2double boundsMax{ 500.0, 500.0 };
 		i32 maxDepth{ 8 };
-		i32 maxEntitiesPerNode{ 8 }; // Quadtree divides when exceeded
+		i32 maxEntitiesPerNode{ 8 }; // Quadtree divides when exceeded up to maxDepth iterations
 	};
 }
 

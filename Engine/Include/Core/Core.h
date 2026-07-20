@@ -24,6 +24,7 @@ namespace Engine {
 	class Texture;
 	class Camera;
 	class CameraController;
+	class QuadTree;
 
 	struct ActionMap;
 	struct KeyStates;

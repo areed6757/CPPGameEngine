@@ -27,6 +27,10 @@
 #include <Graphics/Camera.h>
 #include <Systems/CameraController.h>
 #include <Test/RenderGridTest.h>
+#include <Utilities/QuadTree.h>
+#include <Systems/QuadtreeDebugSystem.h>
+#include <Systems/CollisionSystem.h>
+#include <Graphics/DebugLineRenderer.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -49,10 +53,14 @@ namespace Engine {
 		std::unique_ptr<CameraController> m_cameraController{};
 		std::unique_ptr<Renderer> m_renderer{};
 
-		// Ticked Systems + clock/scheduler
+		// Ticked Systems + clock/scheduler + quadtree
 		std::unique_ptr<GameClock> m_gameClock{};
 		std::unique_ptr<Scheduler> m_scheduler{};
 		std::unique_ptr<MovementTicks> m_moveTicks{};
+		std::unique_ptr<QuadTree> m_quadtree{};
+		std::unique_ptr<DebugLineRenderer> m_debugLineRenderer{};
+		std::unique_ptr<QuadtreeDebugSystem> m_quadtreeDebugSystem{};
+		std::unique_ptr<CollisionSystem> m_collisionSystem{};
 
 		// ECS
 		std::unique_ptr<EntityRegister> m_entityRegister{};
