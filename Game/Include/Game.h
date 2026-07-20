@@ -63,6 +63,9 @@ namespace Engine {
 		std::unique_ptr<MeshRegistry> m_meshRegistry{};
 		std::unique_ptr<RenderSystem> m_renderSystem{};
 
+		// Test Systems
+		std::unique_ptr<RenderGridTest> m_gridTest{};
+
 		InputHandler* m_inputHandler{};
 		ActionMap m_actionMap{};
 		bool m_isRunning{ true };
