@@ -13,7 +13,7 @@ namespace Engine {
 	constexpr Logger::LogLevel LOG_LEVEL{ Logger::LogLevel::Info };
 	constexpr i32 WINDOW_WIDTH{ 1024 };
 	constexpr i32 WINDOW_HEIGHT{ 1024 };
-	constexpr const char* TITLE { "Station Authority" };
+	constexpr const char* TITLE{ "Station Authority" };
 	constexpr d64 TICK_RATE = { 1.0 / 60.0 }; // 1/60 tickRate is 60 ticks per second ***TODO : fix this to be 60 instead of 1/60
 	constexpr const i32 MAX_ENTITIES = { 1'000'000 };
 	constexpr const d64 GRID_CELL_SIZE_KM = 0.01; // Scale constant, .01 = 10m per chassis segment on ships
@@ -29,7 +29,7 @@ namespace Engine {
 
 		i32 windowWidth = { WINDOW_WIDTH };
 		i32 windowHeight = { WINDOW_HEIGHT };
-		const char* title = { TITLE }; 
+		const char* title = { TITLE };
 	};
 
 	// Window and context creation
@@ -58,9 +58,9 @@ namespace Engine {
 
 	struct TextureDesc {
 		BaseDesc base;
-		i32 widthImg = {512};
-		i32 heightImg = {512};
-		i32 colorChannels = {4}; // 3 = jpeg, 4 = png, currently concretely set in Texture instantiation to 4
+		i32 widthImg = { 512 };
+		i32 heightImg = { 512 };
+		i32 colorChannels = { 4 }; // 3 = jpeg, 4 = png, currently concretely set in Texture instantiation to 4
 		const char* imgAddr;
 	};
 
@@ -79,7 +79,7 @@ namespace Engine {
 
 	struct CameraDesc {
 		BaseDesc base;
-		Vector2double position{0.0, 0.0};
+		Vector2double position{ 0.0, 0.0 };
 		f32 zoom{ 10.0f };
 	};
 
@@ -112,6 +112,16 @@ namespace Engine {
 		BaseDesc base;
 		EntityRegister& entityRegister;
 		ComponentDesc& compDesc; // Pass-through for component pools owned by the ECSWrapper
+	};
+
+	// Physics
+
+	struct QuadTreeDesc {
+		BaseDesc base;
+		Vector2double boundsMin;
+		Vector2double boundsMax;
+		i32 maxDepth{ 8 };
+		i32 maxEntitiesPerNode{ 8 }; // Quadtree divides when exceeded
 	};
 }
 

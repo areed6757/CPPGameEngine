@@ -92,7 +92,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	// Renderable entity test with movement
 	RenderGridTestDesc gridTestDesc{ {m_logger}, *m_ecsWrapper };
 	m_gridTest = std::make_unique<RenderGridTest>(gridTestDesc);
-	m_gridTest->spawnGrid(100, 100, 0.1);
+	m_gridTest->spawnGrid(100, 100, 1.0);
 	m_scheduler->registerFrameSystem(m_gridTest.get());
 }
 
