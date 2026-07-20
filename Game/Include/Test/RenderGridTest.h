@@ -31,6 +31,8 @@ namespace Engine {
         // is preferred for this test instead.
         void Update(d64 dt) override;
 
+        void spawnProjectiles(i32 count, d64 startDistance, f32 speed, f32 physicsRadius);
+
     private:
         [[nodiscard]] Vector2double diamondOffset(d64 t) const noexcept;
 

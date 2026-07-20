@@ -19,8 +19,6 @@ Engine::RenderSystem::~RenderSystem()
 
 void Engine::RenderSystem::Update(d64 dt)
 {
-	m_renderer.beginFrame();
-
 	i32 c = m_ecs.sizeComponentPool<Renderable>();
 	for (i32 i = 0; i < c; i++) {
 		i32 entityIndex = m_ecs.entityAtDenseIndex<Renderable>(i);
@@ -43,7 +41,4 @@ void Engine::RenderSystem::Update(d64 dt)
 		m_renderer.draw(mesh, texturePtr, model);
 
 	}
-
-	m_renderer.endFrame();
-
 }

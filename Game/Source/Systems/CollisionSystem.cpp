@@ -86,7 +86,7 @@ namespace Engine {
 			// can differentiate the two by the presense of segment data on baked ships
 			if (narrowPhaseSimple(a, b)) {
 				m_events.push_back(CollisionEvent{ a, b });
-				EngineLogDebug(std::format("Collision detected between entity: {} and entity: {}", a.id, b.id).c_str());
+				EngineLogInfo(std::format("Collision detected between entity: {} and entity: {}", a.id, b.id).c_str());
 				// TODO: compute the impulses on both ships based on their physics
 			}
 		}

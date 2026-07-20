@@ -17,9 +17,12 @@ namespace Engine {
         m_basePositions.reserve(static_cast<size_t>(width) * height);
         m_amplitude = spacing / 2.0; // "half the distance between them"
 
+        d64 halfW = (width - 1) * spacing / 2.0;
+        d64 halfH = (height - 1) * spacing / 2.0;
+
         for (i32 y = 0; y < height; ++y) {
             for (i32 x = 0; x < width; ++x) {
-                Vector2double base{ x * spacing, y * spacing };
+                Vector2double base{ x * spacing -halfW, y * spacing -halfH };
 
                 EntityID id = m_ecs.createEntity();
                 m_ecs.addComponent(id, Position{
@@ -31,6 +34,7 @@ namespace Engine {
                     .texture = std::nullopt,
                     .scale = static_cast<f32>(GRID_CELL_SIZE_KM * 5.0)
                     });
+                m_ecs.addComponent(id, Physics{ .radius = 0.05f });
 
                 m_entities.push_back(id);
                 m_basePositions.push_back(base);
@@ -78,5 +82,43 @@ namespace Engine {
             Vector2double offset = diamondOffset(m_elapsed);
             tform.transform = m_basePositions[i] + offset;
         }
+    }
+
+    void RenderGridTest::spawnProjectiles(i32 count, d64 startDistance, f32 speed, f32 physicsRadius) {
+        for (i32 i = 0; i < count; ++i) {
+            d64 angle = (2.0 * 3.14159265358979 * i) / static_cast<d64>(count);
+            Vector2double startPos{
+                std::cos(angle) * startDistance,
+                std::sin(angle) * startDistance
+            };
+
+            // velocity points from spawn position back toward the origin (grid center)
+            Vector2double dirD = Vector2double{ 0.0, 0.0 } - startPos;
+            dirD.normalize();
+            Vector2float dir{ static_cast<f32>(dirD.x), static_cast<f32>(dirD.y) };
+
+            EntityID id = m_ecs.createEntity();
+            m_ecs.addComponent(id, Position{
+                .transform = startPos,
+                .rotation = 0.0f
+                });
+            m_ecs.addComponent(id, Movement{
+                .linearVelocity = dir * speed,
+                .angularVelocity = 0.0f,
+                .linearAcceleration = Vector2float{},
+                .angularAcceleration = 0.0f
+                });
+            m_ecs.addComponent(id, Renderable{
+                .mesh = MeshID::Quad,
+                .texture = std::nullopt,
+                .scale = static_cast<f32>(GRID_CELL_SIZE_KM * 5.0)
+                });
+            m_ecs.addComponent(id, Physics{
+                .radius = physicsRadius
+                });
+        }
+
+        EngineLogInfo(std::format("Spawned {} projectile(s) at distance {} moving toward origin at speed {}",
+            count, startDistance, speed).c_str());
     }
 }
