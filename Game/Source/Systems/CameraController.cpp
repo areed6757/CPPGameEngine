@@ -1,4 +1,5 @@
 #include <Systems/CameraController.h>
+#include <algorithm>
 
 Engine::CameraController::CameraController(const CameraControllerDesc& desc) : Base(desc.base),
 	m_camera(desc.camera),
@@ -25,5 +26,15 @@ void Engine::CameraController::Update(d64 dt)
 		panDir.normalize();
 		f32 speed = m_basePanSpeed * m_camera.getZoom();
 		m_camera.setPosition(m_camera.getPosition() + panDir * static_cast<d64>(speed * fdt));
+	}
+
+	// Zoom in and out
+
+	if (m_inHandle.isKeyDown("zoomin")) {
+		m_camera.setZoom(std::clamp(m_camera.getZoom() * std::pow(m_zoomFactor, -fdt), m_minZoom, m_maxZoom));
+	}	
+	
+	if (m_inHandle.isKeyDown("zoomout")) {
+		m_camera.setZoom(std::clamp(m_camera.getZoom() * std::pow(m_zoomFactor, fdt), m_minZoom, m_maxZoom));
 	}
 }

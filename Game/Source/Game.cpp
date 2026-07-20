@@ -88,10 +88,22 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler->registerSystem(m_moveTicks.get());
 
 	// Renderable entity test
+	/*
 	EntityID testEntity = m_ecsWrapper->createEntity();
 	m_ecsWrapper->addComponent(testEntity, Position{ .transform = {0.0, 0.0}, .rotation = 0.0f });
 	m_ecsWrapper->addComponent(testEntity, Renderable{ .mesh = MeshID::Quad, .texture = std::nullopt });
-	m_ecsWrapper->addComponent(testEntity, Movement{ {0.0, 0.0}, 0.0, {0.0, 0.0}, 0.0 });
+	m_ecsWrapper->addComponent(testEntity, Movement{ {-0.5, 0.0}, 0.0, {0.0, 0.0}, 0.0 });
+
+	EntityID testEntity2 = m_ecsWrapper->createEntity();
+	m_ecsWrapper->addComponent(testEntity2, Position{ .transform = {0.0, 0.0}, .rotation = 0.0f });
+	m_ecsWrapper->addComponent(testEntity2, Renderable{ .mesh = MeshID::Quad, .texture = std::nullopt });
+	m_ecsWrapper->addComponent(testEntity2, Movement{ {0.5, 0.0}, 0.0, {0.0, 0.0}, 0.0 });
+
+	*/
+
+	RenderGridTestDesc gridTestDesc{ {m_logger}, *m_ecsWrapper };
+	RenderGridTest gridTest{ gridTestDesc };
+	gridTest.spawnGrid(1000, 1000, 1.0);   // 1,000,000 entities, 0.1km spacing
 
 	//if (auto* movement = m_ecsWrapper->tryGetComponent<Movement>(testEntity)) { movement->linearAcceleration.x += 0.5f; movement->angularAcceleration += 0.5f; }
 

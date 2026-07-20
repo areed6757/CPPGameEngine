@@ -14,8 +14,6 @@ namespace Engine {
 			{GLFW_KEY_S, "pandown"},
 			{GLFW_KEY_A, "panleft"},
 			{GLFW_KEY_D, "panright"},
-			{GLFW_KEY_Q, "rotatel"},
-			{GLFW_KEY_R, "rotater"},
 			{GLFW_KEY_UP, "zoomout"},
 			{GLFW_KEY_DOWN, "zoomin"}
 		};

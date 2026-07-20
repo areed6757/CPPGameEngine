@@ -26,6 +26,7 @@
 #include <Systems/RenderSystem.h>
 #include <Graphics/Camera.h>
 #include <Systems/CameraController.h>
+#include <Test/RenderGridTest.h>
 
 namespace Engine {
 	class Game : public Base {
