@@ -3,7 +3,7 @@ file(GLOB_RECURSE GAME_HEADERS CONFIGURE_DEPENDS Include/*.h Source/*.h)
 file(GLOB SHADER_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Shaders/*.vert ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Shaders/*.frag)
 file(GLOB IMAGE_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Images/*.png)
 
-add_executable(Game main.cpp ${GAME_SOURCES} ${GAME_HEADERS}  "Source/Systems/CollisionSystem.cpp" "Include/Systems/CollisionSystem.h" "Include/Components/Physics.h" "Source/Systems/QuadtreeDebugSystem.cpp" "Include/Systems/QuadtreeDebugSystem.h" "Source/Test/CollisionTest.cpp" "Include/Test/CollisionTest.h")
+add_executable(Game main.cpp ${GAME_SOURCES} ${GAME_HEADERS} )
 
 target_include_directories(Game
     PUBLIC Include
