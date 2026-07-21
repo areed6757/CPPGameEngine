@@ -2,7 +2,8 @@
 #include <Components/Physics.h>
 #include <Components/Position.h>
 #include <format>
-
+#include <cmath>
+#include <algorithm>
 
 namespace Engine {
 	CollisionSystem::CollisionSystem(const CollisionSystemDesc& desc) : Base(desc.base),
@@ -11,6 +12,7 @@ namespace Engine {
 		m_maxRadiusSeenThisTick(0.0)
 	{
 		m_entityMask = m_ecs.makeSignature<Position, Physics>();
+		m_movementMask = m_ecs.makeSignature<Movement>();
 
 		EngineLogInfo("Collision system created.");
 	}
@@ -89,7 +91,9 @@ namespace Engine {
 			// Currently all collisions are simple non-ship
 			// can differentiate the two by the presense of segment data on baked ships
 			if (narrowPhaseSimple(a, b)) {
-				m_events.push_back(CollisionEvent{ a, b });
+				CollisionEvent event{ a, b };
+				computeImpulse( a, b, event.impulseA, event.impulseB );
+				m_events.push_back(event);
 				EngineLogInfo("Collision detected between entity: {} and entity: {}", a.id, b.id);
 				// TODO: compute the impulses on both ships based on their physics
 			}
@@ -99,5 +103,46 @@ namespace Engine {
 	// Exposes resolved collision data for consumer systems
 	const std::vector<CollisionEvent>& CollisionSystem::getEvents() const noexcept {
 		return m_events;
+	}
+
+	// Do not divide result by mass again downstream, it is already a considered value of output
+	// Output is simply a velocity delta
+	void CollisionSystem::computeImpulse(EntityID a, EntityID b, Vector2float& outImpulseA, Vector2float& outImpulseB) const
+	{
+		outImpulseA = {};
+		outImpulseB = {};
+
+		auto& posA = m_ecs.getComponent<Position>(a);
+		auto& posB = m_ecs.getComponent<Position>(b);
+		auto& physA = m_ecs.getComponent<Physics>(a);
+		auto& physB = m_ecs.getComponent<Physics>(b);
+
+		Vector2double delta = posB.transform - posA.transform;
+		f32 dist = std::sqrt(delta.x * delta.x + delta.y * delta.y);
+		if (dist < 1e-6) { return; } // Stop proc for entities too close this tick to calculate accurately
+
+		Vector2float normal{ static_cast<f32>(delta.x / dist), static_cast<f32>(delta.y / dist) };
+
+		f32 invMassA = physA.mass > 0.0f ? 1.0 / static_cast<d64>(physA.mass) : 0.0;
+		f32 invMassB = physB.mass > 0.0f ? 1.0 / static_cast<d64>(physB.mass) : 0.0;
+		if (invMassA == 0.0 && invMassB == 0.0) { return; }
+		
+		Vector2float velA{};
+		Vector2float velB{};
+
+		if ((m_ecs.getSignature(a) & m_movementMask) == m_movementMask) { velA = m_ecs.getComponent<Movement>(a).linearVelocity; }
+		if ((m_ecs.getSignature(b) & m_movementMask) == m_movementMask) { velB = m_ecs.getComponent<Movement>(b).linearVelocity; }
+
+		Vector2float relVel = velB - velA;
+		f32 velAlongNormal = relVel.x * normal.x + relVel.y * normal.y;
+		if (velAlongNormal > 0.0) { return; } // returns if the entities are already separating
+
+		f32 elasticity = std::min(physA.elasticity, physB.elasticity);
+		f32 j = -(1.0 + static_cast<d64>(elasticity)) * velAlongNormal / (invMassA + invMassB);
+
+		Vector2float impulse{ normal.x * j, normal.y * j };
+
+		outImpulseA = Vector2float{ -impulse.x * invMassA, -impulse.y * invMassA };
+		outImpulseB = Vector2float{ impulse.x * invMassB, impulse.y * invMassB };
 	}
 }

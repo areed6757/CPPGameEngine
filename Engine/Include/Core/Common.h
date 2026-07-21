@@ -17,8 +17,8 @@ namespace Engine {
 	constexpr d64 TICK_RATE = { 1.0 / 60.0 }; // 1/60 tickRate is 60 ticks per second ***TODO : fix this to be 60 instead of 1/60
 	constexpr const i32 MAX_ENTITIES = { 1'000'000 };
 	constexpr const d64 GRID_CELL_SIZE_KM = 0.01; // Scale constant, .01 = 10m per chassis segment on ships
-	constexpr const d64 gridBoundWidth = 2000.0;
-	constexpr const d64 gridBoundHeight = 2000.0;
+	constexpr const d64 GRID_BOUND_WIDTH = 2000.0;
+	constexpr const d64 GRID_BOUND_HEIGHT = 2000.0;
 
 	// Core classes
 
@@ -125,8 +125,8 @@ namespace Engine {
 
 	struct QuadTreeDesc {
 		BaseDesc base;
-		Vector2double boundsMin{ -(gridBoundWidth /2), -(gridBoundHeight /2)};
-		Vector2double boundsMax{ gridBoundWidth / 2, gridBoundHeight / 2 };
+		Vector2double boundsMin{ -(GRID_BOUND_WIDTH /2), -(GRID_BOUND_HEIGHT /2)};
+		Vector2double boundsMax{ GRID_BOUND_WIDTH / 2, GRID_BOUND_HEIGHT / 2 };
 		i32 maxDepth{ 8 };
 		i32 maxEntitiesPerNode{ 8 }; // Quadtree divides when exceeded up to maxDepth iterations
 	};

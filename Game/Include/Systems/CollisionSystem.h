@@ -24,7 +24,7 @@ namespace Engine {
 
 		Vector2float impulseA{};
 		Vector2float impulseB{};
-		// TODO: Add damage payload fields here
+		// TODO: Add damage payload fields here?
 	};
 
 	class CollisionSystem : public Base, public TickedSystem {
@@ -40,6 +40,7 @@ namespace Engine {
 		GameECSWrapper& m_ecs;
 		QuadTree& m_quadtree;
 		std::bitset<64> m_entityMask;
+		std::bitset<64> m_movementMask;
 
 		std::vector<CollisionCandidate> m_candidates{};
 		std::vector<EntityID> m_nearbyScratch{};
@@ -54,5 +55,6 @@ namespace Engine {
 		// these should be integrated fields from the ship baking process, will test with simple version
 
 		[[nodiscard]] bool narrowPhaseShip(EntityID a, EntityID b) const;
+		[[nodiscard]] void computeImpulse(EntityID a, EntityID b, Vector2float& outImpulseA, Vector2float& outImpulseB) const;
 	};
 }

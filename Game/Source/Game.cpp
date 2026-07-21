@@ -103,12 +103,20 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	EngineLogInfo("Game initialized successfully.");
 
+	/*
 	// Renderable entity test with movement
 	RenderGridTestDesc gridTestDesc{ {m_logger}, *m_ecsWrapper };
 	m_gridTest = std::make_unique<RenderGridTest>(gridTestDesc);
 	m_gridTest->spawnGrid(100, 100, 1.0);
 	m_gridTest->spawnProjectiles(100, 100.0, 5.0f, 0.05f);
 	m_scheduler->registerFrameSystem(m_gridTest.get());
+	*/
+
+	CollisionTestDesc collisionTestDesc{ {m_logger}, *m_ecsWrapper.get() };
+	m_collisionTest = std::make_unique<CollisionTest>(collisionTestDesc);
+	m_collisionTest->spawnHeadOnPairs(20, 5.0, 1.5, 0.5, 5.0, 3.0, 1.0, 0.5);
+
+
 }
 
 Engine::Game::~Game()

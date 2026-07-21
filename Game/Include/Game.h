@@ -31,6 +31,7 @@
 #include <Systems/QuadtreeDebugSystem.h>
 #include <Systems/CollisionSystem.h>
 #include <Graphics/DebugLineRenderer.h>
+#include <Test/CollisionTest.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -73,6 +74,7 @@ namespace Engine {
 
 		// Test Systems
 		std::unique_ptr<RenderGridTest> m_gridTest{};
+		std::unique_ptr<CollisionTest> m_collisionTest{};
 
 		InputHandler* m_inputHandler{};
 		ActionMap m_actionMap{};
