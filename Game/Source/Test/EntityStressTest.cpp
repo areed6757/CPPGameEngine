@@ -32,7 +32,7 @@ namespace Engine {
         std::vector<EntityID> ids;
         ids.reserve(initialCount);
 
-        // Seed a working population first — churn against a "live" set, not an empty one
+        // Seed a working population first, churn against a "live" set, not an empty one
         for (i32 i = 0; i < initialCount; ++i) {
             EntityID id = m_ecs.createEntity();
             m_ecs.addComponent(id, Position{ .transform = Vector2double{0.0, 0.0}, .rotation = 0.0f });
@@ -44,7 +44,7 @@ namespace Engine {
         // Mixed create/add/remove/destroy churn against a live population,
         // mimicking mid-combat component churn rather than one-shot bulk creation
         for (i32 i = 0; i < churnCycles; ++i) {
-            // pick a pseudo-random existing entity to destroy — cheap, deterministic spread
+            // pick a pseudo-random existing entity to destroy, cheap, deterministic spread
             i32 victimIndex = static_cast<i32>((static_cast<i64>(i) * 7919) % ids.size());
             EntityID victim = ids[victimIndex];
 
@@ -54,7 +54,7 @@ namespace Engine {
             m_ecs.addComponent(replacement, Position{ .transform = Vector2double{0.0, 0.0}, .rotation = 0.0f });
             ids[victimIndex] = replacement;
 
-            // exercise add/remove churn on a still-alive neighbor too — the actual
+            // exercise add/remove churn on a still-alive neighbor too the actual
             // Harm System pattern (segments gaining/losing components live)
             i32 neighborIndex = static_cast<i32>((static_cast<i64>(i) * 104729) % ids.size());
             EntityID neighbor = ids[neighborIndex];
