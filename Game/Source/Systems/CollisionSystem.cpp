@@ -32,7 +32,7 @@ namespace Engine {
 			auto& physics = m_ecs.getComponentAtDenseIndex<Physics>(i);
 
 			m_nearbyScratch.clear();
-			m_quadtree.queryRadius(tform.transform, static_cast<d64>(physics.radius) * 2.0, m_nearbyScratch);
+			m_quadtree.queryRadius(tform.transform, static_cast<d64>(physics.radius) + m_maxRadiusSeenThisTick, m_nearbyScratch);
 
 			for (EntityID other : m_nearbyScratch) {
 				if (other.id == id.id) { continue; } // skips self
@@ -66,7 +66,7 @@ namespace Engine {
 	void CollisionSystem::Update(d64 dt)
 	{
 		m_quadtree.clear();
-
+		m_maxRadiusSeenThisTick = 0.0; // Radius of the largest entity in shared quadtree cell
 		i32 c = m_ecs.sizeComponentPool<Physics>();
 		for (i32 i = 0; i < c; i++) {
 			i32 entityIndex = m_ecs.entityAtDenseIndex<Physics>(i);
@@ -75,6 +75,9 @@ namespace Engine {
 
 			auto& tform = m_ecs.getComponent<Position>(id);
 			m_quadtree.insert(id, tform.transform);
+
+			auto& physics = m_ecs.getComponent<Physics>(id);
+			m_maxRadiusSeenThisTick = std::max(m_maxRadiusSeenThisTick, static_cast<d64>(physics.radius));
 		}
 
 		broadPhase(m_candidates);

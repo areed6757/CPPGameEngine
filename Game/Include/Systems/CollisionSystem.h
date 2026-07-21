@@ -45,6 +45,8 @@ namespace Engine {
 		std::vector<EntityID> m_nearbyScratch{};
 		std::vector<CollisionEvent> m_events{};
 
+		d64 m_maxRadiusSeenThisTick;
+
 		void broadPhase(std::vector<CollisionCandidate>& outCandidates);
 		[[nodiscard]] bool narrowPhaseSimple(EntityID a, EntityID b) const;
 
