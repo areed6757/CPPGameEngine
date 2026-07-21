@@ -26,6 +26,11 @@ namespace Engine {
 
 	void QuadTree::insert(EntityID id, const Vector2double& position)
 	{
+		if (position.x < m_boundsMin.x || position.x > m_boundsMax.x ||
+			position.y < m_boundsMin.y || position.y > m_boundsMax.y) {
+			EngineLogWarning("Entity {} inserted at position outside quadtree bounds, skipping.", id.id);
+			return;
+		}
 		insertInto(m_root.get(), id, position, 0);
 	}
 
