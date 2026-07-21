@@ -114,7 +114,7 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	CollisionTestDesc collisionTestDesc{ {m_logger}, *m_ecsWrapper.get() };
 	m_collisionTest = std::make_unique<CollisionTest>(collisionTestDesc);
-	m_collisionTest->spawnHeadOnPairs(20, 5.0, 1.5, 0.5, 5.0, 3.0, 1.0, 0.5);
+	m_collisionTest->spawnHeadOnPairs(20, 5.0, 3.5, 0.5, 50000.0, 3.0, 0.7, 2.5);
 
 
 }

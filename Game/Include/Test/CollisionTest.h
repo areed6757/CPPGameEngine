@@ -8,7 +8,7 @@
 
 namespace Engine {
 	struct CollisionTestDesc {
-		Base base;
+		BaseDesc base;
 		GameECSWrapper& ecs;
 	};
 
