@@ -61,7 +61,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler = std::make_unique<Scheduler>(schedulerDesc);
 	if (!m_scheduler) { EngineLogErrorAndThrow("Scheduler failed to initialize.") };
 
-	QuadTreeDesc qtDesc = { {m_logger}, Vector2double{-50.0, -50.0}, Vector2double{50.0, 50.0} };
+	QuadTreeDesc qtDesc = { {m_logger} };
 	m_quadtree = std::make_unique<QuadTree>(qtDesc);
 	if (!m_quadtree) { EngineLogErrorAndThrow("Quadtree failed to initialize") };
 
