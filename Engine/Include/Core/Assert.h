@@ -12,8 +12,7 @@
     #define ENGINE_ASSERT(cond, msg)                                        \
             do {                                                                 \
                 if (!(cond)) {                                                   \
-                    EngineLogError(std::format("Assertion failed: {} ({})",      \
-                        #cond, msg).c_str());                                    \
+                    EngineLogError("Assertion failed: {} ({})",#cond, msg);      \
                     ENGINE_DEBUG_BREAK();                                        \
                 }                                                                \
             } while (0)

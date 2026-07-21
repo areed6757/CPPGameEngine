@@ -12,7 +12,7 @@ Engine::EntityRegister::EntityRegister(const EntityRegisterDesc& desc) : Base(de
 
 	m_generations.assign(m_maxEntities + 1, 1);
 	
-	EngineLogInfo(std::format("EntityRegister created, size: {}", m_freeIndices.size()).c_str());
+	EngineLogInfo("EntityRegister created, size: {}", m_freeIndices.size());
 }
 
 Engine::EntityRegister::~EntityRegister()
@@ -28,7 +28,7 @@ Engine::EntityID Engine::EntityRegister::create()
 
 	EntityID ent = EntityID{ index, m_generations.at(index) };
 	
-	EngineLogDebug(std::format("Entity created: {}, generation: {}", ent.id, ent.generation).c_str());
+	EngineLogDebug("Entity created: {}, generation: {}", ent.id, ent.generation);
 
 	return ent;
 }
@@ -36,12 +36,12 @@ Engine::EntityID Engine::EntityRegister::create()
 void Engine::EntityRegister::destroy(EntityID id)
 {
 	if (isValid(id)) {
-		EngineLogDebug(std::format("Entity destroyed id: {} generation: {}", id.id, id.generation).c_str());
+		EngineLogDebug("Entity destroyed id: {} generation: {}", id.id, id.generation);
 		m_generations[id.id]++;
 		m_freeIndices.push_back(id.id);
 	}
 	else {
-		EngineLogError(std::format("Attempted to destroy invalid EntityID, id: {} generation: {}", id.id, id.generation).c_str());
+		EngineLogError("Attempted to destroy invalid EntityID, id: {} generation: {}", id.id, id.generation);
 	}
 }
 

@@ -16,12 +16,12 @@ Engine::Scheduler::~Scheduler()
 void Engine::Scheduler::registerSystem(TickedSystem* sys)
 {
 	m_systems.push_back(sys);
-	EngineLogInfo(std::format("Scheduler registered TickedSystem type: {}", typeid(*sys).name()).c_str());
+	EngineLogInfo("Scheduler registered TickedSystem type: {}", typeid(*sys).name());
 }
 
 void Engine::Scheduler::registerFrameSystem(TickedSystem* sys) {
 	m_frameSystems.push_back(sys);
-	EngineLogInfo(std::format("Scheduler registered Frame-based TickedSystem type: {}", typeid(*sys).name()).c_str());
+	EngineLogInfo("Scheduler registered Frame-based TickedSystem type: {}", typeid(*sys).name());
 }
 
 void Engine::Scheduler::advance()

@@ -37,7 +37,7 @@ void Engine::InputHandler::onKey(i32 key, i32 scancode, i32 action, i32 mods)
 		for (const std::pair pairs : m_actionMap.bindings) {
 			if (pairs.first == key) {
 				m_keyStates.at(key).isDown = true;
-				// EngineLogInfo((std::format("{} pressed", pairs.second)).c_str());
+				// EngineLogInfo("{} pressed", pairs.second);
 			}
 		}
 		return;
@@ -45,7 +45,7 @@ void Engine::InputHandler::onKey(i32 key, i32 scancode, i32 action, i32 mods)
 		for (const std::pair pairs : m_actionMap.bindings) {
 			if (pairs.first == key) {
 				m_keyStates.at(key).isDown = false;
-				// EngineLogInfo((std::format("{} released", pairs.second)).c_str());
+				// EngineLogInfo("{} released", pairs.second);
 			}
 		}
 		return;

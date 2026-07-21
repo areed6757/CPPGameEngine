@@ -107,7 +107,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	RenderGridTestDesc gridTestDesc{ {m_logger}, *m_ecsWrapper };
 	m_gridTest = std::make_unique<RenderGridTest>(gridTestDesc);
 	m_gridTest->spawnGrid(100, 100, 1.0);
-	m_gridTest->spawnProjectiles(50, 100.0, 5.0f, 0.05f);
+	m_gridTest->spawnProjectiles(1, 100.0, 5.0f, 0.05f);
 	m_scheduler->registerFrameSystem(m_gridTest.get());
 }
 

@@ -63,7 +63,7 @@ namespace Engine {
 		/// <param name="id"></param>
 		void destroyEntity(EntityID id) {
 			if (!isValidEntity(id)) {
-				EngineLogDebug(std::format("Attempted to destroy invalid entity id: {} generation: {}", id.id, id.generation).c_str());
+				EngineLogDebug("Attempted to destroy invalid entity id: {} generation: {}", id.id, id.generation);
 				return;
 			}
 			

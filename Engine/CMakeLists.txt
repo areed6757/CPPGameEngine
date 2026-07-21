@@ -12,9 +12,11 @@ target_include_directories(Engine
 
 find_package(glm CONFIG REQUIRED)
 find_package(glfw3 REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(Engine PUBLIC
     glfw
     glm::glm
+    spdlog::spdlog
 )
 
 target_compile_definitions(Engine PUBLIC
@@ -28,4 +30,9 @@ target_compile_options(Engine PRIVATE
 target_compile_definitions(Engine PRIVATE
     $<$<CONFIG:Debug>:_DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
+)
+
+target_compile_definitions(Engine PUBLIC
+    $<$<CONFIG:Debug>:SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG>
+    $<$<CONFIG:Release>:SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_INFO>
 )

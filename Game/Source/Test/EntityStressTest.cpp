@@ -22,7 +22,7 @@ namespace Engine {
         auto end = std::chrono::high_resolution_clock::now();
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-        EngineLogInfo(std::format("Created {} entities with Position in {}ms", count, ms).c_str());
+        EngineLogInfo("Created {} entities with Position in {}ms", count, ms);
     }
 
     void EntityStressTest::runChurnTest() {
@@ -69,9 +69,9 @@ namespace Engine {
         auto end = std::chrono::high_resolution_clock::now();
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 
-        EngineLogInfo(std::format(
+        EngineLogInfo(
             "Churned {} cycles (destroy+create+Position, plus Movement add/remove) over {} live entities in {}ms",
             churnCycles, initialCount, ms
-        ).c_str());
+        );
     }
 }

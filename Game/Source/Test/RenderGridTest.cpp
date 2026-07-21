@@ -43,8 +43,8 @@ namespace Engine {
 
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::high_resolution_clock::now() - start).count();
-        EngineLogInfo(std::format("Spawned {}x{} renderable grid ({} entities) in {}ms",
-            width, height, width * height, ms).c_str());
+        EngineLogInfo("Spawned {}x{} renderable grid ({} entities) in {}ms",
+            width, height, width * height, ms);
     }
 
     // Traces a diamond (rotated square) of the given amplitude around the
@@ -118,7 +118,7 @@ namespace Engine {
                 });
         }
 
-        EngineLogInfo(std::format("Spawned {} projectile(s) at distance {} moving toward origin at speed {}",
-            count, startDistance, speed).c_str());
+        EngineLogInfo("Spawned {} projectile(s) at distance {} moving toward origin at speed {}",
+            count, startDistance, speed);
     }
 }

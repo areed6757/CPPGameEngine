@@ -32,17 +32,17 @@ namespace Engine {
 
 		void add(i32 index, const T& component) {
 			if (!(index > 0 && index <= m_maxEntities)) {
-				EngineLogError(std::format("Invalid attempt to add component to index {}", index).c_str());
+				EngineLogError("Invalid attempt to add component to index {}", index);
 				return;
 			}
 			if (m_sparse[index] != INVALID_SENTINEL) {
-				EngineLogWarning(std::format("Entity {} already has this component.", index).c_str());
+				EngineLogWarning("Entity {} already has this component.", index);
 				return;
 			}
 			m_dense.push_back(component);
 			m_backRef.push_back(index);
 			m_sparse[index] = static_cast<i32> (m_dense.size() - 1);
-			EngineLogDebug(std::format("Entity {} added {} component", index, typeid(T).name()).c_str());
+			EngineLogDebug("Entity {} added {} component", index, typeid(T).name());
 		}
 
 		void remove(i32 index) {
@@ -59,7 +59,7 @@ namespace Engine {
 			m_backRef.pop_back();
 			m_sparse[index] = INVALID_SENTINEL;
 
-			EngineLogDebug(std::format("Entity {} destroyed {} component.", index, typeid(T).name()).c_str());
+			EngineLogDebug("Entity {} destroyed {} component.", index, typeid(T).name());
 		}
 
 		[[nodiscard]] bool has(i32 index) const noexcept {

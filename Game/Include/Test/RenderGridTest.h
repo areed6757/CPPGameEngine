@@ -42,7 +42,7 @@ namespace Engine {
         std::vector<Vector2double> m_basePositions;
 
         d64 m_amplitude{};   // spacing / 2, set in spawnGrid
-        d64 m_period{ 4.0 }; // seconds per full diamond loop — tune by feel
+        d64 m_period{ 4.0 }; // seconds per full diamond loop
         d64 m_elapsed{};
     };
 }

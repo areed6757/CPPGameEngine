@@ -42,6 +42,6 @@ void Engine::MovementTicks::Update(d64 dt)
 
 
 		// Debug
-		// EngineLogInfo(std::format("Entity: {} moved to position: x {} y {}, velocity: ({}, {})", id.id, tform.transform.x, tform.transform.y, movement.linearVelocity).c_str());
+		// EngineLogInfo("Entity: {} moved to position: x {} y {}, velocity: ({}, {})", id.id, tform.transform.x, tform.transform.y, movement.linearVelocity);
 	}
 }

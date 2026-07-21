@@ -30,7 +30,6 @@ Engine::GLFWContext::~GLFWContext() {
 
 void Engine::GLFWContext::error_callback(int error, const char* description) {
     if (s_instance) {
-        std::string str = std::format("GLFW Error: {} - {}", error, description);
-        s_instance->getLogger().log(Logger::LogLevel::Error, str.c_str());
+        s_instance->getLogger().log(Logger::LogLevel::Error, "GLFW Error: {} - {}", error, description);
     }
 }

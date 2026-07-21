@@ -53,7 +53,7 @@ std::string Engine::Shader::get_file_contents(const char* filename)
 		in.close();
 		return(contents);
 	}
-    EngineLogErrorAndThrow(std::format("Failed to load file: {}", filename).c_str());
+    EngineLogErrorAndThrow("Failed to load file: {}", filename);
 }
 
 void Engine::Shader::compileErrors(unsigned int shader, const char* type) {
@@ -63,14 +63,14 @@ void Engine::Shader::compileErrors(unsigned int shader, const char* type) {
         glGetShaderiv(shader, GL_COMPILE_STATUS, &hasCompiled);
         if (hasCompiled == GL_FALSE) {
             glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-            EngineLogErrorAndThrow(std::format("SHADER_COMPILATION_ERROR for: {}", type).c_str());
+            EngineLogErrorAndThrow("SHADER_COMPILATION_ERROR for: {}", type);
         }
     }
     else {
         glGetProgramiv(shader, GL_COMPILE_STATUS, &hasCompiled);
         if (hasCompiled == GL_FALSE) {
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-            EngineLogErrorAndThrow(std::format("SHADER_LINKING_ERROR for: {}", type).c_str());
+            EngineLogErrorAndThrow("SHADER_LINKING_ERROR for: {}", type);
         }
     }
 }

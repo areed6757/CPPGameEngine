@@ -1,29 +1,40 @@
 #include <Core/Logger.h>
-#include <iostream>
+#include <spdlog/sinks/rotating_file_sink.h>
 
-Engine::Logger::Logger(LogLevel logLevel) : m_logLevel(logLevel)
-{
-	std::clog << "|=-{ Station Authority }-=|" << "\n";
-	std::clog << "---------------------------" << "\n";
-}
-
-void Engine::Logger::log(LogLevel lLevel, const char* message) const
-{
-	if (lLevel < m_logLevel) return;
-
-	auto logLevelToString = [](LogLevel level) {
+namespace Engine {
+	
+	spdlog::level::level_enum Logger::toSpdlogLevel(LogLevel level)
+	{
 		switch (level) {
-		case LogLevel::Debug: return "Debug";
-		case LogLevel::Info: return "Info";
-		case LogLevel::Warning: return "Warning";
-		case LogLevel::Error: return "Error";
-		default: return "Unkown";
+		case LogLevel::Debug:   return spdlog::level::debug;
+		case LogLevel::Info:    return spdlog::level::info;
+		case LogLevel::Warning: return spdlog::level::warn;
+		case LogLevel::Error:   return spdlog::level::err;
+		default:                return spdlog::level::info;
 		}
-		};
+	}
 
-	std::clog << "[Engine " << logLevelToString(lLevel) << "]: " << message << "\n";
-}
+	Logger::Logger(LogLevel logLevel)
+	{
+		auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+		auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+			"logs/engine.log", 1024 * 1024 * 5, 3); // 5MB per file, 3 rotated
 
-Engine::Logger::~Logger()
-{
+		m_logger = std::make_unique<spdlog::logger>(
+			"engine", spdlog::sinks_init_list{ console_sink, file_sink });
+
+		m_logger->set_pattern("[Engine %^%l%$]: %v");
+		m_logger->set_level(toSpdlogLevel(logLevel));
+
+		m_logger->info("||=-{{ Stacked Engine }}-=||");
+		m_logger->info("----------------------------");
+	}
+
+	Logger::~Logger()
+	{
+		m_logger->info("Logger destroyed.");
+	}
+
+
+
 }

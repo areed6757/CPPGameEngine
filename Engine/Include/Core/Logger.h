@@ -1,4 +1,8 @@
 #pragma once
+#include <memory>
+#include <format>
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace Engine {
 	class Logger final {
@@ -13,7 +17,11 @@ namespace Engine {
 
 		explicit Logger(LogLevel logLevel = LogLevel::Error);
 
-		void log(LogLevel logLevel, const char* message) const;
+		template<typename... Args>
+		void log(LogLevel lLevel, spdlog::format_string_t<Args...> fmt, Args&&... args) const
+		{
+			m_logger->log(toSpdlogLevel(lLevel), fmt, std::forward<Args>(args)...);
+		}
 
 		~Logger();
 
@@ -24,39 +32,47 @@ namespace Engine {
 		Logger& operator = (Logger&&) = delete;
 
 	private:
-		LogLevel m_logLevel = LogLevel::Error;
+		static spdlog::level::level_enum toSpdlogLevel(LogLevel level);
+		std::unique_ptr<spdlog::logger> m_logger;
 	};
 
-	// \ at the end of macro lines indicate to preprocessor that the macro continues on the next line
+	// Compile-time stripping of logger output
+	#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_ERROR
+	#define ENGINE_LOG_ERROR_IMPL(...) getLogger().log((Logger::LogLevel::Error), __VA_ARGS__)
+	#else
+	#define ENGINE_LOG_ERROR_IMPL(...) ((void)0)
+	#endif
+	#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_WARN
+	#define ENGINE_LOG_WARNING_IMPL(...) getLogger().log((Logger::LogLevel::Warning), __VA_ARGS__)
+	#else
+	#define ENGINE_LOG_WARNING_IMPL(...) ((void)0)
+	#endif
+	#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_INFO
+	#define ENGINE_LOG_INFO_IMPL(...) getLogger().log((Logger::LogLevel::Info), __VA_ARGS__)
+	#else
+	#define ENGINE_LOG_INFO_IMPL(...) ((void)0)
+	#endif
+	#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_DEBUG
+	#define ENGINE_LOG_DEBUG_IMPL(...) getLogger().log((Logger::LogLevel::Debug), __VA_ARGS__)
+	#else
+	#define ENGINE_LOG_DEBUG_IMPL(...) ((void)0)
+	#endif
+
 	// Place enumeration vals in () to prevent unexpected behavior during macro expansion
-	#define EngineLogError(message) {\
-		getLogger().log((Logger::LogLevel::Error), message);\
-		}
-
-	#define EngineLogErrorAndThrow(message) {\
-		EngineLogError(message);\
-		throw std::runtime_error(message);\
-		}
-
-	#define EngineLogWarning(message) {\
-		getLogger().log((Logger::LogLevel::Warning), message);\
-		}
-
-	#define EngineLogWarningAndThrow(message) {\
-		EngineLogWarning(message);\
-		throw std::runtime_error(message);\
-		}
-
-	#define EngineLogInfo(message) {\
-		getLogger().log((Logger::LogLevel::Info), message);\
-		}
-
-	#define EngineLogInfoAndThrow(message) {\
-		EngineLogInfo(message);\
-		throw std::runtime_error(message);\
-		}
-
-	#define EngineLogDebug(message) {\
-		getLogger().log((Logger::LogLevel::Debug), message);\
-		}
+	#define EngineLogError(...) { ENGINE_LOG_ERROR_IMPL(__VA_ARGS__); }
+	#define EngineLogErrorAndThrow(...) {\
+			EngineLogError(__VA_ARGS__);\
+			throw std::runtime_error(std::format(__VA_ARGS__));\
+			}
+	#define EngineLogWarning(...) { ENGINE_LOG_WARNING_IMPL(__VA_ARGS__); }
+	#define EngineLogWarningAndThrow(...) {\
+			EngineLogWarning(__VA_ARGS__);\
+			throw std::runtime_error(std::format(__VA_ARGS__));\
+			}
+	#define EngineLogInfo(...) { ENGINE_LOG_INFO_IMPL(__VA_ARGS__); }
+	#define EngineLogInfoAndThrow(...) {\
+			EngineLogInfo(__VA_ARGS__);\
+			throw std::runtime_error(std::format(__VA_ARGS__));\
+			}
+	#define EngineLogDebug(...) { ENGINE_LOG_DEBUG_IMPL(__VA_ARGS__); }
 }
