@@ -85,13 +85,13 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_renderSystem = std::make_unique<RenderSystem>(renderSysDesc);
 	if (!m_renderSystem) { EngineLogErrorAndThrow("Render system failed to initialize."); }
 
-	MovementTicksDesc mvTicksDesc = { {m_logger}, *m_ecsWrapper.get() };
-	m_moveTicks = std::make_unique<MovementTicks>(mvTicksDesc);
-	if (!m_moveTicks) { EngineLogErrorAndThrow("MoveTicks failed to initialize.") };
-
 	CollisionSystemDesc collisionSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_quadtree.get() };
 	m_collisionSystem = std::make_unique<CollisionSystem>(collisionSysDesc);
 	if (!m_collisionSystem) { EngineLogErrorAndThrow("CollisionSystem failed to initialize.") };
+
+	MovementTicksDesc mvTicksDesc = { {m_logger}, *m_ecsWrapper.get(), *m_collisionSystem.get()};
+	m_moveTicks = std::make_unique<MovementTicks>(mvTicksDesc);
+	if (!m_moveTicks) { EngineLogErrorAndThrow("MoveTicks failed to initialize.") };
 
 	// Register TickedSystems
 	m_scheduler->registerFrameSystem(m_renderSystem.get()); // Frame based update not backend ticks, smooths lag and stops buffer queueing stutter
@@ -107,7 +107,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	RenderGridTestDesc gridTestDesc{ {m_logger}, *m_ecsWrapper };
 	m_gridTest = std::make_unique<RenderGridTest>(gridTestDesc);
 	m_gridTest->spawnGrid(100, 100, 1.0);
-	m_gridTest->spawnProjectiles(60, 100.0, 5.0f, 0.05f);
+	m_gridTest->spawnProjectiles(50, 100.0, 5.0f, 0.05f);
 	m_scheduler->registerFrameSystem(m_gridTest.get());
 }
 

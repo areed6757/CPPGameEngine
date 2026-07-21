@@ -2,6 +2,7 @@
 #include <Components/Movement.h>
 #include <Components/Position.h>
 #include <Core/Common.h>
+#include <Systems/CollisionSystem.h>
 #include <ECS/TickedSystem.h>
 #include <GameDescs.h>
 #include <GameECS.h>
@@ -9,6 +10,12 @@
 #include <format>
 
 namespace Engine {
+	struct MovementTicksDesc {
+		BaseDesc base;
+		GameECSWrapper& ecs;
+		CollisionSystem& collisionSystem;
+	};
+
 	class MovementTicks final : public Base, public TickedSystem {
 	public:
 		explicit MovementTicks(const MovementTicksDesc& desc);
@@ -20,5 +27,6 @@ namespace Engine {
 		GameECSWrapper& m_ecs;
 		std::bitset<64> m_entityMask;
 		i32 m_tickCount = 0;
+		CollisionSystem& m_collisionSystem;
 	};
 }

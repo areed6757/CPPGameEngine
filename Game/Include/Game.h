@@ -53,18 +53,18 @@ namespace Engine {
 		std::unique_ptr<CameraController> m_cameraController{};
 		std::unique_ptr<Renderer> m_renderer{};
 
+		// ECS
+		std::unique_ptr<EntityRegister> m_entityRegister{};
+		std::unique_ptr<GameECSWrapper> m_ecsWrapper{};
+
 		// Ticked Systems + clock/scheduler + quadtree
 		std::unique_ptr<GameClock> m_gameClock{};
 		std::unique_ptr<Scheduler> m_scheduler{};
-		std::unique_ptr<MovementTicks> m_moveTicks{};
 		std::unique_ptr<QuadTree> m_quadtree{};
 		std::unique_ptr<DebugLineRenderer> m_debugLineRenderer{};
 		std::unique_ptr<QuadtreeDebugSystem> m_quadtreeDebugSystem{};
 		std::unique_ptr<CollisionSystem> m_collisionSystem{};
-
-		// ECS
-		std::unique_ptr<EntityRegister> m_entityRegister{};
-		std::unique_ptr<GameECSWrapper> m_ecsWrapper{};
+		std::unique_ptr<MovementTicks> m_moveTicks{};
 
 		// Graphics
 		std::unique_ptr<TextureRegistry> m_textureRegistry{};

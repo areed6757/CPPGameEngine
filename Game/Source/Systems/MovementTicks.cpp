@@ -1,7 +1,7 @@
 #include <Systems/MovementTicks.h>
 #include <bitset>
 
-Engine::MovementTicks::MovementTicks(const MovementTicksDesc& desc) : Base(desc.base), m_ecs(desc.ecs)
+Engine::MovementTicks::MovementTicks(const MovementTicksDesc& desc) : Base(desc.base), m_ecs(desc.ecs), m_collisionSystem(desc.collisionSystem)
 {
 	m_entityMask = m_ecs.makeSignature<Position, Movement>(); // Defines entities that can be modified by this system
 }
@@ -12,6 +12,13 @@ Engine::MovementTicks::~MovementTicks()
 
 void Engine::MovementTicks::Update(d64 dt)
 {
+	for (auto& event : m_collisionSystem.getEvents()) {
+		if (m_ecs.hasComponent<Movement>(event.entityA))
+			m_ecs.getComponent<Movement>(event.entityA).linearVelocity += event.impulseA;
+		if (m_ecs.hasComponent<Movement>(event.entityB))
+			m_ecs.getComponent<Movement>(event.entityB).linearVelocity += event.impulseB;
+	}
+
 	// Concrete selection of Movement Component pool size, as it will necessarily be smaller than Position
 	for (i32 i = 0; i < m_ecs.sizeComponentPool<Movement>(); i++) {
 		
@@ -24,7 +31,6 @@ void Engine::MovementTicks::Update(d64 dt)
 		// Position must still perform a lookup based on id
 		auto& tform = m_ecs.getComponent<Position>(id);
 		auto& movement = m_ecs.getComponentAtDenseIndex<Movement>(i);
-
 
 		// Update components
 		f32 fdt = static_cast<f32>(dt);

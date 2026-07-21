@@ -96,6 +96,4 @@ namespace Engine {
 	const std::vector<CollisionEvent>& CollisionSystem::getEvents() const noexcept {
 		return m_events;
 	}
-
-
 }
