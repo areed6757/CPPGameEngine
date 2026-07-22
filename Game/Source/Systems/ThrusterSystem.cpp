@@ -26,7 +26,7 @@ namespace Engine {
 
 			auto& pos = m_ecs.getComponent<Position>(id);
 			auto& movement = m_ecs.getComponent<Movement>(id);
-			auto& thruster = m_ecs.getComponent<Thruster>(id);
+			auto& thruster = m_ecs.getComponentAtDenseIndex<Thruster>(i);
 
 			f32 rot = pos.rotation;
 
