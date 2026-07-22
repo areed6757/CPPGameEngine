@@ -129,9 +129,9 @@ namespace Engine {
 
 		Vector2float normal{ static_cast<f32>(delta.x / dist), static_cast<f32>(delta.y / dist) };
 
-		f32 invMassA = physA.mass > 0.0f ? 1.0 / static_cast<d64>(physA.mass) : 0.0;
-		f32 invMassB = physB.mass > 0.0f ? 1.0 / static_cast<d64>(physB.mass) : 0.0;
-		if (invMassA == 0.0 && invMassB == 0.0) { return; }
+		f32 invMassA = physA.mass > 0.0f ? 1.0f / physA.mass : 0.0f;
+		f32 invMassB = physB.mass > 0.0f ? 1.0f / physB.mass : 0.0f;
+		if (invMassA == 0.0f && invMassB == 0.0f) { return; }
 		
 		Vector2float velA{};
 		Vector2float velB{};
@@ -144,7 +144,7 @@ namespace Engine {
 		if (velAlongNormal > 0.0) { return; } // returns if the entities are already separating
 
 		f32 elasticity = std::min(physA.elasticity, physB.elasticity);
-		f32 j = -(1.0 + static_cast<d64>(elasticity)) * velAlongNormal / (invMassA + invMassB);
+		f32 j = -(1.0f + elasticity) * velAlongNormal / (invMassA + invMassB);
 
 		Vector2float impulse{ normal.x * j, normal.y * j };
 
