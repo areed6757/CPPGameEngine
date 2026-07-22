@@ -93,6 +93,10 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_moveTicks = std::make_unique<MovementTicks>(mvTicksDesc);
 	if (!m_moveTicks) { EngineLogErrorAndThrow("MoveTicks failed to initialize.") };
 
+	ThrusterSystemDesc thrSysDesc = { {m_logger}, *m_ecsWrapper.get() };
+	m_thrusterSystem = std::make_unique<ThrusterSystem>(thrSysDesc);
+	if (!m_thrusterSystem) { EngineLogErrorAndThrow("ThrusterSystem failed to initialize.") };
+
 	// Register TickedSystems
 	m_scheduler->registerFrameSystem(m_renderSystem.get()); // Frame based update not backend ticks, smooths lag and stops buffer queueing stutter
 	m_scheduler->registerFrameSystem(m_cameraController.get());
@@ -100,6 +104,7 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	m_scheduler->registerSystem(m_moveTicks.get());
 	m_scheduler->registerSystem(m_collisionSystem.get());
+	m_scheduler->registerSystem(m_thrusterSystem.get());
 
 	EngineLogInfo("Game initialized successfully.");
 
@@ -112,10 +117,15 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler->registerFrameSystem(m_gridTest.get());
 	*/
 
+	/*
 	CollisionTestDesc collisionTestDesc{ {m_logger}, *m_ecsWrapper.get() };
 	m_collisionTest = std::make_unique<CollisionTest>(collisionTestDesc);
 	m_collisionTest->spawnHeadOnPairs(20, 5.0, 3.5, 0.5, 50000.0, 3.0, 0.7, 2.5);
+	*/
 
+	ThrusterTestDesc thrusterTestDesc{ {m_logger}, *m_ecsWrapper.get() };
+	m_thrusterTest = std::make_unique<ThrusterTest>(thrusterTestDesc);
+	m_thrusterTest->spawnAccelRow(5, 1.5, 2.5, 10.0, 0.5, 0.0);
 
 }
 

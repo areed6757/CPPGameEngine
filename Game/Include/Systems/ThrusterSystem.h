@@ -1,22 +1,23 @@
 #pragma once 
 #include <GameECS.h>
 #include <Core/Common.h>
+#include <ECS/TickedSystem.h>
 
 namespace Engine {
 	struct ThrusterSystemDesc {
 		BaseDesc base;
-		ECSWrapper& ecs;
+		GameECSWrapper& ecs;
 	};
 
-	class ThrusterSystem : public base, public TickedSystem {
+	class ThrusterSystem : public Base, public TickedSystem {
 	public:
-		explicit ThrusterSystem(const ThrusterSystem& desc);
+		explicit ThrusterSystem(const ThrusterSystemDesc& desc);
 		~ThrusterSystem();
 
 		void Update(d64 dt) override;
 
 	private:
-		ECSWrapper& m_ecs;
+		GameECSWrapper& m_ecs;
 		std::bitset<64> m_entityMask{};
 	};
 }

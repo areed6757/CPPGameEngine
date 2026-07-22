@@ -32,6 +32,8 @@
 #include <Systems/CollisionSystem.h>
 #include <Graphics/DebugLineRenderer.h>
 #include <Test/CollisionTest.h>
+#include <Systems/ThrusterSystem.h>
+#include <Test/ThrusterTest.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -66,6 +68,7 @@ namespace Engine {
 		std::unique_ptr<QuadtreeDebugSystem> m_quadtreeDebugSystem{};
 		std::unique_ptr<CollisionSystem> m_collisionSystem{};
 		std::unique_ptr<MovementTicks> m_moveTicks{};
+		std::unique_ptr<ThrusterSystem> m_thrusterSystem{};
 
 		// Graphics
 		std::unique_ptr<TextureRegistry> m_textureRegistry{};
@@ -75,6 +78,7 @@ namespace Engine {
 		// Test Systems
 		std::unique_ptr<RenderGridTest> m_gridTest{};
 		std::unique_ptr<CollisionTest> m_collisionTest{};
+		std::unique_ptr<ThrusterTest> m_thrusterTest{};
 
 		InputHandler* m_inputHandler{};
 		ActionMap m_actionMap{};
