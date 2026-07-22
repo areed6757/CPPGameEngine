@@ -46,6 +46,9 @@ namespace Engine {
 				.maxAccel = accel,
 				.throttle = 1.0f
 				});
+			m_ecs.addComponent(id, Lifetime{
+				.remaining = 3.0f
+				});
 		}
 
 		EngineLogInfo("Spawned {} thrust-test entities, accel range {} to {}", count, minAccel, maxAccel);

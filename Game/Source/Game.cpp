@@ -97,6 +97,10 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_thrusterSystem = std::make_unique<ThrusterSystem>(thrSysDesc);
 	if (!m_thrusterSystem) { EngineLogErrorAndThrow("ThrusterSystem failed to initialize.") };
 
+	LifetimeSystemDesc ltsDesc = { {m_logger}, *m_ecsWrapper.get() };
+	m_lifetimeSystem = std::make_unique<LifetimeSystem>(ltsDesc);
+	if (!m_lifetimeSystem) { EngineLogErrorAndThrow("LifetimeSystem failed to initialize.") };
+
 	// Register TickedSystems
 	m_scheduler->registerFrameSystem(m_renderSystem.get()); // Frame based update not backend ticks, smooths lag and stops buffer queueing stutter
 	m_scheduler->registerFrameSystem(m_cameraController.get());
@@ -105,6 +109,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler->registerSystem(m_moveTicks.get());
 	m_scheduler->registerSystem(m_collisionSystem.get());
 	m_scheduler->registerSystem(m_thrusterSystem.get());
+	m_scheduler->registerSystem(m_lifetimeSystem.get());
 
 	EngineLogInfo("Game initialized successfully.");
 
