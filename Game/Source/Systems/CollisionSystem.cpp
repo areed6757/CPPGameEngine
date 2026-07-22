@@ -1,6 +1,7 @@
 #include <Systems/CollisionSystem.h>
 #include <Components/Physics.h>
 #include <Components/Position.h>
+#include <Components/DamagePayload.h>
 #include <format>
 #include <cmath>
 #include <algorithm>
@@ -13,6 +14,7 @@ namespace Engine {
 	{
 		m_entityMask = m_ecs.makeSignature<Position, Physics>();
 		m_movementMask = m_ecs.makeSignature<Movement>();
+		m_nonPhysicsCollisionMask = m_ecs.makeSignature<DamagePayload>();
 
 		EngineLogInfo("Collision system created.");
 	}
@@ -92,7 +94,11 @@ namespace Engine {
 			// can differentiate the two by the presense of segment data on baked ships
 			if (narrowPhaseSimple(a, b)) {
 				CollisionEvent event{ a, b };
-				computeImpulse( a, b, event.impulseA, event.impulseB );
+				if (!((m_ecs.getSignature(a) & m_nonPhysicsCollisionMask) == m_nonPhysicsCollisionMask) &&
+					!((m_ecs.getSignature(b) & m_nonPhysicsCollisionMask) == m_nonPhysicsCollisionMask)) 
+				{
+					computeImpulse(a, b, event.impulseA, event.impulseB);
+				}
 				m_events.push_back(event);
 				EngineLogInfo("Collision detected between entity: {} and entity: {}", a.id, b.id);
 				// TODO: compute the impulses on both ships based on their physics

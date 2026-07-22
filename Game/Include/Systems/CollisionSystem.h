@@ -41,6 +41,7 @@ namespace Engine {
 		QuadTree& m_quadtree;
 		std::bitset<64> m_entityMask;
 		std::bitset<64> m_movementMask;
+		std::bitset<64> m_nonPhysicsCollisionMask;
 
 		std::vector<CollisionCandidate> m_candidates{};
 		std::vector<EntityID> m_nearbyScratch{};
