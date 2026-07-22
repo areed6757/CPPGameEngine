@@ -33,7 +33,7 @@ namespace Engine {
 	template <> struct ComponentBit<Weapon> { static constexpr i32 value = 8; };
 
 	struct ComponentPools {
-		explicit ComponentPools(const ComponentDesc& desc) : positions(desc), movements(desc), renderables(desc), physics(desc) {}
+		explicit ComponentPools(const ComponentDesc& desc) : positions(desc), movements(desc), renderables(desc), physics(desc), damagePayloads(desc), healths(desc), lifetimes(desc), thrusters(desc), weapons(desc) {}
 
 	private:
 		Component<Position> positions;
