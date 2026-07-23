@@ -9,6 +9,8 @@ Engine::RenderSystem::RenderSystem(const RenderSystemDesc& desc) : Base(desc.bas
 	m_camera(desc.camera)
 {
 	m_entityMask = m_ecs.makeSignature<Position, Renderable>();
+	m_reads = m_ecs.makeSignature<Position, Renderable>();
+	m_writes = m_ecs.makeSignature<>();
 	EngineLogInfo("Render system created.");
 }
 

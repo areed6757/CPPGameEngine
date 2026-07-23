@@ -4,6 +4,8 @@
 Engine::MovementTicks::MovementTicks(const MovementTicksDesc& desc) : Base(desc.base), m_ecs(desc.ecs), m_collisionSystem(desc.collisionSystem)
 {
 	m_entityMask = m_ecs.makeSignature<Position, Movement>(); // Defines entities that can be modified by this system
+	m_reads = m_ecs.makeSignature<Position, Movement>();
+	m_writes = m_ecs.makeSignature<Position, Movement>();
 }
 
 Engine::MovementTicks::~MovementTicks()

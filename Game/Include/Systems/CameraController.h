@@ -20,6 +20,13 @@ namespace Engine {
 
 		void Update(d64 dt) override;
 
+		std::bitset<64> getReadSignature() const noexcept { return m_reads; }
+		std::bitset<64> getWriteSignature() const noexcept { return m_reads; }
+
+	protected:
+		std::bitset<64> m_reads{};
+		std::bitset<64> m_writes{};
+
 	private:
 		Camera& m_camera;
 		InputHandler& m_inHandle;

@@ -19,6 +19,14 @@ namespace Engine {
     public:
         explicit QuadtreeDebugSystem(const QuadtreeDebugSystemDesc& desc);
         void Update(d64 dt) override;
+
+        std::bitset<64> getReadSignature() const noexcept { return m_reads; }
+        std::bitset<64> getWriteSignature() const noexcept { return m_reads; }
+
+    protected:
+        std::bitset<64> m_reads{};
+        std::bitset<64> m_writes{};
+
     private:
         QuadTree& m_quadtree;
         Camera& m_camera;

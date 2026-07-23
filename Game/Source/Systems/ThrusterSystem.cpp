@@ -11,6 +11,8 @@ namespace Engine {
 		m_ecs(desc.ecs)
 	{
 		m_entityMask = m_ecs.makeSignature<Position, Movement, Thruster>();
+		m_reads = m_ecs.makeSignature<Position, Thruster>();
+		m_writes = m_ecs.makeSignature<Movement>();
 	}
 
 	ThrusterSystem::~ThrusterSystem()

@@ -9,6 +9,9 @@ namespace Engine {
 	{
 		m_healthMask = m_ecs.makeSignature<Health>();
 		m_damageMask = m_ecs.makeSignature<DamagePayload>();
+
+		m_reads = m_ecs.makeSignature<Health, DamagePayload>();
+		m_writes = m_ecs.makeSignature<Health>();
 	}
 
 	DamageSystem::~DamageSystem()

@@ -6,6 +6,8 @@ namespace Engine {
 		m_ecs(desc.ecs)
 	{
 		m_entityMask = m_ecs.makeSignature<Lifetime>();
+		m_reads = m_ecs.makeSignature<Lifetime>();
+		m_writes = m_ecs.makeSignature<Lifetime>();
 	}
 
 	LifetimeSystem::~LifetimeSystem()

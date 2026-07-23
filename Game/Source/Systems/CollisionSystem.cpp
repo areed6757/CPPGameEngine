@@ -16,6 +16,9 @@ namespace Engine {
 		m_movementMask = m_ecs.makeSignature<Movement>();
 		m_nonPhysicsCollisionMask = m_ecs.makeSignature<DamagePayload>();
 
+		m_reads = m_ecs.makeSignature<Position, Physics, Movement, DamagePayload>();
+		m_writes = m_ecs.makeSignature<>();
+
 		EngineLogInfo("Collision system created.");
 	}
 
