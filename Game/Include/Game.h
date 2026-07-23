@@ -1,40 +1,34 @@
 #pragma once
 #include <Core/Base.h>
 #include <Core/Core.h>
-#include <Graphics/GLFWContext.h>
-#include <Graphics/Window.h>
-#include <Input/InputHandler.h>
-#include <Input/ActionMap.h>
-#include <Utilities/GameClock.h>
-#include <Utilities/Scheduler.h>
-#include <Systems/MovementTicks.h>
 #include <ECS/EntityRegister.h>
 #include <ECS/ECSWrapper.h>
-#include <Components/Position.h>
-#include <Physics/Vector3double.h>
-#include <Test/EntityStressTest.h>
-#include <Components/Movement.h>
-#include <Graphics/Renderer.h>
-#include <GameDescs.h>
-#include <GameECS.h>
+#include <Graphics/Camera.h>
+#include <Graphics/DebugLineRenderer.h>
+#include <Graphics/GLFWContext.h>
 #include <Graphics/Mesh.h>
+#include <Graphics/MeshID.h>
+#include <Graphics/MeshRegistry.h>
+#include <Graphics/Renderer.h>
 #include <Graphics/Texture.h>
 #include <Graphics/TextureRegistry.h>
 #include <Graphics/TextureID.h>
-#include <Graphics/MeshRegistry.h>
-#include <Graphics/MeshID.h>
-#include <Systems/RenderSystem.h>
-#include <Graphics/Camera.h>
+#include <Graphics/Window.h>
+#include <Physics/Vector3double.h>
+#include <Input/ActionMap.h>
+#include <Input/InputHandler.h>
 #include <Systems/CameraController.h>
-#include <Test/RenderGridTest.h>
-#include <Utilities/QuadTree.h>
-#include <Systems/QuadtreeDebugSystem.h>
 #include <Systems/CollisionSystem.h>
-#include <Graphics/DebugLineRenderer.h>
-#include <Systems/ThrusterSystem.h>
-#include <Systems/LifetimeSystem.h>
 #include <Systems/DamageSystem.h>
+#include <Systems/LifetimeSystem.h>
+#include <Systems/MovementTicks.h>
+#include <Systems/QuadtreeDebugSystem.h>
+#include <Systems/RenderSystem.h>
+#include <Systems/ThrusterSystem.h>
 #include <Test/CoreSystemsTest.h>
+#include <Utilities/GameClock.h>
+#include <Utilities/QuadTree.h>
+#include <Utilities/Scheduler.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -79,7 +73,6 @@ namespace Engine {
 		std::unique_ptr<RenderSystem> m_renderSystem{};
 
 		// Test Systems
-		//std::unique_ptr<RenderGridTest> m_gridTest{};
 		std::unique_ptr<CoreSystemsTest> m_coreSystemsTest{};
 
 

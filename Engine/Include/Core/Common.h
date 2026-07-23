@@ -82,7 +82,7 @@ namespace Engine {
 	struct CameraDesc {
 		BaseDesc base;
 		Vector2double position{ 0.0, 0.0 };
-		f32 zoom{ 100.0f };
+		f32 zoom{ 75.0f };
 	};
 
 	struct DebugLineRendererDesc {
