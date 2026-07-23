@@ -4,6 +4,7 @@
 #include <Core/Common.h>
 #include <Systems/CollisionSystem.h>
 #include <ECS/TickedSystem.h>
+#include <Utilities/Job.h>
 #include <GameDescs.h>
 #include <GameECS.h>
 #include <bitset>
@@ -23,6 +24,8 @@ namespace Engine {
 
 		void Update(d64 deltaTime) override;
 
+		std::vector<Job> buildJobs(d64 dt) override;
+
 		std::bitset<64> getReadSignature() const noexcept { return m_reads; }
 		std::bitset<64> getWriteSignature() const noexcept { return m_writes; }
 
@@ -32,9 +35,11 @@ namespace Engine {
 
 	private:
 		GameECSWrapper& m_ecs;
-		GameCommandBuffer m_cmdBuffer;
 		std::bitset<64> m_entityMask;
 		i32 m_tickCount = 0;
 		CollisionSystem& m_collisionSystem;
+
+		void drainImpulses();
+		void updateRange(i32 start, i32 end, d64 dt);
 	};
 }
