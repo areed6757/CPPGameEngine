@@ -101,6 +101,10 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_lifetimeSystem = std::make_unique<LifetimeSystem>(ltsDesc);
 	if (!m_lifetimeSystem) { EngineLogErrorAndThrow("LifetimeSystem failed to initialize.") };
 
+	DamageSystemDesc dsDesc = { {m_logger}, *m_ecsWrapper.get(), *m_collisionSystem.get() };
+	m_damageSystem = std::make_unique<DamageSystem>(dsDesc);
+	if (!m_damageSystem) { EngineLogErrorAndThrow("DamageSystem failed to initialize.") };
+
 	// Register TickedSystems
 	m_scheduler->registerFrameSystem(m_renderSystem.get()); // Frame based update not backend ticks, smooths lag and stops buffer queueing stutter
 	m_scheduler->registerFrameSystem(m_cameraController.get());
@@ -110,6 +114,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler->registerSystem(m_collisionSystem.get());
 	m_scheduler->registerSystem(m_thrusterSystem.get());
 	m_scheduler->registerSystem(m_lifetimeSystem.get());
+	m_scheduler->registerSystem(m_damageSystem.get());
 
 	EngineLogInfo("Game initialized successfully.");
 
@@ -128,10 +133,15 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_collisionTest->spawnHeadOnPairs(20, 5.0, 3.5, 0.5, 50000.0, 3.0, 0.7, 2.5);
 	*/
 
+	/*
 	ThrusterTestDesc thrusterTestDesc{ {m_logger}, *m_ecsWrapper.get() };
 	m_thrusterTest = std::make_unique<ThrusterTest>(thrusterTestDesc);
 	m_thrusterTest->spawnAccelRow(5, 1.5, 2.5, 10.0, 0.5, 0.0);
+	*/
 
+	DamageTestDesc dtDesc{ {m_logger}, *m_ecsWrapper.get() };
+	m_damageTest = std::make_unique<DamageTest>(dtDesc);
+	m_damageTest->spawnTestHit(5.0, 2.0f, 0.5f, 10.0f, 5.0f);
 }
 
 Engine::Game::~Game()

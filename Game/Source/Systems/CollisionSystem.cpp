@@ -100,8 +100,6 @@ namespace Engine {
 					computeImpulse(a, b, event.impulseA, event.impulseB);
 				}
 				m_events.push_back(event);
-				EngineLogInfo("Collision detected between entity: {} and entity: {}", a.id, b.id);
-				// TODO: compute the impulses on both ships based on their physics
 			}
 		}
 	}
@@ -141,7 +139,7 @@ namespace Engine {
 
 		Vector2float relVel = velB - velA;
 		f32 velAlongNormal = relVel.x * normal.x + relVel.y * normal.y;
-		if (velAlongNormal > 0.0) { return; } // returns if the entities are already separating
+		if (velAlongNormal > 0.0f) { return; } // returns if the entities are already separating
 
 		f32 elasticity = std::min(physA.elasticity, physB.elasticity);
 		f32 j = -(1.0f + elasticity) * velAlongNormal / (invMassA + invMassB);

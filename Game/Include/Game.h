@@ -35,6 +35,8 @@
 #include <Systems/ThrusterSystem.h>
 #include <Test/ThrusterTest.h>
 #include <Systems/LifetimeSystem.h>
+#include <Systems/DamageSystem.h>
+#include <Test/DamageTest.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -71,6 +73,7 @@ namespace Engine {
 		std::unique_ptr<MovementTicks> m_moveTicks{};
 		std::unique_ptr<ThrusterSystem> m_thrusterSystem{};
 		std::unique_ptr<LifetimeSystem> m_lifetimeSystem{};
+		std::unique_ptr<DamageSystem> m_damageSystem{};
 
 		// Graphics
 		std::unique_ptr<TextureRegistry> m_textureRegistry{};
@@ -81,6 +84,8 @@ namespace Engine {
 		std::unique_ptr<RenderGridTest> m_gridTest{};
 		std::unique_ptr<CollisionTest> m_collisionTest{};
 		std::unique_ptr<ThrusterTest> m_thrusterTest{};
+		std::unique_ptr<DamageTest> m_damageTest{};
+
 
 		InputHandler* m_inputHandler{};
 		ActionMap m_actionMap{};
