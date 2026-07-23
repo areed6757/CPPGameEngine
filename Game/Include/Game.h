@@ -31,12 +31,10 @@
 #include <Systems/QuadtreeDebugSystem.h>
 #include <Systems/CollisionSystem.h>
 #include <Graphics/DebugLineRenderer.h>
-#include <Test/CollisionTest.h>
 #include <Systems/ThrusterSystem.h>
-#include <Test/ThrusterTest.h>
 #include <Systems/LifetimeSystem.h>
 #include <Systems/DamageSystem.h>
-#include <Test/DamageTest.h>
+#include <Test/CoreSystemsTest.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -81,10 +79,8 @@ namespace Engine {
 		std::unique_ptr<RenderSystem> m_renderSystem{};
 
 		// Test Systems
-		std::unique_ptr<RenderGridTest> m_gridTest{};
-		std::unique_ptr<CollisionTest> m_collisionTest{};
-		std::unique_ptr<ThrusterTest> m_thrusterTest{};
-		std::unique_ptr<DamageTest> m_damageTest{};
+		//std::unique_ptr<RenderGridTest> m_gridTest{};
+		std::unique_ptr<CoreSystemsTest> m_coreSystemsTest{};
 
 
 		InputHandler* m_inputHandler{};
