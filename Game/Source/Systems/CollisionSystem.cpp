@@ -48,19 +48,6 @@ namespace Engine {
 		}
 	}
 
-	bool CollisionSystem::narrowPhaseSimple(EntityID a, EntityID b) const {
-		auto& posA = m_ecs.getComponent<Position>(a);
-		auto& posB = m_ecs.getComponent<Position>(b);
-		auto& physA = m_ecs.getComponent<Physics>(a);
-		auto& physB = m_ecs.getComponent<Physics>(b);
-
-		Vector2double delta = posA.transform - posB.transform;
-		d64 distSq = delta.x * delta.x + delta.y * delta.y;
-		d64 radiusSum = static_cast<d64>(physA.radius) + static_cast<d64>(physB.radius);
-
-		return distSq <= (radiusSum * radiusSum);
-	}
-
 	// Narrow phase sweep that uses projected position comparisons to prevent tunneling from high-velocity
 	// + low-radius projectile hits
 	bool CollisionSystem::narrowPhaseSwept(EntityID a, EntityID b, d64 dt) const
