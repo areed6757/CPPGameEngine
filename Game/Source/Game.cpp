@@ -96,6 +96,9 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler->registerSystem(m_lifetimeSystem.get());
 	m_scheduler->registerSystem(m_damageSystem.get());
 
+	m_scheduler->registerFlushCallback([this]() { m_lifetimeSystem->getCommandBuffer().flush(); });
+	m_scheduler->registerFlushCallback([this]() { m_damageSystem->getCommandBuffer().flush(); });
+
 	EngineLogInfo("Game initialized successfully.");
 
 	CoreSystemsTestDesc cstDesc{ {m_logger}, *m_ecsWrapper.get() };

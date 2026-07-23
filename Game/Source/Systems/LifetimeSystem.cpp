@@ -26,8 +26,7 @@ namespace Engine {
 			lifetime.remaining -= static_cast<f32>(dt);
 
 			if (lifetime.remaining <= 0.0f) {
-				m_ecs.destroyEntity(id);
-				i--; // Swap and pop from destroy will reindex the final entry of the dense array to this index
+				m_cmdBuffer.destroyEntity(id);
 			}
 		}
 	}

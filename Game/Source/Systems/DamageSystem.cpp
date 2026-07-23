@@ -51,10 +51,10 @@ namespace Engine {
 			damageDealer.id, payload.amount, target.id, health.current, health.max);
 
 		if (health.current <= 0.0f) {
-			m_ecs.destroyEntity(target);
+			m_cmdBuffer.destroyEntity(target);
 			EngineLogInfo("Entity {} destroyed.", target.id);
 		}
 
-		m_ecs.destroyEntity(damageDealer); // Currently assumes all damaging entities are temporary projectiles
+		m_cmdBuffer.destroyEntity(damageDealer); // Currently assumes all damaging entities are temporary projectiles
 	}
 }

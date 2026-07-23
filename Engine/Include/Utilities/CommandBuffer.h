@@ -4,6 +4,11 @@
 #include <ECS/ECSWrapper.h>
 #include <ECS/EntityRegister.h>
 
+
+/// <summary>
+/// Extends ECS functions to create and destroy entities and components so that they may be queued for the end of a tick,
+/// preventing concurrent threads from attempting to read/write improperly from an altered dense component/entity index
+/// </summary>
 namespace Engine {
 	template <typename TPools>
 	class CommandBuffer : public Base {
