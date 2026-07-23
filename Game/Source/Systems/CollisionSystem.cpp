@@ -61,11 +61,54 @@ namespace Engine {
 		return distSq <= (radiusSum * radiusSum);
 	}
 
+	// Narrow phase sweep that uses projected position comparisons to prevent tunneling from high-velocity
+	// + low-radius projectile hits
+	bool CollisionSystem::narrowPhaseSwept(EntityID a, EntityID b, d64 dt) const
+	{
+		auto& posA = m_ecs.getComponent<Position>(a);
+		auto& posB = m_ecs.getComponent<Position>(b);
+		auto& physA = m_ecs.getComponent<Physics>(a);
+		auto& physB = m_ecs.getComponent<Physics>(b);
 
-	bool CollisionSystem::narrowPhaseShip(EntityID a, EntityID b) const {
-		// Currently defaults to simple circle check until ship baking process is complete
+		Vector2float velA{};
+		Vector2float velB{};
+		if ((m_ecs.getSignature(a) & m_movementMask) == m_movementMask) { velA = m_ecs.getComponent<Movement>(a).linearVelocity; }
+		if ((m_ecs.getSignature(b) & m_movementMask) == m_movementMask) { velB = m_ecs.getComponent<Movement>(b).linearVelocity; }
+
+		// Vector from A to B at t=0, and how that vector changes per unit time
+		Vector2double delta0 = posB.transform - posA.transform;
+		Vector2double relVel{
+			static_cast<d64>(velB.x - velA.x),
+			static_cast<d64>(velB.y - velA.y)
+		};
+
+		d64 radiusSum = static_cast<d64>(physA.radius) + static_cast<d64>(physB.radius);
+		d64 relVelSq = relVel.x * relVel.x + relVel.y * relVel.y;
+
+		// Neither entity closing on the other this tick (stationary relative to
+		// each other) closest approach is just the current distance, t=0
+		if (relVelSq < 1e-12) {
+			d64 distSq = delta0.x * delta0.x + delta0.y * delta0.y;
+			return distSq <= (radiusSum * radiusSum);
+		}
+
+		// Time of closest approach, unclamped, then clamped into this tick's
+		// actual window t=0 is already covered as the lower clamp bound, so
+		// this subsumes the static check rather than needing it run separately
+		d64 t = -(delta0.x * relVel.x + delta0.y * relVel.y) / relVelSq;
+		t = std::clamp(t, 0.0, dt);
+
+		Vector2double closest{ delta0.x + relVel.x * t, delta0.y + relVel.y * t };
+		d64 distSq = closest.x * closest.x + closest.y * closest.y;
+
+		return distSq <= (radiusSum * radiusSum);
+	}
+
+
+	bool CollisionSystem::narrowPhaseShip(EntityID a, EntityID b, d64 dt) const {
+		// Currently defaults to simple swept check until ship baking process is complete
 		// baked ships will have grid casting based on the vector they are flattened to
-		return narrowPhaseSimple(a, b);
+		return narrowPhaseSwept(a, b, dt);
 	}
 
 	void CollisionSystem::Update(d64 dt)
@@ -92,7 +135,7 @@ namespace Engine {
 			// TODO: dispatch narrowPhaseSimple vs narrowPhaseShip once
 			// Currently all collisions are simple non-ship
 			// can differentiate the two by the presense of segment data on baked ships
-			if (narrowPhaseSimple(a, b)) {
+			if (narrowPhaseSwept(a, b, dt)) {
 				CollisionEvent event{ a, b };
 				if (!((m_ecs.getSignature(a) & m_nonPhysicsCollisionMask) == m_nonPhysicsCollisionMask) &&
 					!((m_ecs.getSignature(b) & m_nonPhysicsCollisionMask) == m_nonPhysicsCollisionMask)) 

@@ -92,7 +92,7 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	m_scheduler->registerSystem(m_thrusterSystem.get());
 	m_scheduler->registerSystem(m_collisionSystem.get());
-	m_scheduler->registerSystem(m_moveTicks.get());
+	m_scheduler->registerSystem(m_moveTicks.get()); // Consumer of thruster, collision systems, register after
 	m_scheduler->registerSystem(m_lifetimeSystem.get());
 	m_scheduler->registerSystem(m_damageSystem.get());
 

@@ -50,12 +50,12 @@ namespace Engine {
 		d64 m_maxRadiusSeenThisTick;
 
 		void broadPhase(std::vector<CollisionCandidate>& outCandidates);
-		[[nodiscard]] bool narrowPhaseSimple(EntityID a, EntityID b) const;
 
 		// TODO: grid-cast footprint overlap + center of mass raycast for multi-part ships,
 		// these should be integrated fields from the ship baking process, will test with simple version
-
-		[[nodiscard]] bool narrowPhaseShip(EntityID a, EntityID b) const;
+		
+		[[nodiscard]] bool narrowPhaseSwept(EntityID a, EntityID b, d64 dt) const;
+		[[nodiscard]] bool narrowPhaseShip(EntityID a, EntityID b, d64 dt) const;
 		[[nodiscard]] void computeImpulse(EntityID a, EntityID b, Vector2float& outImpulseA, Vector2float& outImpulseB) const;
 	};
 }
