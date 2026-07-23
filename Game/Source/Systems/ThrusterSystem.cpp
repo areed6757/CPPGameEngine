@@ -8,7 +8,8 @@
 
 namespace Engine {
 	ThrusterSystem::ThrusterSystem(const ThrusterSystemDesc& desc) : Base(desc.base),
-		m_ecs(desc.ecs)
+		m_ecs(desc.ecs),
+		m_cmdBuffer({desc.base, desc.ecs})
 	{
 		m_entityMask = m_ecs.makeSignature<Position, Movement, Thruster>();
 		m_reads = m_ecs.makeSignature<Position, Thruster>();

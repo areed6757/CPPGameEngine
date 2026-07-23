@@ -9,6 +9,7 @@
 namespace Engine {
 	CollisionSystem::CollisionSystem(const CollisionSystemDesc& desc) : Base(desc.base),
 		m_ecs(desc.ecs),
+		m_cmdBuffer({desc.base, desc.ecs}),
 		m_quadtree(desc.quadtree),
 		m_maxRadiusSeenThisTick(0.0)
 	{

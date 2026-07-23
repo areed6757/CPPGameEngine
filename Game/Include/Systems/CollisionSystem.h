@@ -37,7 +37,7 @@ namespace Engine {
 		[[nodiscard]] const std::vector<CollisionEvent>& getEvents() const noexcept;
 
 		std::bitset<64> getReadSignature() const noexcept { return m_reads; }
-		std::bitset<64> getWriteSignature() const noexcept { return m_reads; }
+		std::bitset<64> getWriteSignature() const noexcept { return m_writes; }
 
 	protected:
 		std::bitset<64> m_reads{};
@@ -45,6 +45,7 @@ namespace Engine {
 
 	private:
 		GameECSWrapper& m_ecs;
+		GameCommandBuffer m_cmdBuffer;
 		QuadTree& m_quadtree;
 		std::bitset<64> m_entityMask;
 		std::bitset<64> m_movementMask;

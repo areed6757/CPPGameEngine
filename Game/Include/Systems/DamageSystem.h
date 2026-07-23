@@ -19,7 +19,7 @@ namespace Engine {
 		void Update(d64 dt) override;
 
 		std::bitset<64> getReadSignature() const noexcept { return m_reads; }
-		std::bitset<64> getWriteSignature() const noexcept { return m_reads; }
+		std::bitset<64> getWriteSignature() const noexcept { return m_writes; }
 
 	protected:
 		std::bitset<64> m_reads{};
@@ -29,6 +29,7 @@ namespace Engine {
 		void applyHit(EntityID damageDealer, EntityID target);
 
 		GameECSWrapper& m_ecs;
+		GameCommandBuffer m_cmdBuffer;
 		CollisionSystem& m_collisionSystem;
 
 		std::bitset<64> m_healthMask{};

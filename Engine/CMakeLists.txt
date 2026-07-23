@@ -3,7 +3,7 @@ file(GLOB_RECURSE ENGINE_HEADERS CONFIGURE_DEPENDS Include/*.h Source/*.h)
 
 message(STATUS "ENGINE_SOURCES: ${ENGINE_SOURCES}")
 
-add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS}  "Include/Graphics/DebugLineRenderer.h" "Source/Graphics/DebugLineRenderer.cpp")
+add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS}  "Include/Graphics/DebugLineRenderer.h" "Source/Graphics/DebugLineRenderer.cpp" "Include/Utilities/CommandBuffer.h")
 
 target_include_directories(Engine
     PUBLIC Include

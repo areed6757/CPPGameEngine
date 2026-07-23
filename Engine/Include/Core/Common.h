@@ -102,6 +102,12 @@ namespace Engine {
 		d64 tickRate{ TICK_RATE };
 	};
 
+	template <typename TPools>
+	struct CommandBufferDesc {
+		BaseDesc base;
+		ECSWrapper<TPools>& ecs;
+	};
+
 
 	// ECS
 

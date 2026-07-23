@@ -26,6 +26,8 @@ namespace Engine {
 	class CameraController;
 	class QuadTree;
 
+	template <typename TPools> class ECSWrapper;
+
 	struct ActionMap;
 	struct KeyStates;
 	struct Vector3double;

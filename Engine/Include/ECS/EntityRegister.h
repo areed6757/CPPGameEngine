@@ -29,5 +29,7 @@ namespace Engine {
 		i32 m_maxEntities{};
 		std::vector<i32> m_generations;
 		std::vector<i32> m_freeIndices;
+
+		std::mutex m_mutex;
 	};
 }

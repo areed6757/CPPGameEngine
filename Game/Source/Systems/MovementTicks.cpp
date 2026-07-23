@@ -1,7 +1,10 @@
 #include <Systems/MovementTicks.h>
 #include <bitset>
 
-Engine::MovementTicks::MovementTicks(const MovementTicksDesc& desc) : Base(desc.base), m_ecs(desc.ecs), m_collisionSystem(desc.collisionSystem)
+Engine::MovementTicks::MovementTicks(const MovementTicksDesc& desc) : Base(desc.base),
+	m_ecs(desc.ecs),
+	m_cmdBuffer({desc.base, desc.ecs}),
+	m_collisionSystem(desc.collisionSystem)
 {
 	m_entityMask = m_ecs.makeSignature<Position, Movement>(); // Defines entities that can be modified by this system
 	m_reads = m_ecs.makeSignature<Position, Movement>();

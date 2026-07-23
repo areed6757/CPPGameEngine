@@ -5,6 +5,7 @@
 #include <ECS/TickedSystem.h>
 #include <Physics/Vector2double.h>
 #include <Physics/Vector2float.h>
+#include <bitset>
 
 namespace Engine {
 	struct CameraControllerDesc {
@@ -21,7 +22,7 @@ namespace Engine {
 		void Update(d64 dt) override;
 
 		std::bitset<64> getReadSignature() const noexcept { return m_reads; }
-		std::bitset<64> getWriteSignature() const noexcept { return m_reads; }
+		std::bitset<64> getWriteSignature() const noexcept { return m_writes; }
 
 	protected:
 		std::bitset<64> m_reads{};

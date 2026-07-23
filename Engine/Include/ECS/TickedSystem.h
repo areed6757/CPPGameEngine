@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/Common.h>
+#include <bitset>
 
 // Base class for all systems that are updated per-tick.
 // DeltaTime is used to determine actual changes made per tick-call to Update()
@@ -10,7 +11,7 @@ namespace Engine {
 		virtual ~TickedSystem() = default;
 
 		std::bitset<64> getReadSignature() const noexcept { return m_reads; }
-		std::bitset<64> getReadSignature() const noexcept { return m_writes; }
+		std::bitset<64> getWriteSignature() const noexcept { return m_writes; }
 
 	protected:
 		std::bitset<64> m_reads{};

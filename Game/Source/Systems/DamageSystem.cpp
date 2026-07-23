@@ -5,6 +5,7 @@
 namespace Engine {
 	DamageSystem::DamageSystem(const DamageSystemDesc& desc) : Base(desc.base),
 		m_ecs(desc.ecs),
+		m_cmdBuffer({desc.base, desc.ecs}),
 		m_collisionSystem(desc.collisionSystem)
 	{
 		m_healthMask = m_ecs.makeSignature<Health>();

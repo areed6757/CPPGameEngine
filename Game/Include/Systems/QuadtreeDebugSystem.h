@@ -5,6 +5,7 @@
 #include <Utilities/QuadTree.h>
 #include <Graphics/Camera.h>
 #include <Graphics/Window.h>
+#include <bitset>
 
 namespace Engine {
     struct QuadtreeDebugSystemDesc {
@@ -21,7 +22,7 @@ namespace Engine {
         void Update(d64 dt) override;
 
         std::bitset<64> getReadSignature() const noexcept { return m_reads; }
-        std::bitset<64> getWriteSignature() const noexcept { return m_reads; }
+        std::bitset<64> getWriteSignature() const noexcept { return m_writes; }
 
     protected:
         std::bitset<64> m_reads{};
