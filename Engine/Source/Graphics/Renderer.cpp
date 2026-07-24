@@ -8,7 +8,6 @@ Engine::Renderer::Renderer(const RendererDesc& desc) : Base(desc.base),
 {
 
     m_projectionUni = glGetUniformLocation(m_shader.ID, "projection");
-    m_modelUni = glGetUniformLocation(m_shader.ID, "model");
     m_tex0uni = glGetUniformLocation(m_shader.ID, "tex0");
     m_useTextureUni = glGetUniformLocation(m_shader.ID, "useTexture");
 
@@ -28,9 +27,8 @@ void Engine::Renderer::beginFrame()
     glUniformMatrix4fv(m_projectionUni, 1, GL_FALSE, &projection[0][0]);
 }
 
-void Engine::Renderer::draw(const Mesh& mesh, const Texture* texture, const glm::mat4& model)
+void Engine::Renderer::drawInstanced(const Mesh& mesh, const Texture* texture, GLsizei instanceCount)
 {
-    glUniformMatrix4fv(m_modelUni, 1, GL_FALSE, &model[0][0]);
     glUniform1i(m_useTextureUni, texture != nullptr);
     
     if (texture) {
@@ -38,9 +36,7 @@ void Engine::Renderer::draw(const Mesh& mesh, const Texture* texture, const glm:
         texture->Bind();
     }
 
-    mesh.Bind();
-
-    glDrawElements(GL_TRIANGLES, mesh.indexCount(), GL_UNSIGNED_INT, 0);
+    mesh.drawInstanced(instanceCount);
 }
 
 void Engine::Renderer::endFrame()

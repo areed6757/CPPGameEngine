@@ -6,6 +6,7 @@
 #include <Graphics/MeshRegistry.h>
 #include <Graphics/TextureRegistry.h>
 #include <Graphics/Camera.h>
+#include <map>
 
 namespace Engine {
 	struct RenderSystemDesc {
@@ -37,5 +38,6 @@ namespace Engine {
 		Renderer& m_renderer;
 		Camera& m_camera;
 		std::bitset<64> m_entityMask;
+		std::map<std::pair<MeshID, std::optional<TextureID>>, std::vector<glm::mat4>> m_batches;
 	};
 }

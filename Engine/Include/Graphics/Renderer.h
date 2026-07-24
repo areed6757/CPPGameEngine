@@ -16,7 +16,7 @@ namespace Engine {
 		~Renderer();
 		
 		void beginFrame();
-		void draw(const Mesh& mesh, const Texture* texture, const glm::mat4& model);
+		void drawInstanced(const Mesh& mesh, const Texture* texture, GLsizei instanceCount);
 		void endFrame();
 
 	private:
@@ -24,7 +24,6 @@ namespace Engine {
 		Shader m_shader;
 		Camera& m_camera;
 
-		GLuint m_modelUni;
 		GLuint m_tex0uni;
 		GLuint m_useTextureUni{};
 		GLuint m_projectionUni{};

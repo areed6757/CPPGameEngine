@@ -9,7 +9,7 @@ namespace Engine {
 		VAO();
 		~VAO();
 
-		void LinkAttrib(const VBO& VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
+		void LinkAttrib(const VBO& VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset, GLuint divisor = 0);
 		void Bind() const;
 		void Unbind() const;
 	};

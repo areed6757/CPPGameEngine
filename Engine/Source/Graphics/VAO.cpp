@@ -9,11 +9,12 @@ Engine::VAO::~VAO() {
 	glDeleteVertexArrays(1, &ID);
 }
 
-void Engine::VAO::LinkAttrib(const VBO& vbo, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset)
+void Engine::VAO::LinkAttrib(const VBO& vbo, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset, GLuint divisor)
 {
 	vbo.Bind();
 	glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset);
 	glEnableVertexAttribArray(layout);
+	if (divisor > 0) { glVertexAttribDivisor(layout, divisor); }
 	vbo.Unbind();
 }
 

@@ -21,6 +21,8 @@ Engine::RenderSystem::~RenderSystem()
 
 void Engine::RenderSystem::Update(d64 dt)
 {
+	for (auto& [key, matrices] : m_batches) { matrices.clear(); }
+
 	i32 c = m_ecs.sizeComponentPool<Renderable>();
 	for (i32 i = 0; i < c; i++) {
 		i32 entityIndex = m_ecs.entityAtDenseIndex<Renderable>(i);
@@ -28,7 +30,7 @@ void Engine::RenderSystem::Update(d64 dt)
 		if ((m_ecs.getSignature(id) & m_entityMask) != m_entityMask) continue;
 
 		auto& renderable = m_ecs.getComponentAtDenseIndex<Renderable>(i);
-		auto& position = m_ecs.getComponent<Position>(id); // Needed after implmenting model matrix + camera
+		auto& position = m_ecs.getComponent<Position>(id);
 
 		Vector2double relative = m_camera.toCameraRelative(position.transform);
 		glm::vec3 pos(static_cast<f32>(relative.x), static_cast<f32>(relative.y), 0.0f);
@@ -37,10 +39,16 @@ void Engine::RenderSystem::Update(d64 dt)
 		model = glm::rotate(model, position.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, glm::vec3(renderable.scale, renderable.scale, 1.0f));
 
-		const Mesh& mesh = m_meshReg.get(renderable.mesh);
-		const Texture* texturePtr = renderable.texture.has_value() ? &m_textureReg.get(*renderable.texture) : nullptr;
+		m_batches[{ renderable.mesh, renderable.texture }].push_back(model);
+	}
 
-		m_renderer.draw(mesh, texturePtr, model);
+	for (auto& [key, matrices] : m_batches) {
+		if (matrices.empty()) { continue; }
 
+		const Mesh& mesh = m_meshReg.get(key.first);
+		const Texture* texturePtr = key.second.has_value() ? &m_textureReg.get(*key.second) : nullptr;
+	
+		mesh.uploadInstanceData(matrices.data(), matrices.size() * sizeof(glm::mat4), static_cast<GLsizei>(matrices.size()));
+		m_renderer.drawInstanced(mesh, texturePtr, static_cast<GLsizei>(matrices.size()));
 	}
 }

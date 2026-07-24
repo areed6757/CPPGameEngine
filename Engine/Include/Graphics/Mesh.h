@@ -27,10 +27,15 @@ namespace Engine {
 		void Bind() const;
 		[[nodiscard]] GLsizei indexCount() const;
 
+		void uploadInstanceData(const void* data, GLsizeiptr dataSize, GLsizei instanceCount) const;
+		void drawInstanced(GLsizei instanceCount) const;
+
 	private:
 		VAO m_VAO;
 		VBO m_VBO;
 		EBO m_EBO;
 		GLsizei m_indexCount{};
+		VBO m_instanceVBO;
+		mutable GLsizei m_maxInstancesUploaded{ 0 };
 	};
 }

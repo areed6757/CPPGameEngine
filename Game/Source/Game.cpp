@@ -110,13 +110,13 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	EngineLogInfo("Game initialized successfully.");
 
-	// CoreSystemsTestDesc cstDesc{ {m_logger}, *m_ecsWrapper.get() };
-	// m_coreSystemsTest = std::make_unique<CoreSystemsTest>(cstDesc);
-	// m_coreSystemsTest->spawnAll();
+	CoreSystemsTestDesc cstDesc{ {m_logger}, *m_ecsWrapper.get() };
+	m_coreSystemsTest = std::make_unique<CoreSystemsTest>(cstDesc);
+	m_coreSystemsTest->spawnAll();
 
-	ThreadingStressTestDesc tstDesc{ {m_logger}, *m_ecsWrapper.get() };
-	ThreadingStressTest threadingStressTest(tstDesc);
-	threadingStressTest.spawnGrid(1'000'000, GRID_CELL_SIZE_KM * 10.0);
+	// ThreadingStressTestDesc tstDesc{ {m_logger}, *m_ecsWrapper.get() };
+	// ThreadingStressTest threadingStressTest(tstDesc);
+	// threadingStressTest.spawnGrid(1'000'000, GRID_CELL_SIZE_KM * 10.0);
 
 }
 
