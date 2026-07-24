@@ -116,7 +116,7 @@ Engine::Game::Game(const GameDesc& desc) :
 
 	ThreadingStressTestDesc tstDesc{ {m_logger}, *m_ecsWrapper.get() };
 	ThreadingStressTest threadingStressTest(tstDesc);
-	threadingStressTest.spawnGrid(900000, GRID_CELL_SIZE_KM * 10.0);
+	threadingStressTest.spawnGrid(1'000'000, GRID_CELL_SIZE_KM * 10.0);
 
 }
 

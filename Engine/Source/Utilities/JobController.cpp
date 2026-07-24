@@ -82,6 +82,8 @@ namespace Engine {
 
 	bool JobController::conflicts(const Job& a, const Job& b) const
 	{
+		if (a.owner == b.owner) { return false; }
+
 		return (a.writes & (b.reads | b.writes)).any() ||
 			(b.writes & (a.reads | a.writes)).any();
 	}
