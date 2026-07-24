@@ -43,12 +43,18 @@ Engine::Game::Game(const GameDesc& desc) :
 	MeshRegistryDesc meshRegDesc{ {m_logger} };
 	m_meshRegistry = std::make_unique<MeshRegistry>(meshRegDesc);
 
-	// Time + Space
+	// Utilities
 
 	GameClockDesc clockDesc = { {m_logger} };
 	m_gameClock = std::make_unique<GameClock>(clockDesc);
 
-	SchedulerDesc schedulerDesc = { {m_logger}, *m_gameClock };
+	ThreadPoolDesc tpDesc{ {m_logger} };
+	m_threadPool = std::make_unique<ThreadPool>(tpDesc);
+
+	JobControllerDesc jcDesc{ {m_logger}, *m_threadPool.get() };
+	m_jobController = std::make_unique<JobController>(jcDesc);
+
+	SchedulerDesc schedulerDesc = { {m_logger}, *m_gameClock, *m_jobController.get() };
 	m_scheduler = std::make_unique<Scheduler>(schedulerDesc);
 
 	QuadTreeDesc qtDesc = { {m_logger} };
@@ -73,7 +79,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	CollisionSystemDesc collisionSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_quadtree.get() };
 	m_collisionSystem = std::make_unique<CollisionSystem>(collisionSysDesc);
 
-	MovementTicksDesc mvTicksDesc = { {m_logger}, *m_ecsWrapper.get(), *m_collisionSystem.get()};
+	MovementTicksDesc mvTicksDesc = { {m_logger}, *m_ecsWrapper.get(), *m_collisionSystem.get(), *m_threadPool.get()};
 	m_moveTicks = std::make_unique<MovementTicks>(mvTicksDesc);
 
 	ThrusterSystemDesc thrSysDesc = { {m_logger}, *m_ecsWrapper.get() };
@@ -99,11 +105,19 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler->registerFlushCallback([this]() { m_lifetimeSystem->getCommandBuffer().flush(); });
 	m_scheduler->registerFlushCallback([this]() { m_damageSystem->getCommandBuffer().flush(); });
 
+	m_jobController->addOrderingConstraint(m_collisionSystem.get(), m_moveTicks.get());
+	m_jobController->addOrderingConstraint(m_collisionSystem.get(), m_damageSystem.get());
+
 	EngineLogInfo("Game initialized successfully.");
 
-	CoreSystemsTestDesc cstDesc{ {m_logger}, *m_ecsWrapper.get() };
-	m_coreSystemsTest = std::make_unique<CoreSystemsTest>(cstDesc);
-	m_coreSystemsTest->spawnAll();
+	// CoreSystemsTestDesc cstDesc{ {m_logger}, *m_ecsWrapper.get() };
+	// m_coreSystemsTest = std::make_unique<CoreSystemsTest>(cstDesc);
+	// m_coreSystemsTest->spawnAll();
+
+	ThreadingStressTestDesc tstDesc{ {m_logger}, *m_ecsWrapper.get() };
+	ThreadingStressTest threadingStressTest(tstDesc);
+	threadingStressTest.spawnGrid(900000, GRID_CELL_SIZE_KM * 10.0);
+
 }
 
 Engine::Game::~Game()

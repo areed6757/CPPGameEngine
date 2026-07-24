@@ -5,6 +5,7 @@
 #include <Systems/CollisionSystem.h>
 #include <ECS/TickedSystem.h>
 #include <Utilities/Job.h>
+#include <Utilities/ThreadPool.h>
 #include <GameDescs.h>
 #include <GameECS.h>
 #include <bitset>
@@ -15,6 +16,7 @@ namespace Engine {
 		BaseDesc base;
 		GameECSWrapper& ecs;
 		CollisionSystem& collisionSystem;
+		ThreadPool& threadPool;
 	};
 
 	class MovementTicks final : public Base, public TickedSystem {
@@ -41,5 +43,7 @@ namespace Engine {
 
 		void drainImpulses();
 		void updateRange(i32 start, i32 end, d64 dt);
+
+		i32 m_chunkCount;
 	};
 }

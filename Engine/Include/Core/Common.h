@@ -4,6 +4,7 @@
 #include <Core/Logger.h>
 #include <Physics/Vector2double.h>
 #include <vector>
+#include <thread>
 
 // Descriptions for dependency injection, constructors should only take these structs as args
 namespace Engine {
@@ -99,6 +100,7 @@ namespace Engine {
 	struct SchedulerDesc {
 		BaseDesc base;
 		GameClock& gameClock;
+		JobController& jobController;
 		d64 tickRate{ TICK_RATE };
 	};
 
@@ -108,6 +110,15 @@ namespace Engine {
 		ECSWrapper<TPools>& ecs;
 	};
 
+	struct ThreadPoolDesc {
+		BaseDesc base;
+		i32 threadCount{ static_cast<i32>(std::thread::hardware_concurrency()) };
+	};
+
+	struct JobControllerDesc {
+		BaseDesc base;
+		ThreadPool& threadPool;
+	};
 
 	// ECS
 

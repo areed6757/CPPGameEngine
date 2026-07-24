@@ -8,7 +8,8 @@ namespace Engine {
 		m_fixedTimestep(desc.tickRate),
 		m_systems{},
 		m_accumulator{ 0.0 },
-		m_paused{ false }
+		m_paused{ false },
+		m_jobController(desc.jobController)
 	{
 		EngineLogInfo("Scheduler created.");
 	}
@@ -37,14 +38,10 @@ namespace Engine {
 		if (m_paused) { m_accumulator = 0; };
 
 		while (m_accumulator >= m_fixedTimestep) {
-			for (auto* sys : m_systems) {
-				sys->Update(m_fixedTimestep);
-			}
+			m_jobController.runTick(m_systems, m_fixedTimestep);
 			for (auto& cb : m_flushCallbacks) { cb(); }
 			m_accumulator -= m_fixedTimestep;
-			// EngineLogInfo("______________Tick______________"); // Uncomment to view tick-delineated logging
 		}
-
 		for (auto* sys : m_frameSystems) {
 			sys->Update(dt);
 		}

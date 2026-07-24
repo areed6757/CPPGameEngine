@@ -25,6 +25,8 @@ namespace Engine {
 	class Camera;
 	class CameraController;
 	class QuadTree;
+	class ThreadPool;
+	class JobController;
 
 	template <typename TPools> class ECSWrapper;
 
@@ -34,7 +36,7 @@ namespace Engine {
 	struct Vector3float;
 	struct EntityID;
 	struct ComponentPools;
-
+	struct Job;
 
 	// Game declarations
 	class MeshRegistry;

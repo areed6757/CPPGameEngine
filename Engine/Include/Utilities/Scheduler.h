@@ -2,6 +2,7 @@
 #include <Core/Common.h>
 #include <Utilities/GameClock.h>
 #include <Utilities/CommandBuffer.h>
+#include <Utilities/JobController.h>
 #include <functional>
 #include <vector>
 
@@ -31,6 +32,7 @@ namespace Engine {
 		d64 m_accumulator;
 		bool m_paused{ false };
 		std::vector<std::function<void()>> m_flushCallbacks{};
+		JobController& m_jobController;
 
 	};
 }

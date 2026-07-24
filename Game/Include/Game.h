@@ -29,6 +29,9 @@
 #include <Utilities/GameClock.h>
 #include <Utilities/QuadTree.h>
 #include <Utilities/Scheduler.h>
+#include <Utilities/ThreadPool.h>
+#include <Utilities/JobController.h>
+#include <Test/ThreadingStressTest.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -50,6 +53,8 @@ namespace Engine {
 		std::unique_ptr<Camera> m_camera{};
 		std::unique_ptr<CameraController> m_cameraController{};
 		std::unique_ptr<Renderer> m_renderer{};
+		std::unique_ptr<ThreadPool> m_threadPool{};
+		std::unique_ptr<JobController> m_jobController{};
 
 		// ECS
 		std::unique_ptr<EntityRegister> m_entityRegister{};
@@ -74,6 +79,7 @@ namespace Engine {
 
 		// Test Systems
 		std::unique_ptr<CoreSystemsTest> m_coreSystemsTest{};
+		std::unique_ptr<ThreadingStressTest> m_threadingStressTest{};
 
 
 		InputHandler* m_inputHandler{};
