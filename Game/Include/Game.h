@@ -32,6 +32,7 @@
 #include <Utilities/ThreadPool.h>
 #include <Utilities/JobController.h>
 #include <Test/ThreadingStressTest.h>
+#include <Systems/ParticleSystem.h>
 
 namespace Engine {
 	class Game : public Base {
@@ -71,6 +72,7 @@ namespace Engine {
 		std::unique_ptr<ThrusterSystem> m_thrusterSystem{};
 		std::unique_ptr<LifetimeSystem> m_lifetimeSystem{};
 		std::unique_ptr<DamageSystem> m_damageSystem{};
+		std::unique_ptr<ParticleSystem> m_particleSystem{};
 
 		// Graphics
 		std::unique_ptr<TextureRegistry> m_textureRegistry{};

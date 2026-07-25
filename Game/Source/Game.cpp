@@ -91,6 +91,9 @@ Engine::Game::Game(const GameDesc& desc) :
 	DamageSystemDesc dsDesc = { {m_logger}, *m_ecsWrapper.get(), *m_collisionSystem.get() };
 	m_damageSystem = std::make_unique<DamageSystem>(dsDesc);
 
+	ParticleSystemDesc psDesc = { {m_logger}, *m_ecsWrapper.get() };
+	m_particleSystem = std::make_unique<ParticleSystem>(psDesc);
+
 	// Register TickedSystems
 	m_scheduler->registerFrameSystem(m_renderSystem.get()); // Frame based update not backend ticks, smooths lag and stops buffer queueing stutter
 	m_scheduler->registerFrameSystem(m_cameraController.get());
@@ -101,6 +104,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler->registerSystem(m_moveTicks.get()); // Consumer of thruster, collision systems, register after
 	m_scheduler->registerSystem(m_lifetimeSystem.get());
 	m_scheduler->registerSystem(m_damageSystem.get());
+	m_scheduler->registerSystem(m_particleSystem.get());
 
 	m_scheduler->registerFlushCallback([this]() { m_lifetimeSystem->getCommandBuffer().flush(); });
 	m_scheduler->registerFlushCallback([this]() { m_damageSystem->getCommandBuffer().flush(); });
