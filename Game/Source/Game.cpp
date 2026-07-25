@@ -98,13 +98,14 @@ Engine::Game::Game(const GameDesc& desc) :
 	m_scheduler->registerFrameSystem(m_renderSystem.get()); // Frame based update not backend ticks, smooths lag and stops buffer queueing stutter
 	m_scheduler->registerFrameSystem(m_cameraController.get());
 	m_scheduler->registerFrameSystem(m_quadtreeDebugSystem.get());
+	m_scheduler->registerFrameSystem(m_particleSystem.get());
+
 
 	m_scheduler->registerSystem(m_thrusterSystem.get());
 	m_scheduler->registerSystem(m_collisionSystem.get());
 	m_scheduler->registerSystem(m_moveTicks.get()); // Consumer of thruster, collision systems, register after
 	m_scheduler->registerSystem(m_lifetimeSystem.get());
 	m_scheduler->registerSystem(m_damageSystem.get());
-	m_scheduler->registerSystem(m_particleSystem.get());
 
 	m_scheduler->registerFlushCallback([this]() { m_lifetimeSystem->getCommandBuffer().flush(); });
 	m_scheduler->registerFlushCallback([this]() { m_damageSystem->getCommandBuffer().flush(); });
