@@ -8,7 +8,6 @@
 #include <Core/Common.h>
 #include <Core/Logger.h>
 #include <Core/Core.h>
-#include <Core/Logger.h>
 
 // ECS
 #include <ECS/ECSWrapper.h>
@@ -35,7 +34,6 @@
 #include <Graphics/MeshID.h>
 #include <Graphics/Texture.h>
 #include <Graphics/TextureID.h>
-#include <Graphics/DebugLineRenderer.h>
 
 // Input
 #include <Input/ActionMap.h>

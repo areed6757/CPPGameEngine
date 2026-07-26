@@ -24,8 +24,6 @@ namespace Engine {
 		std::unique_ptr<GameECSWrapper> m_ecsWrapper{};
 
 		std::unique_ptr<QuadTree> m_quadtree{};
-		std::unique_ptr<DebugLineRenderer> m_debugLineRenderer{};
-		std::unique_ptr<QuadtreeDebugSystem> m_quadtreeDebugSystem{};
 		std::unique_ptr<CollisionSystem> m_collisionSystem{};
 		std::unique_ptr<ImpulseSystem> m_impulseSystem{};
 		std::unique_ptr<MovementTicks> m_moveTicks{};

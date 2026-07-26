@@ -12,7 +12,6 @@
 #include <Systems/DamageSystem.h>
 #include <Systems/RenderSystem.h>
 #include <Systems/ParticleSystem.h>
-#include <Systems/QuadtreeDebugSystem.h>
 
 // Components
 #include <Components/Position.h>

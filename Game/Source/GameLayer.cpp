@@ -24,10 +24,6 @@ namespace Engine {
 		RendererDesc rendererDesc{ {m_logger}, m_app.getWindow(), shaderDesc, *m_camera.get() };
 		m_renderer = std::make_unique<Renderer>(rendererDesc);
 
-		ShaderDesc debugLineShaderDesc{ {m_logger}, "Shaders/debugline.vert", "Shaders/debugline.frag" };
-		DebugLineRendererDesc debugLineRendererDesc{ {m_logger}, debugLineShaderDesc };
-		m_debugLineRenderer = std::make_unique<DebugLineRenderer>(debugLineRendererDesc);
-
 		TextureRegistryDesc textureRegDesc{ {m_logger} };
 		m_textureRegistry = std::make_unique<TextureRegistry>(textureRegDesc);
 
@@ -36,9 +32,6 @@ namespace Engine {
 
 		QuadTreeDesc qtDesc = { {m_logger} };
 		m_quadtree = std::make_unique<QuadTree>(qtDesc);
-
-		QuadtreeDebugSystemDesc qtDebugDesc{ {m_logger}, *m_quadtree.get(), *m_camera.get(), m_app.getWindow(), *m_debugLineRenderer.get() };
-		m_quadtreeDebugSystem = std::make_unique<QuadtreeDebugSystem>(qtDebugDesc);
 
 		EntityRegisterDesc eRegDesc = { {m_logger} };
 		m_entityRegister = std::make_unique<EntityRegister>(eRegDesc);
@@ -74,7 +67,6 @@ namespace Engine {
 		Scheduler& scheduler = m_app.getScheduler();
 		scheduler.registerFrameSystem(m_renderSystem.get());
 		scheduler.registerFrameSystem(m_cameraController.get());
-		scheduler.registerFrameSystem(m_quadtreeDebugSystem.get());
 		scheduler.registerFrameSystem(m_particleSystem.get());
 
 		scheduler.registerSystem(m_thrusterSystem.get());
