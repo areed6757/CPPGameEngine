@@ -12,6 +12,7 @@
 #include <Systems/DamageSystem.h>
 #include <Systems/RenderSystem.h>
 #include <Systems/ParticleSystem.h>
+#include <Systems/WeaponSystem.h>
 
 // Components
 #include <Components/Position.h>
