@@ -1,10 +1,5 @@
 #pragma once
-#include <Graphics/Camera.h>
-#include <Input/InputHandler.h>
-#include <Core/Common.h>
-#include <ECS/TickedSystem.h>
-#include <Physics/Vector2double.h>
-#include <Physics/Vector2float.h>
+#include <Engine.h>
 #include <bitset>
 
 namespace Engine {

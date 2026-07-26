@@ -6,7 +6,6 @@
 #include <Components/Thruster.h>
 #include <Components/Health.h>
 #include <Components/DamagePayload.h>
-#include <Graphics/MeshID.h>
 
 namespace Engine {
 	CoreSystemsTest::CoreSystemsTest(const CoreSystemsTestDesc& desc) : Base(desc.base), m_ecs(desc.ecs) {}

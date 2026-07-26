@@ -1,11 +1,7 @@
 #pragma once
+#include <Engine.h>
 #include <Components/Movement.h>
 #include <Components/Position.h>
-#include <Core/Common.h>
-#include <ECS/TickedSystem.h>
-#include <Utilities/Job.h>
-#include <Utilities/ThreadPool.h>
-#include <GameDescs.h>
 #include <GameECS.h>
 #include <bitset>
 #include <format>

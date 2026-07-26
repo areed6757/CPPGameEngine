@@ -1,7 +1,5 @@
 #pragma once
-#include <Core/Common.h>
-#include <Graphics/TextureID.h>
-#include <Graphics/Texture.h>
+#include <Engine.h>
 #include <array>
 
 namespace Engine {

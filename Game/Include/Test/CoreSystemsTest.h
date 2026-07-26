@@ -1,6 +1,5 @@
 #pragma once
-#include <Core/Base.h>
-#include <Core/Common.h>
+#include <Engine.h>
 #include <GameECS.h>
 
 namespace Engine {

@@ -1,10 +1,5 @@
 #pragma once
-#include <Core/Common.h>
-#include <Graphics/DebugLineRenderer.h>
-#include <ECS/TickedSystem.h>
-#include <Utilities/QuadTree.h>
-#include <Graphics/Camera.h>
-#include <Graphics/Window.h>
+#include <Engine.h>
 #include <bitset>
 
 namespace Engine {

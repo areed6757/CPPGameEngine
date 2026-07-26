@@ -1,5 +1,4 @@
 #include <Systems/RenderSystem.h>
-#include <glm/gtc/matrix_transform.hpp>
 
 Engine::RenderSystem::RenderSystem(const RenderSystemDesc& desc) : Base(desc.base),
 	m_ecs(desc.ecs),

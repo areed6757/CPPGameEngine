@@ -1,9 +1,13 @@
 #pragma once
-#include <Core/Common.h>
-#include <GameDescs.h>
+#include <Engine.h>
 #include <GameECS.h>
 
 namespace Engine {
+    struct EntityStressTestDesc {
+        BaseDesc base;
+        GameECSWrapper& ecs;
+    };
+
     class EntityStressTest : public Base {
     public:
         explicit EntityStressTest(const EntityStressTestDesc& desc)

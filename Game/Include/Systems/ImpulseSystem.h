@@ -1,6 +1,5 @@
 #pragma once
-#include <Core/Common.h>
-#include <ECS/TickedSystem.h>
+#include <Engine.h>
 #include <GameECS.h>
 #include <Systems/CollisionSystem.h>
 

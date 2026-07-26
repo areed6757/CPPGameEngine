@@ -1,7 +1,6 @@
 #pragma once 
+#include <Engine.h>
 #include <GameECS.h>
-#include <Core/Common.h>
-#include <ECS/TickedSystem.h>
 
 namespace Engine {
 	struct ThrusterSystemDesc {

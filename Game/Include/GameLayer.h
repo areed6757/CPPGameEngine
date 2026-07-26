@@ -1,14 +1,5 @@
 #pragma once
-#include <Core/Base.h>
-#include <Core/Layer.h>
-#include <Core/Application.h>
-#include <ECS/EntityRegister.h>
-#include <ECS/ECSWrapper.h>
-#include <Graphics/Camera.h>
-#include <Graphics/DebugLineRenderer.h>
-#include <Graphics/MeshRegistry.h>
-#include <Graphics/Renderer.h>
-#include <Graphics/TextureRegistry.h>
+#include <Engine.h>
 #include <Systems/CameraController.h>
 #include <Systems/CollisionSystem.h>
 #include <Systems/DamageSystem.h>
@@ -21,7 +12,6 @@
 #include <Systems/ImpulseSystem.h>
 #include <Test/CoreSystemsTest.h>
 #include <Test/ThreadingStressTest.h>
-#include <Utilities/QuadTree.h>
 
 namespace Engine {
 	class GameLayer : public Base, public Layer {

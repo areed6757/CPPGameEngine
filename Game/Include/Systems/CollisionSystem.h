@@ -1,10 +1,7 @@
 #pragma once
-#include <Core/Common.h>
-#include <Utilities/QuadTree.h>
-#include <ECS/TickedSystem.h>
+#include <Engine.h>
 #include <GameECS.h>
 #include <vector>
-#include <Physics/Vector2float.h>
 
 namespace Engine {
 	struct CollisionSystemDesc {

@@ -3,7 +3,7 @@ file(GLOB_RECURSE GAME_HEADERS CONFIGURE_DEPENDS Include/*.h Source/*.h)
 file(GLOB SHADER_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Shaders/*.vert ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Shaders/*.frag ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Shaders/*.comp)
 file(GLOB IMAGE_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Images/*.png)
 
-add_executable(Game main.cpp ${GAME_SOURCES} ${GAME_HEADERS}  "Include/Systems/ParticleSystem.h" "Source/Systems/ParticleSystem.cpp" "Source/GameLayer.cpp" "Include/GameLayer.h" "Include/Systems/ImpulseSystem.h" "Source/Systems/ImpulseSystem.cpp")
+add_executable(Game main.cpp ${GAME_SOURCES} ${GAME_HEADERS} )
 
 target_include_directories(Game
     PUBLIC Include
@@ -21,3 +21,5 @@ add_custom_command(TARGET Game POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:Game>/Images
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${IMAGE_FILES} $<TARGET_FILE_DIR:Game>/Images
 )
+
+target_precompile_headers(Game REUSE_FROM Engine)

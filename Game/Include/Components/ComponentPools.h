@@ -1,7 +1,5 @@
 #pragma once
-#include <Core/Common.h>
-#include <ECS/Component.h>
-#include <ECS/ECSWrapper.h>
+#include <Engine.h>
 #include <Components/Movement.h>
 #include <Components/Position.h>
 #include <Components/Renderable.h>

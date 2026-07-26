@@ -1,14 +1,6 @@
 #pragma once
-#include <Core/Common.h>
+#include <Engine.h>
 #include <GameECS.h>
-#include <Graphics/ComputeShader.h>
-#include <ThirdParty/glad/glad.h>
-#include <glm/glm.hpp>
-#include <ECS/TickedSystem.h>
-#include <Physics/Vector2double.h>
-#include <Graphics/Shader.h>
-#include <Graphics/Camera.h>
-#include <Graphics/Window.h>
 
 namespace Engine {
 	struct ParticleSystemDesc {

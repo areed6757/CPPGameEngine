@@ -3,7 +3,7 @@ file(GLOB_RECURSE ENGINE_HEADERS CONFIGURE_DEPENDS Include/*.h Source/*.h)
 
 message(STATUS "ENGINE_SOURCES: ${ENGINE_SOURCES}")
 
-add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS}  "Include/Core/Application.h" "Source/Core/Application.cpp")
+add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS}  "Include/Core/Application.h" "Source/Core/Application.cpp" "Include/Engine.h")
 
 target_include_directories(Engine
     PUBLIC Include
@@ -35,4 +35,13 @@ target_compile_definitions(Engine PRIVATE
 target_compile_definitions(Engine PUBLIC
     $<$<CONFIG:Debug>:SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_DEBUG>
     $<$<CONFIG:Release>:SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_INFO>
+)
+
+target_precompile_headers(Engine PRIVATE
+    Include/Engine.h
+)
+
+set_source_files_properties(
+    Source/ThirdParty/glad/glad.c
+    PROPERTIES SKIP_PRECOMPILE_HEADERS ON
 )

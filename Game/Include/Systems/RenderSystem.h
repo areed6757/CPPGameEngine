@@ -1,11 +1,8 @@
 #pragma once
-#include <Core/Common.h>
+#include <Engine.h>
 #include <GameECS.h>
-#include <ECS/TickedSystem.h>
-#include <Graphics/Renderer.h>
 #include <Graphics/MeshRegistry.h>
 #include <Graphics/TextureRegistry.h>
-#include <Graphics/Camera.h>
 #include <map>
 
 namespace Engine {

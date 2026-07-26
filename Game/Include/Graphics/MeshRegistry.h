@@ -1,7 +1,5 @@
 #pragma once
-#include <Core/Common.h>
-#include <Graphics/MeshID.h>
-#include <Graphics/Mesh.h>
+#include <Engine.h>
 #include <ThirdParty/glad/glad.h>
 #include <array>
 

@@ -1,7 +1,6 @@
 #include <Systems/ParticleSystem.h>
 #include <random>
 #include <cmath>
-#include <glm/gtc/matrix_transform.hpp>
 
 namespace Engine {
 	ParticleSystem::ParticleSystem(const ParticleSystemDesc& desc) : Base(desc.base),
