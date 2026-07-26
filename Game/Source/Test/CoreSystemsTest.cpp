@@ -20,8 +20,8 @@ namespace Engine {
 		// --- Row 1 (y = -ROW_SPACING): ThrusterTest -- three entities, same
 		// facing, increasing accel, all starting at rest at x = 0.
 		{
-			f32 accels[3] = { 1.0f, 3.0f, 6.0f };
-			for (i32 i = 0; i < 3; ++i) {
+			f32 accels[8] = { 1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f };
+			for (i32 i = 0; i < 7; ++i) {
 				d64 lane = (i - 1) * 5.0; // spread along a sub-axis within the row
 				EntityID id = m_ecs.createEntity();
 				m_ecs.addComponent(id, Position{
@@ -42,7 +42,7 @@ namespace Engine {
 				m_ecs.addComponent(id, Physics{ .radius = RADIUS });
 				m_ecs.addComponent(id, Thruster{ .maxAccel = accels[i], .throttle = 1.0f });
 			}
-			EngineLogInfo("CoreSystemsTest: spawned thruster row (3 entities)");
+			EngineLogInfo("CoreSystemsTest: spawned thruster row (8 entities)");
 		}
 
 		// --- Row 2 (y = 0): CollisionTest -- one head-on pair, unequal mass,
