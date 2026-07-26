@@ -6,7 +6,7 @@ namespace Engine {
 	// Engine declarations
 	class Base;
 	class Logger;
-	class Game;
+	class Application;
 	class GLFWContext;
 	class Window;
 	class InputHandler;
@@ -27,6 +27,8 @@ namespace Engine {
 	class QuadTree;
 	class ThreadPool;
 	class JobController;
+	class Layer;
+	class LayerStack;
 
 	template <typename TPools> class ECSWrapper;
 

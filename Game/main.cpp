@@ -1,11 +1,14 @@
 #include <cstdlib>
-#include <Game.h>
+#include <Core/Application.h>
+#include <GameLayer.h>
 
 int main()
 {
 	try {
-		Engine::Game game({});
-		game.run();
+		Engine::ApplicationDesc desc{};
+		Engine::Application app(desc);
+		app.pushLayer(new Engine::GameLayer(app));
+		app.run();		
 	}
 	catch (const std::runtime_error&) {
 		return EXIT_FAILURE;

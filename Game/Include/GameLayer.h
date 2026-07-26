@@ -1,22 +1,14 @@
 #pragma once
 #include <Core/Base.h>
-#include <Core/Core.h>
+#include <Core/Layer.h>
+#include <Core/Application.h>
 #include <ECS/EntityRegister.h>
 #include <ECS/ECSWrapper.h>
 #include <Graphics/Camera.h>
 #include <Graphics/DebugLineRenderer.h>
-#include <Graphics/GLFWContext.h>
-#include <Graphics/Mesh.h>
-#include <Graphics/MeshID.h>
 #include <Graphics/MeshRegistry.h>
 #include <Graphics/Renderer.h>
-#include <Graphics/Texture.h>
 #include <Graphics/TextureRegistry.h>
-#include <Graphics/TextureID.h>
-#include <Graphics/Window.h>
-#include <Physics/Vector3double.h>
-#include <Input/ActionMap.h>
-#include <Input/InputHandler.h>
 #include <Systems/CameraController.h>
 #include <Systems/CollisionSystem.h>
 #include <Systems/DamageSystem.h>
@@ -25,54 +17,33 @@
 #include <Systems/QuadtreeDebugSystem.h>
 #include <Systems/RenderSystem.h>
 #include <Systems/ThrusterSystem.h>
-#include <Test/CoreSystemsTest.h>
-#include <Utilities/GameClock.h>
-#include <Utilities/QuadTree.h>
-#include <Utilities/Scheduler.h>
-#include <Utilities/ThreadPool.h>
-#include <Utilities/JobController.h>
-#include <Test/ThreadingStressTest.h>
 #include <Systems/ParticleSystem.h>
+#include <Test/CoreSystemsTest.h>
+#include <Test/ThreadingStressTest.h>
+#include <Utilities/QuadTree.h>
 
 namespace Engine {
-
-	struct GameDesc {
-		Logger::LogLevel logLevel = LOG_LEVEL;
-
-		i32 windowWidth = { WINDOW_WIDTH };
-		i32 windowHeight = { WINDOW_HEIGHT };
-		const char* title = { TITLE };
-	};
-
-	class Game : public Base {
+	class GameLayer : public Base, public Layer {
 	public:
-		explicit Game(const GameDesc& desc);
-		virtual ~Game() override;
+		explicit GameLayer(Application& app);
+		~GameLayer() override;
 
-		virtual void run() final;
+		void onAttach() override;
+		void onDetach() override;
+		void onUpdate(d64 dt) override;
 
+	private:
+		Application& m_app;
 
 		// IMPORTANT: unique_ptrs must be instantiated in priority order.
 		// The first of these objects created will be destroyed LAST.
-	private:
-
-		// Core startup
-		std::unique_ptr<Logger> m_loggerPtr{};
-		std::unique_ptr<GLFWContext> m_glfwContext{};
-		std::unique_ptr<Window> m_window{};
 		std::unique_ptr<Camera> m_camera{};
 		std::unique_ptr<CameraController> m_cameraController{};
 		std::unique_ptr<Renderer> m_renderer{};
-		std::unique_ptr<ThreadPool> m_threadPool{};
-		std::unique_ptr<JobController> m_jobController{};
 
-		// ECS
 		std::unique_ptr<EntityRegister> m_entityRegister{};
 		std::unique_ptr<GameECSWrapper> m_ecsWrapper{};
 
-		// Ticked Systems + clock/scheduler + quadtree
-		std::unique_ptr<GameClock> m_gameClock{};
-		std::unique_ptr<Scheduler> m_scheduler{};
 		std::unique_ptr<QuadTree> m_quadtree{};
 		std::unique_ptr<DebugLineRenderer> m_debugLineRenderer{};
 		std::unique_ptr<QuadtreeDebugSystem> m_quadtreeDebugSystem{};
@@ -83,18 +54,11 @@ namespace Engine {
 		std::unique_ptr<DamageSystem> m_damageSystem{};
 		std::unique_ptr<ParticleSystem> m_particleSystem{};
 
-		// Graphics
 		std::unique_ptr<TextureRegistry> m_textureRegistry{};
 		std::unique_ptr<MeshRegistry> m_meshRegistry{};
 		std::unique_ptr<RenderSystem> m_renderSystem{};
 
-		// Test Systems
 		std::unique_ptr<CoreSystemsTest> m_coreSystemsTest{};
 		std::unique_ptr<ThreadingStressTest> m_threadingStressTest{};
-
-
-		InputHandler* m_inputHandler{};
-		ActionMap m_actionMap{};
-		bool m_isRunning{ true };
 	};
 }

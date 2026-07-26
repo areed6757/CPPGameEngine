@@ -128,11 +128,13 @@ namespace Engine {
 		glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, sizeof(sample), sample);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 		
+		/*
 		for (i32 i = 0; i < 4; i++) {
-			EngineLogInfo("Particle[{}]: pos({}, {}) vel({}, {}) age {} / {}",
+			 EngineLogInfo("Particle[{}]: pos({}, {}) vel({}, {}) age {} / {}",
 				i, sample[i].position.x, sample[i].position.y,
 				sample[i].velocity.x, sample[i].velocity.y,
 				sample[i].age, sample[i].maxLifetime);
 		}
+		*/
 	}
 }
