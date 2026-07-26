@@ -1,10 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
-#include <Core/Logger.h>
-#include <ECS/EntityRegister.h>
-#include <GameDescs.h>
-#include <GameECS.h>
-#include <Components/Position.h>
-#include <Components/Movement.h>
+#include <Game.h>
 
 using namespace Engine;
 

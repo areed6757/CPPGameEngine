@@ -1,8 +1,5 @@
 #pragma once
-#include <Engine.h>
-#include <Components/Movement.h>
-#include <Components/Position.h>
-#include <GameECS.h>
+#include <Game.h>
 #include <bitset>
 #include <format>
 

@@ -1,5 +1,5 @@
 #pragma once
-#include <glm/glm.hpp>
+#include <Game.h>
 
 namespace Engine {
 	struct ParticleGPU {

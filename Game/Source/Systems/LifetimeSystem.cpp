@@ -1,5 +1,4 @@
 #include <Systems/LifetimeSystem.h>
-#include <Components/Lifetime.h>
 
 namespace Engine {
 	LifetimeSystem::LifetimeSystem(const LifetimeSystemDesc& desc) : Base(desc.base),

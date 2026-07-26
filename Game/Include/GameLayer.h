@@ -1,17 +1,5 @@
 #pragma once
-#include <Engine.h>
-#include <Systems/CameraController.h>
-#include <Systems/CollisionSystem.h>
-#include <Systems/DamageSystem.h>
-#include <Systems/LifetimeSystem.h>
-#include <Systems/MovementTicks.h>
-#include <Systems/QuadtreeDebugSystem.h>
-#include <Systems/RenderSystem.h>
-#include <Systems/ThrusterSystem.h>
-#include <Systems/ParticleSystem.h>
-#include <Systems/ImpulseSystem.h>
-#include <Test/CoreSystemsTest.h>
-#include <Test/ThreadingStressTest.h>
+#include <Game.h>
 
 namespace Engine {
 	class GameLayer : public Base, public Layer {

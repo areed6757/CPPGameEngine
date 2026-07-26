@@ -1,5 +1,4 @@
 #include <Systems/ImpulseSystem.h>
-#include <Components/Movement.h>
 
 namespace Engine {
 	ImpulseSystem::ImpulseSystem(const ImpulseSystemDesc& desc) : Base(desc.base),

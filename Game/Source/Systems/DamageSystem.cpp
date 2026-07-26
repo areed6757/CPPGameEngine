@@ -1,6 +1,4 @@
 #include <Systems/DamageSystem.h>
-#include <Components/Health.h>
-#include <Components/DamagePayload.h>
 
 namespace Engine {
 	DamageSystem::DamageSystem(const DamageSystemDesc& desc) : Base(desc.base),

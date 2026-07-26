@@ -1,5 +1,4 @@
 #include <GameLayer.h>
-#include <ThirdParty/stb/stb_image.h>
 
 namespace Engine {
 	GameLayer::GameLayer(Application& app) :

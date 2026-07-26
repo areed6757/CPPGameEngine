@@ -1,6 +1,5 @@
 #include <Systems/QuadtreeDebugSystem.h>
 
-
 namespace Engine {
     QuadtreeDebugSystem::QuadtreeDebugSystem(const QuadtreeDebugSystemDesc& desc) : Base(desc.base),
         m_quadtree(desc.quadtree),

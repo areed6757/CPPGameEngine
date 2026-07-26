@@ -1,7 +1,5 @@
 #pragma once
-#include <Engine.h>
-#include <GameECS.h>
-#include <Systems/CollisionSystem.h>
+#include <Game.h>
 
 namespace Engine {
 	struct DamageSystemDesc {

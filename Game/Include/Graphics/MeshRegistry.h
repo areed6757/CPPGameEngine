@@ -1,6 +1,5 @@
 #pragma once
-#include <Engine.h>
-#include <ThirdParty/glad/glad.h>
+#include <Game.h>
 #include <array>
 
 namespace Engine {

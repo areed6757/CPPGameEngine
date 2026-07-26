@@ -1,7 +1,3 @@
-#include <Systems/CollisionSystem.h>
-#include <Components/Physics.h>
-#include <Components/Position.h>
-#include <Components/DamagePayload.h>
 #include <format>
 #include <cmath>
 #include <algorithm>

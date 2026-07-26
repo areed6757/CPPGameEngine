@@ -1,8 +1,5 @@
 #pragma once
-#include <Engine.h>
-#include <GameECS.h>
-#include <Graphics/MeshRegistry.h>
-#include <Graphics/TextureRegistry.h>
+#include <Game.h>
 #include <map>
 
 namespace Engine {
