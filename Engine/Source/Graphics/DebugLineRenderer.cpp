@@ -1,11 +1,9 @@
 #include <Graphics/DebugLineRenderer.h>
 
 namespace Engine {
-	Engine::DebugLineRenderer::DebugLineRenderer(const DebugLineRendererDesc& desc) : Base(desc.base),
+	DebugLineRenderer::DebugLineRenderer(const DebugLineRendererDesc& desc) : Base(desc.base),
 		m_shader(desc.shaderDesc)
 	{
-		glGenVertexArrays(1, &m_VAO);
-		glGenBuffers(1, &m_VBO);
 		m_projectionUni = glGetUniformLocation(m_shader.ID, "projection");
 		m_modelUni = glGetUniformLocation(m_shader.ID, "model");
 		m_colorUni = glGetUniformLocation(m_shader.ID, "linecolor");
@@ -23,11 +21,9 @@ namespace Engine {
 		glUniformMatrix4fv(m_modelUni, 1, GL_FALSE, &identity[0][0]);
 		glUniform3fv(m_colorUni, 1, &color[0]);
 
-		glBindVertexArray(m_VAO);
-		glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-		glBufferData(GL_ARRAY_BUFFER, flatVerts.size() * sizeof(f32), flatVerts.data(), GL_DYNAMIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(f32), (void*)0);
-		glEnableVertexAttribArray(0);
+		m_VAO.Bind();
+		m_VBO.BufferData(flatVerts.size() * sizeof(f32), flatVerts.data(), GL_DYNAMIC_DRAW);
+		m_VAO.LinkAttrib(m_VBO, 0, 3, GL_FLOAT, 3 * sizeof(f32), (void*)0);
 
 		glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(flatVerts.size() / 3));
 	}

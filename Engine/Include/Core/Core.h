@@ -56,6 +56,4 @@ namespace Engine {
 	using ui32 = std::uint32_t;
 	using f32 = float;
 	using d64 = double;
-
-	template <typename T> class ECSWrapper;
 }
