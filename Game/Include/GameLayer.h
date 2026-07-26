@@ -18,6 +18,7 @@
 #include <Systems/RenderSystem.h>
 #include <Systems/ThrusterSystem.h>
 #include <Systems/ParticleSystem.h>
+#include <Systems/ImpulseSystem.h>
 #include <Test/CoreSystemsTest.h>
 #include <Test/ThreadingStressTest.h>
 #include <Utilities/QuadTree.h>
@@ -48,6 +49,7 @@ namespace Engine {
 		std::unique_ptr<DebugLineRenderer> m_debugLineRenderer{};
 		std::unique_ptr<QuadtreeDebugSystem> m_quadtreeDebugSystem{};
 		std::unique_ptr<CollisionSystem> m_collisionSystem{};
+		std::unique_ptr<ImpulseSystem> m_impulseSystem{};
 		std::unique_ptr<MovementTicks> m_moveTicks{};
 		std::unique_ptr<ThrusterSystem> m_thrusterSystem{};
 		std::unique_ptr<LifetimeSystem> m_lifetimeSystem{};

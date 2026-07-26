@@ -4,7 +4,6 @@
 namespace Engine {
 	MovementTicks::MovementTicks(const MovementTicksDesc& desc) : Base(desc.base),
 		m_ecs(desc.ecs),
-		m_collisionSystem(desc.collisionSystem),
 		m_chunkCount(desc.threadPool.threadCount())
 	{
 		m_entityMask = m_ecs.makeSignature<Position, Movement>(); // Defines entities that can be modified by this system
@@ -14,15 +13,6 @@ namespace Engine {
 
 	MovementTicks::~MovementTicks()
 	{
-	}
-
-	void MovementTicks::drainImpulses() {
-		for (auto& event : m_collisionSystem.getEvents()) {
-			if (m_ecs.hasComponent<Movement>(event.entityA))
-				m_ecs.getComponent<Movement>(event.entityA).linearVelocity += event.impulseA;
-			if (m_ecs.hasComponent<Movement>(event.entityB))
-				m_ecs.getComponent<Movement>(event.entityB).linearVelocity += event.impulseB;
-		}
 	}
 
 	void MovementTicks::updateRange(i32 start, i32 end, d64 dt) {
@@ -44,7 +34,6 @@ namespace Engine {
 
 	void MovementTicks::Update(d64 dt)
 	{
-		drainImpulses();
 		updateRange(0, m_ecs.sizeComponentPool<Movement>(), dt);
 
 		// Debug
@@ -52,8 +41,6 @@ namespace Engine {
 	}
 
 	std::vector<Job> MovementTicks::buildJobs(d64 dt) {
-		drainImpulses(); // synchronous, before any chunk job is constructed
-
 		i32 total = m_ecs.sizeComponentPool<Movement>();
 		i32 chunkSize = (total + m_chunkCount - 1) / m_chunkCount;
 

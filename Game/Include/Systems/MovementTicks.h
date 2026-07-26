@@ -2,7 +2,6 @@
 #include <Components/Movement.h>
 #include <Components/Position.h>
 #include <Core/Common.h>
-#include <Systems/CollisionSystem.h>
 #include <ECS/TickedSystem.h>
 #include <Utilities/Job.h>
 #include <Utilities/ThreadPool.h>
@@ -15,7 +14,6 @@ namespace Engine {
 	struct MovementTicksDesc {
 		BaseDesc base;
 		GameECSWrapper& ecs;
-		CollisionSystem& collisionSystem;
 		ThreadPool& threadPool;
 	};
 
@@ -32,9 +30,7 @@ namespace Engine {
 		GameECSWrapper& m_ecs;
 		std::bitset<64> m_entityMask;
 		i32 m_tickCount = 0;
-		CollisionSystem& m_collisionSystem;
 
-		void drainImpulses();
 		void updateRange(i32 start, i32 end, d64 dt);
 
 		i32 m_chunkCount;

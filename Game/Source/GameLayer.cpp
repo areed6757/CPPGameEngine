@@ -54,7 +54,10 @@ namespace Engine {
 		CollisionSystemDesc collisionSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_quadtree.get() };
 		m_collisionSystem = std::make_unique<CollisionSystem>(collisionSysDesc);
 
-		MovementTicksDesc mvTicksDesc = { {m_logger}, *m_ecsWrapper.get(), *m_collisionSystem.get(), m_app.getThreadPool() };
+		ImpulseSystemDesc impulseSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_collisionSystem.get() };
+		m_impulseSystem = std::make_unique<ImpulseSystem>(impulseSysDesc);
+
+		MovementTicksDesc mvTicksDesc = { {m_logger}, *m_ecsWrapper.get(), m_app.getThreadPool() };
 		m_moveTicks = std::make_unique<MovementTicks>(mvTicksDesc);
 
 		ThrusterSystemDesc thrSysDesc = { {m_logger}, *m_ecsWrapper.get() };
@@ -77,6 +80,7 @@ namespace Engine {
 
 		scheduler.registerSystem(m_thrusterSystem.get());
 		scheduler.registerSystem(m_collisionSystem.get());
+		scheduler.registerSystem(m_impulseSystem.get());
 		scheduler.registerSystem(m_moveTicks.get());
 		scheduler.registerSystem(m_lifetimeSystem.get());
 		scheduler.registerSystem(m_damageSystem.get());
