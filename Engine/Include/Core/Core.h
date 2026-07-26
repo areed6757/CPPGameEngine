@@ -40,18 +40,6 @@ namespace Engine {
 	struct ComponentPools;
 	struct Job;
 
-	// Game declarations
-	class MeshRegistry;
-	class TextureRegistry;
-	class MovementTicks;
-	class RenderSystem;
-
-	struct Movement;
-	struct Position;
-	struct Renderable;
-
-	
-
 	// Common types
 	using i32 = std::int32_t;
 	using i64 = std::int64_t;

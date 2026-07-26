@@ -2,6 +2,8 @@
 #include <Game.h>
 
 namespace Engine {
+	class CollisionSystem;
+
 	struct ImpulseSystemDesc {
 		BaseDesc base;
 		GameECSWrapper& ecs;

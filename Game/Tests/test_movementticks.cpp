@@ -8,7 +8,8 @@ struct MovementFixture {
     EntityRegister entityReg{ EntityRegisterDesc{ { logger }, 100 } };
     ComponentDesc compDesc{ { logger }, 100 };
     GameECSWrapper ecs{ ECSWrapperDesc{ { logger }, entityReg, compDesc } };
-    MovementTicks movementSystem{ MovementTicksDesc{ { logger }, ecs } };
+    ThreadPool threadPool{ {logger} };
+    MovementTicks movementSystem{ MovementTicksDesc{ { logger }, ecs, threadPool } };
 };
 
 TEST_CASE_METHOD(MovementFixture, "entity with only Position is untouched by MovementTicks", "[MovementTicks]") {

@@ -3,6 +3,9 @@
 #include <map>
 
 namespace Engine {
+	class MeshRegistry;
+	class TextureRegistry;
+
 	struct RenderSystemDesc {
 		BaseDesc base;
 		GameECSWrapper& ecs;
