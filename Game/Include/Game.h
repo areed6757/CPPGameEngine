@@ -35,6 +35,15 @@
 #include <Systems/ParticleSystem.h>
 
 namespace Engine {
+
+	struct GameDesc {
+		Logger::LogLevel logLevel = LOG_LEVEL;
+
+		i32 windowWidth = { WINDOW_WIDTH };
+		i32 windowHeight = { WINDOW_HEIGHT };
+		const char* title = { TITLE };
+	};
+
 	class Game : public Base {
 	public:
 		explicit Game(const GameDesc& desc);

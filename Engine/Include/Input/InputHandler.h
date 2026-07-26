@@ -7,6 +7,11 @@
 #include <utility>
 
 namespace Engine {
+	struct InputHandlerDesc {
+		BaseDesc base;
+		ActionMap& actionMap;
+	};
+
 	struct KeyState {
 		bool isDown{ false };
 		bool wasDownLastFrame{ false };

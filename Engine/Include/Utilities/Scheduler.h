@@ -7,6 +7,13 @@
 #include <vector>
 
 namespace Engine {
+	struct SchedulerDesc {
+		BaseDesc base;
+		GameClock& gameClock;
+		JobController& jobController;
+		d64 tickRate{ TICK_RATE };
+	};
+
 	class Scheduler : public Base {
 	public:
 		explicit Scheduler(const SchedulerDesc& desc);

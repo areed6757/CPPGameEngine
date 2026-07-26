@@ -19,6 +19,11 @@
 ///	follows a strict ECS implementation plan, components are pure data, systems perform logic.
 /// </summary>
 namespace Engine {
+	struct ComponentDesc {
+		BaseDesc base;
+		i32 maxEntities{ MAX_ENTITIES };
+	};
+
 	template <typename T>
 	class Component : public Base {
 	public:

@@ -10,6 +10,14 @@
 /// Potential optimization by incredmentally performing updates instead of rebuilds.
 /// </summary>
 namespace Engine {
+	struct QuadTreeDesc {
+		BaseDesc base;
+		Vector2double boundsMin{ -(GRID_BOUND_WIDTH / 2), -(GRID_BOUND_HEIGHT / 2) };
+		Vector2double boundsMax{ GRID_BOUND_WIDTH / 2, GRID_BOUND_HEIGHT / 2 };
+		i32 maxDepth{ 8 };
+		i32 maxEntitiesPerNode{ 8 }; // Quadtree divides when exceeded up to maxDepth iterations
+	};
+
 	class QuadTree : public Base {
 	public:
 		explicit QuadTree(const QuadTreeDesc& desc);

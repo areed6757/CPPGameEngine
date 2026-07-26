@@ -18,6 +18,12 @@
 /// </summary>
 namespace Engine {
 
+	struct ECSWrapperDesc {
+		BaseDesc base;
+		EntityRegister& entityRegister;
+		ComponentDesc& compDesc; // Pass-through for component pools owned by the ECSWrapper
+	};
+
 	/// <summary>
 	/// Maps a component type to a fixed bit index within an entity's 64-bit signature. No default
 	///		definition is provided deliverately, using an unregistered type here fails to compile

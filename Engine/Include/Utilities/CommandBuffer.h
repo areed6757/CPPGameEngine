@@ -11,6 +11,12 @@
 /// </summary>
 namespace Engine {
 	template <typename TPools>
+	struct CommandBufferDesc {
+		BaseDesc base;
+		ECSWrapper<TPools>& ecs;
+	};
+
+	template <typename TPools>
 	class CommandBuffer : public Base {
 	public:
 		explicit CommandBuffer(const CommandBufferDesc<TPools>& desc) : Base(desc.base), m_ecs(desc.ecs) {}

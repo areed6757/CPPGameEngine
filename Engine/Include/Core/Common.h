@@ -6,11 +6,9 @@
 #include <vector>
 #include <thread>
 
-// Descriptions for dependency injection, constructors should only take these structs as args
 namespace Engine {
 	constexpr i32 INVALID_SENTINEL{ -1 };
 
-	// Customization fields, to be moved later.
 	constexpr Logger::LogLevel LOG_LEVEL{ Logger::LogLevel::Info };
 	constexpr i32 WINDOW_WIDTH{ 1024 };
 	constexpr i32 WINDOW_HEIGHT{ 1024 };
@@ -21,131 +19,8 @@ namespace Engine {
 	constexpr const d64 GRID_BOUND_WIDTH = 2000.0;
 	constexpr const d64 GRID_BOUND_HEIGHT = 2000.0;
 
-	// Core classes
-
 	struct BaseDesc {
 		Logger& logger;
-	};
-
-	struct GameDesc {
-		Logger::LogLevel logLevel = LOG_LEVEL;
-
-		i32 windowWidth = { WINDOW_WIDTH };
-		i32 windowHeight = { WINDOW_HEIGHT };
-		const char* title = { TITLE };
-	};
-
-	// Window and context creation
-
-	struct GLFWDesc {
-		BaseDesc base;
-	};
-
-	struct WindowDesc {
-		BaseDesc base;
-
-		// Default window fields set by instantiation in GameDesc
-		i32 windowWidth = {};
-		i32 windowHeight = {};
-		const char* title = {};
-
-		ActionMap& actionMap; // Pass-through for InputHandler of the Window
-	};
-
-	struct InputHandlerDesc {
-		BaseDesc base;
-		ActionMap& actionMap;
-	};
-
-	// Graphics
-
-	struct TextureDesc {
-		BaseDesc base;
-		i32 widthImg = { 512 };
-		i32 heightImg = { 512 };
-		i32 colorChannels = { 4 }; // 3 = jpeg, 4 = png, currently concretely set in Texture instantiation to 4
-		const char* imgAddr;
-	};
-
-	struct ShaderDesc {
-		BaseDesc base;
-		const char* vertexFile = "Shaders/default.vert";
-		const char* fragmentFile = "Shaders/default.frag";
-	};
-
-	struct RendererDesc {
-		BaseDesc base;
-		Window& window;
-		ShaderDesc shaderDesc; // Pass-through
-		Camera& camera;
-	};
-
-	struct CameraDesc {
-		BaseDesc base;
-		Vector2double position{ 0.0, 0.0 };
-		f32 zoom{ 75.0f };
-	};
-
-	struct DebugLineRendererDesc {
-		BaseDesc base;
-		ShaderDesc shaderDesc;
-	};
-
-	// Utilities
-
-	struct GameClockDesc {
-		BaseDesc base;
-	};
-
-	struct SchedulerDesc {
-		BaseDesc base;
-		GameClock& gameClock;
-		JobController& jobController;
-		d64 tickRate{ TICK_RATE };
-	};
-
-	template <typename TPools>
-	struct CommandBufferDesc {
-		BaseDesc base;
-		ECSWrapper<TPools>& ecs;
-	};
-
-	struct ThreadPoolDesc {
-		BaseDesc base;
-		i32 threadCount{ static_cast<i32>(std::thread::hardware_concurrency()) };
-	};
-
-	struct JobControllerDesc {
-		BaseDesc base;
-		ThreadPool& threadPool;
-	};
-
-	// ECS
-
-	struct EntityRegisterDesc {
-		BaseDesc base;
-		i32 maxEntities{ MAX_ENTITIES };
-	};
-
-	struct ComponentDesc {
-		BaseDesc base;
-		i32 maxEntities{ MAX_ENTITIES };
-	};
-
-	struct ECSWrapperDesc {
-		BaseDesc base;
-		EntityRegister& entityRegister;
-		ComponentDesc& compDesc; // Pass-through for component pools owned by the ECSWrapper
-	};
-
-	// Physics
-
-	struct QuadTreeDesc {
-		BaseDesc base;
-		Vector2double boundsMin{ -(GRID_BOUND_WIDTH /2), -(GRID_BOUND_HEIGHT /2)};
-		Vector2double boundsMax{ GRID_BOUND_WIDTH / 2, GRID_BOUND_HEIGHT / 2 };
-		i32 maxDepth{ 8 };
-		i32 maxEntitiesPerNode{ 8 }; // Quadtree divides when exceeded up to maxDepth iterations
 	};
 }
 

@@ -7,6 +7,11 @@
 /// some functions to continue targetting the destroyed Entity)
 /// </summary>
 namespace Engine {
+	struct EntityRegisterDesc {
+		BaseDesc base;
+		i32 maxEntities{ MAX_ENTITIES };
+	};
+
 	struct EntityID {
 		i32 id;
 		i32 generation;

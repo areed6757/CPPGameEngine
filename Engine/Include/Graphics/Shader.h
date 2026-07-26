@@ -8,6 +8,12 @@
 #include <iostream>
 
 namespace Engine {
+	struct ShaderDesc {
+		BaseDesc base;
+		const char* vertexFile = "Shaders/default.vert";
+		const char* fragmentFile = "Shaders/default.frag";
+	};
+
 	class Shader : public Base {
 	public:
 		explicit Shader(const ShaderDesc& desc);

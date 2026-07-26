@@ -5,6 +5,17 @@
 #include <GLFW/glfw3.h>
 
 namespace Engine {
+	struct WindowDesc {
+		BaseDesc base;
+
+		// Default window fields set by instantiation in GameDesc
+		i32 windowWidth = {};
+		i32 windowHeight = {};
+		const char* title = {};
+
+		ActionMap& actionMap; // Pass-through for InputHandler of the Window
+	};
+
 	class Window final : public Base {
 	public:
 		explicit Window(const WindowDesc& desc);

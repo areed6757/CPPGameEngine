@@ -5,6 +5,11 @@
 #include <GLFW/glfw3.h>
 
 namespace Engine {
+
+    struct GLFWDesc {
+        BaseDesc base;
+    };
+
     class GLFWContext : public Base {
     public:
         explicit GLFWContext(const GLFWDesc& desc);

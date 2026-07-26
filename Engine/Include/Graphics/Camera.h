@@ -4,6 +4,12 @@
 #include <glm/glm.hpp>
 
 namespace Engine {
+	struct CameraDesc {
+		BaseDesc base;
+		Vector2double position{ 0.0, 0.0 };
+		f32 zoom{ 75.0f };
+	};
+
 	class Camera : public Base {
 	public:
 		explicit Camera(const CameraDesc& desc);

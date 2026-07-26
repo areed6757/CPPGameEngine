@@ -4,6 +4,14 @@
 #include <ThirdParty/stb/stb_image.h>
 
 namespace Engine {
+	struct TextureDesc {
+		BaseDesc base;
+		i32 widthImg = { 512 };
+		i32 heightImg = { 512 };
+		i32 colorChannels = { 4 }; // 3 = jpeg, 4 = png, currently concretely set in Texture instantiation to 4
+		const char* imgAddr;
+	};
+
 	class Texture : public Base {
 	public:
 		explicit Texture(const TextureDesc& desc);

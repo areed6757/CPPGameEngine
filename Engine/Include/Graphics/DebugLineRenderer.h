@@ -11,6 +11,11 @@
 #include <GLFW/glfw3.h>
 
 namespace Engine {
+	struct DebugLineRendererDesc {
+		BaseDesc base;
+		ShaderDesc shaderDesc;
+	};
+
 	class DebugLineRenderer : public Base {
 	public:
 		explicit DebugLineRenderer(const DebugLineRendererDesc& desc);

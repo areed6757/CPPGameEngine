@@ -9,6 +9,11 @@
 #include <atomic>
 
 namespace Engine {
+	struct ThreadPoolDesc {
+		BaseDesc base;
+		i32 threadCount{ static_cast<i32>(std::thread::hardware_concurrency()) };
+	};
+
 	class ThreadPool : public Base {
 	public:
 		explicit ThreadPool(const ThreadPoolDesc& desc);

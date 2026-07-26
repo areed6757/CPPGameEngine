@@ -7,6 +7,11 @@
 #include <unordered_map>
 
 namespace Engine {
+	struct JobControllerDesc {
+		BaseDesc base;
+		ThreadPool& threadPool;
+	};
+
 	class JobController : public Base {
 	public:
 		explicit JobController(const JobControllerDesc& desc);

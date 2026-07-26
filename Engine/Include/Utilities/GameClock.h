@@ -3,6 +3,10 @@
 #include <chrono>
 
 namespace Engine {
+	struct GameClockDesc {
+		BaseDesc base;
+	};
+
 	using SteadyClock = std::chrono::steady_clock;
 	using Duration = std::chrono::duration<double>;
 

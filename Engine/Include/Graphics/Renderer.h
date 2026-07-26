@@ -10,6 +10,13 @@
 #include <Graphics/Camera.h>
 
 namespace Engine {
+	struct RendererDesc {
+		BaseDesc base;
+		Window& window;
+		ShaderDesc shaderDesc; // Pass-through
+		Camera& camera;
+	};
+
 	class Renderer : public Base {
 	public:
 		explicit Renderer(const RendererDesc& desc);
