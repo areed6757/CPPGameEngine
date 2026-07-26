@@ -1,11 +1,15 @@
 #include <Systems/ParticleSystem.h>
 #include <random>
 #include <cmath>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Engine {
 	ParticleSystem::ParticleSystem(const ParticleSystemDesc& desc) : Base(desc.base),
 		m_ecs(desc.ecs),
-		m_updateShader({ desc.base, "Shaders/particle_update.comp"} )
+		m_updateShader({ desc.base, "Shaders/particle_update.comp"} ),
+		m_drawShader({ desc.base, "Shaders/particle_draw.vert", "Shaders/particle_draw.frag" }),
+		m_camera(desc.camera),
+		m_window(desc.window)
 	{
 		m_reads = m_ecs.makeSignature<Position, Movement, Thruster>();
 		m_writes = m_ecs.makeSignature<>();
@@ -14,6 +18,13 @@ namespace Engine {
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ssbo);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, MAX_PARTICLES * sizeof(ParticleGPU), nullptr, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+		glGenVertexArrays(1, &m_dummyVAO);
+
+		m_projLoc = glGetUniformLocation(m_drawShader.ID, "projection");
+		m_camOffsetLoc = glGetUniformLocation(m_drawShader.ID, "cameraOffset");
+		m_sizeLoc = glGetUniformLocation(m_drawShader.ID, "particleSize");
+		m_colorLoc = glGetUniformLocation(m_drawShader.ID, "particleColor");
 
 		EngineLogInfo("Particle system created({} max particles)", MAX_PARTICLES);
 	}
@@ -78,6 +89,7 @@ namespace Engine {
 		glDispatchCompute(groups, 1, 1);
 		glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
+		draw();
 
 		// DEBUG LINES
 		m_debugTickCounter++;
@@ -85,6 +97,28 @@ namespace Engine {
 			debugLogSample();
 			m_debugTickCounter = 0;
 		}
+	}
+
+	void ParticleSystem::draw()
+	{
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		m_drawShader.Activate();
+		glm::mat4 proj = m_camera.getProjection(m_window.getWidth(), m_window.getHeight());
+		glUniformMatrix4fv(m_projLoc, 1, GL_FALSE, &proj[0][0]);
+
+		Vector2double camPos = m_camera.getPosition();
+		glUniform2f(m_camOffsetLoc, static_cast<f32>(camPos.x), static_cast<f32>(camPos.y));
+		glUniform1f(m_sizeLoc, 0.05f);
+		glUniform3f(m_colorLoc, 1.0f, 0.6f, 0.15f);
+
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_ssbo);
+		glBindVertexArray(m_dummyVAO);
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, MAX_PARTICLES);
+		glBindVertexArray(0);
+
+		glDisable(GL_BLEND);
 	}
 
 	void ParticleSystem::debugLogSample()

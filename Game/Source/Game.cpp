@@ -91,7 +91,7 @@ Engine::Game::Game(const GameDesc& desc) :
 	DamageSystemDesc dsDesc = { {m_logger}, *m_ecsWrapper.get(), *m_collisionSystem.get() };
 	m_damageSystem = std::make_unique<DamageSystem>(dsDesc);
 
-	ParticleSystemDesc psDesc = { {m_logger}, *m_ecsWrapper.get() };
+	ParticleSystemDesc psDesc = { {m_logger}, *m_ecsWrapper.get(), *m_camera.get(), *m_window.get() };
 	m_particleSystem = std::make_unique<ParticleSystem>(psDesc);
 
 	// Register TickedSystems

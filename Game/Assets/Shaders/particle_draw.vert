@@ -15,7 +15,7 @@ const vec2 corners[6] = vec2[] (
 
 void main() {
 	Particle p = particles[gl_InstanceID];
-	vec2 corner = corners[gl_vertexID];
+	vec2 corner = corners[gl_VertexID];
 	vec2 relPos = p.position - cameraOffset;
 	vec2 worldPos = relPos + corner * particleSize;
 	gl_Position = projection * vec4(worldPos, 0.0, 1.0);

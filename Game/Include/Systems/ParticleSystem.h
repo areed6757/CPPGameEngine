@@ -6,11 +6,16 @@
 #include <glm/glm.hpp>
 #include <ECS/TickedSystem.h>
 #include <Physics/Vector2double.h>
+#include <Graphics/Shader.h>
+#include <Graphics/Camera.h>
+#include <Graphics/Window.h>
 
 namespace Engine {
 	struct ParticleSystemDesc {
 		BaseDesc base;
 		GameECSWrapper& ecs;
+		Camera& camera;
+		Window& window;
 	};
 
 	struct ParticleGPU {
@@ -28,6 +33,8 @@ namespace Engine {
 		void Update(d64 dt) override;
 		GLuint getBufferID() const noexcept { return m_ssbo; }
 
+		void draw();
+
 	private:
 		void emit(const Vector2double& shipPos, const Vector2float& shipVel);
 
@@ -35,6 +42,12 @@ namespace Engine {
 		ComputeShader m_updateShader;
 		GLuint m_ssbo{};
 		i32 m_writeCursor{ 0 };
+
+		Shader m_drawShader;
+		Camera& m_camera;
+		Window& m_window;
+		GLuint m_dummyVAO{};
+		GLuint m_projLoc{}, m_camOffsetLoc{}, m_sizeLoc{}, m_colorLoc{};
 
 		static constexpr i32 MAX_PARTICLES = 100000;
 		static constexpr i32 EMIT_PER_TICK = 4;
