@@ -22,7 +22,7 @@ namespace Engine {
 		/// <param name="dt"></param>
 		/// <returns></returns>
 		virtual std::vector<Job> buildJobs(d64 dt) {
-			return { Job{m_reads, m_writes, [this, dt]() { Update(dt); } } };
+			return { Job{m_reads, m_writes, [this, dt]() { Update(dt); }, this } };
 		}
 
 	protected:

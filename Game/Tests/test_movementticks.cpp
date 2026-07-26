@@ -16,6 +16,9 @@ TEST_CASE_METHOD(MovementFixture, "entity with only Position is untouched by Mov
     EntityID id = ecs.createEntity();
     ecs.addComponent(id, Position{}); // no Movement, should not match the system's signature
     movementSystem.Update(1.0);
+
+    logger.log(Logger::LogLevel::Info, "Entity {} rotation after one Update(dt=1.0) with no Movement component: {} (expected unchanged)",
+        id.id, ecs.getComponent<Position>(id).rotation);
     REQUIRE(ecs.getComponent<Position>(id).rotation == 0.0f); // unchanged
 }
 
@@ -33,5 +36,7 @@ TEST_CASE_METHOD(MovementFixture, "entity with Position+Movement integrates over
     // rather than a specific magnitude, given that logic is still being reworked.
     auto& pos = ecs.getComponent<Position>(id);
     bool moved = (pos.transform.x != 0.0 || pos.transform.y != 0.0);
+    logger.log(Logger::LogLevel::Info, "Entity {} transform after one Update(dt=1.0) with linearVelocity=(2,2): ({}, {}), moved={}",
+        id.id, pos.transform.x, pos.transform.y, moved);
     REQUIRE(moved);
 }

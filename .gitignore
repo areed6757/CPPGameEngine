@@ -70,3 +70,6 @@ Testing/
 
 # Visual studio
 .vs/
+
+# Coverage reports (OpenCppCoverage)
+coverage_report/

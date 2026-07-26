@@ -18,6 +18,6 @@ TEST_CASE("one million entity creation completes within a reasonable time budget
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
         std::chrono::high_resolution_clock::now() - start).count();
 
-    WARN("Took " << ms << "ms"); // Can change back to INFO, just for me to see it
+    logger.log(Logger::LogLevel::Info, "Created 1,000,000 entities with a Position component in {}ms", ms);
     REQUIRE(ms < 1000); // Catches egregious performance faults
 }
