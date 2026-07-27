@@ -13,6 +13,7 @@
 #include <Systems/RenderSystem.h>
 #include <Systems/ParticleSystem.h>
 #include <Systems/WeaponSystem.h>
+#include <Systems/DamperSystem.h>
 
 // Components
 #include <Components/Position.h>
@@ -25,6 +26,7 @@
 #include <Components/Lifetime.h>
 #include <Components/Weapon.h>
 #include <Components/WeaponMount.h>
+#include <Components/MovementDamper.h>
 
 // Graphics
 #include <Graphics/TextureRegistry.h>
@@ -35,3 +37,4 @@
 #include <Test/EntityStressTest.h>
 #include <Test/ThreadingStressTest.h>
 #include <Test/WeaponTest.h>
+#include <Test/DamperTest.h>

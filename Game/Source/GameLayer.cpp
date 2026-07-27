@@ -58,14 +58,18 @@ namespace Engine {
 		LifetimeSystemDesc ltsDesc = { {m_logger}, *m_ecsWrapper.get() };
 		m_lifetimeSystem = std::make_unique<LifetimeSystem>(ltsDesc);
 
-		DamageSystemDesc dsDesc = { {m_logger}, *m_ecsWrapper.get(), *m_collisionSystem.get() };
-		m_damageSystem = std::make_unique<DamageSystem>(dsDesc);
+		DamageSystemDesc damSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_collisionSystem.get() };
+		m_damageSystem = std::make_unique<DamageSystem>(damSysDesc);
 
-		ParticleSystemDesc psDesc = { {m_logger}, *m_ecsWrapper.get(), *m_camera.get(), m_app.getWindow() };
-		m_particleSystem = std::make_unique<ParticleSystem>(psDesc);
+		ParticleSystemDesc partSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_camera.get(), m_app.getWindow() };
+		m_particleSystem = std::make_unique<ParticleSystem>(partSysDesc);
 
-		WeaponSystemDesc wsDesc = { {m_logger}, *m_ecsWrapper.get() };
-		m_weaponSystem = std::make_unique<WeaponSystem>(wsDesc);
+		WeaponSystemDesc wepSysDesc = { {m_logger}, *m_ecsWrapper.get() };
+		m_weaponSystem = std::make_unique<WeaponSystem>(wepSysDesc);
+
+		DamperSystemDesc dampSysDesc = { {m_logger}, *m_ecsWrapper.get() };
+		m_damperSystem = std::make_unique<DamperSystem>(dampSysDesc);
+
 
 		Scheduler& scheduler = m_app.getScheduler();
 		scheduler.registerFrameSystem(m_renderSystem.get());
@@ -79,11 +83,14 @@ namespace Engine {
 		scheduler.registerSystem(m_lifetimeSystem.get());
 		scheduler.registerSystem(m_damageSystem.get());
 		scheduler.registerSystem(m_weaponSystem.get());
+		scheduler.registerSystem(m_damperSystem.get());
 
+		// Command buffers process queued calls for entity and component create/destroy for parallelization
 		scheduler.registerFlushCallback([this]() { m_lifetimeSystem->getCommandBuffer().flush(); });
 		scheduler.registerFlushCallback([this]() { m_damageSystem->getCommandBuffer().flush(); });
 		scheduler.registerFlushCallback([this]() { m_weaponSystem->getCommandBuffer().flush(); });
 
+		// Ordering constraints ensure certain systems are updated before others due to order dependency
 		m_app.getJobController().addOrderingConstraint(m_collisionSystem.get(), m_moveTicks.get());
 		m_app.getJobController().addOrderingConstraint(m_collisionSystem.get(), m_damageSystem.get());
 
@@ -95,9 +102,15 @@ namespace Engine {
 		m_coreSystemsTest->spawnAll();
 		*/
 
+		/*
 		WeaponTestDesc wtDesc{ {m_logger}, *m_ecsWrapper.get() };
 		m_weaponTest = std::make_unique<WeaponTest>(wtDesc);
-		m_weaponTest->spawnFiringShip(20.0, 1.0f, 30.0f, 0.10f, 5.0f, 100.0f);
+		m_weaponTest->spawnFiringShip(20.0, 0.1f, 30.0f, 0.10f, 5.0f, 100.0f);
+		*/
+
+		DamperTestDesc dTestDesc{ {m_logger}, *m_ecsWrapper.get() };
+		m_damperTest = std::make_unique<DamperTest>(dTestDesc);
+		m_damperTest->spawnComparisonRow(5.0, 5.0f, 0.5f, 0.1f);
 	}
 
 	void GameLayer::onDetach()

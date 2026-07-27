@@ -32,6 +32,7 @@ namespace Engine {
 		std::unique_ptr<DamageSystem> m_damageSystem{};
 		std::unique_ptr<ParticleSystem> m_particleSystem{};
 		std::unique_ptr<WeaponSystem> m_weaponSystem{};
+		std::unique_ptr<DamperSystem> m_damperSystem{};
 
 		std::unique_ptr<TextureRegistry> m_textureRegistry{};
 		std::unique_ptr<MeshRegistry> m_meshRegistry{};
@@ -40,5 +41,6 @@ namespace Engine {
 		std::unique_ptr<CoreSystemsTest> m_coreSystemsTest{};
 		std::unique_ptr<ThreadingStressTest> m_threadingStressTest{};
 		std::unique_ptr<WeaponTest> m_weaponTest{};
+		std::unique_ptr<DamperTest> m_damperTest{};
 	};
 }

@@ -10,6 +10,7 @@
 #include <Components/Thruster.h>
 #include <Components/Weapon.h>
 #include <Components/WeaponMount.h>
+#include <Components/MovementDamper.h>
 
 /// <summary>
 /// This class holds pools of components as the single source of access to all components types by all systems in the game.
@@ -31,11 +32,12 @@ namespace Engine {
 	template <> struct ComponentBit<Thruster> { static constexpr i32 value = 7; };
 	template <> struct ComponentBit<Weapon> { static constexpr i32 value = 8; };
 	template <> struct ComponentBit<WeaponMount> { static constexpr i32 value = 9; };
+	template <> struct ComponentBit<MovementDamper> { static constexpr i32 value = 10; };
 
 	struct ComponentPools {
 		explicit ComponentPools(const ComponentDesc& desc) : positions(desc), movements(desc),
 			renderables(desc), physics(desc), damagePayloads(desc), healths(desc), lifetimes(desc),
-			thrusters(desc), weapons(desc), weaponMounts(desc) {}
+			thrusters(desc), weapons(desc), weaponMounts(desc), movementDampers(desc) {}
 
 	private:
 		Component<Position> positions;
@@ -48,6 +50,7 @@ namespace Engine {
 		Component<Thruster> thrusters;
 		Component<Weapon> weapons;
 		Component<WeaponMount> weaponMounts;
+		Component<MovementDamper> movementDampers;
 
 	public:
 		/// <summary>
@@ -67,6 +70,7 @@ namespace Engine {
 			else if constexpr (std::is_same_v<T, Thruster>) return thrusters;
 			else if constexpr (std::is_same_v<T, Weapon>) return weapons;
 			else if constexpr (std::is_same_v<T, WeaponMount>) return weaponMounts;
+			else if constexpr (std::is_same_v<T, MovementDamper>) return movementDampers;
 			else static_assert(sizeof(T) == 0, "getPool: unregistered component type");
 		}
 
@@ -88,6 +92,7 @@ namespace Engine {
 			else if constexpr (std::is_same_v<T, Thruster>) return thrusters;
 			else if constexpr (std::is_same_v<T, Weapon>) return weapons;
 			else if constexpr (std::is_same_v<T, WeaponMount>) return weaponMounts;
+			else if constexpr (std::is_same_v<T, MovementDamper>) return movementDampers;
 			else static_assert(sizeof(T) == 0, "getPool: unregistered component type");
 		}
 
@@ -102,6 +107,7 @@ namespace Engine {
 			if (thrusters.has(index)) { thrusters.remove(index); }
 			if (weapons.has(index)) { weapons.remove(index); }
 			if (weaponMounts.has(index)) { weaponMounts.remove(index); }
+			if (movementDampers.has(index)) { movementDampers.remove(index); }
 		}
 	};
 
