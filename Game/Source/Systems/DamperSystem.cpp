@@ -32,6 +32,10 @@ namespace Engine {
 
 			movement.linearVelocity = movement.linearVelocity * linearFactor;
 			movement.angularVelocity *= angularFactor;
+
+			f32 speed = std::sqrt(movement.linearVelocity.x * movement.linearVelocity.x + movement.linearVelocity.y * movement.linearVelocity.y);
+			if (speed < damper.linearStopThreshold) { movement.linearVelocity = Vector2float{0.0f, 0.0f}; }
+			if (std::abs(movement.angularVelocity) < damper.angularStopThreshold) { movement.angularVelocity = 0.0f; }
 		}
 	}
 
