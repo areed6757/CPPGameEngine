@@ -64,6 +64,9 @@ namespace Engine {
 		ParticleSystemDesc psDesc = { {m_logger}, *m_ecsWrapper.get(), *m_camera.get(), m_app.getWindow() };
 		m_particleSystem = std::make_unique<ParticleSystem>(psDesc);
 
+		WeaponSystemDesc wsDesc = { {m_logger}, *m_ecsWrapper.get() };
+		m_weaponSystem = std::make_unique<WeaponSystem>(wsDesc);
+
 		Scheduler& scheduler = m_app.getScheduler();
 		scheduler.registerFrameSystem(m_renderSystem.get());
 		scheduler.registerFrameSystem(m_cameraController.get());
@@ -75,18 +78,26 @@ namespace Engine {
 		scheduler.registerSystem(m_moveTicks.get());
 		scheduler.registerSystem(m_lifetimeSystem.get());
 		scheduler.registerSystem(m_damageSystem.get());
+		scheduler.registerSystem(m_weaponSystem.get());
 
 		scheduler.registerFlushCallback([this]() { m_lifetimeSystem->getCommandBuffer().flush(); });
 		scheduler.registerFlushCallback([this]() { m_damageSystem->getCommandBuffer().flush(); });
+		scheduler.registerFlushCallback([this]() { m_weaponSystem->getCommandBuffer().flush(); });
 
 		m_app.getJobController().addOrderingConstraint(m_collisionSystem.get(), m_moveTicks.get());
 		m_app.getJobController().addOrderingConstraint(m_collisionSystem.get(), m_damageSystem.get());
 
 		EngineLogInfo("GameLayer attached, game initialized successfully.");
 
+		/*
 		CoreSystemsTestDesc cstDesc{ {m_logger}, *m_ecsWrapper.get() };
 		m_coreSystemsTest = std::make_unique<CoreSystemsTest>(cstDesc);
 		m_coreSystemsTest->spawnAll();
+		*/
+
+		WeaponTestDesc wtDesc{ {m_logger}, *m_ecsWrapper.get() };
+		m_weaponTest = std::make_unique<WeaponTest>(wtDesc);
+		m_weaponTest->spawnFiringShip(20.0, 1.0f, 30.0f, 0.10f, 5.0f, 100.0f);
 	}
 
 	void GameLayer::onDetach()

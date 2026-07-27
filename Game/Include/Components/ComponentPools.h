@@ -9,6 +9,7 @@
 #include <Components/Lifetime.h>
 #include <Components/Thruster.h>
 #include <Components/Weapon.h>
+#include <Components/WeaponMount.h>
 
 /// <summary>
 /// This class holds pools of components as the single source of access to all components types by all systems in the game.
@@ -29,9 +30,12 @@ namespace Engine {
 	template <> struct ComponentBit<Lifetime> { static constexpr i32 value = 6; };
 	template <> struct ComponentBit<Thruster> { static constexpr i32 value = 7; };
 	template <> struct ComponentBit<Weapon> { static constexpr i32 value = 8; };
+	template <> struct ComponentBit<WeaponMount> { static constexpr i32 value = 9; };
 
 	struct ComponentPools {
-		explicit ComponentPools(const ComponentDesc& desc) : positions(desc), movements(desc), renderables(desc), physics(desc), damagePayloads(desc), healths(desc), lifetimes(desc), thrusters(desc), weapons(desc) {}
+		explicit ComponentPools(const ComponentDesc& desc) : positions(desc), movements(desc),
+			renderables(desc), physics(desc), damagePayloads(desc), healths(desc), lifetimes(desc),
+			thrusters(desc), weapons(desc), weaponMounts(desc) {}
 
 	private:
 		Component<Position> positions;
@@ -43,6 +47,7 @@ namespace Engine {
 		Component<Lifetime> lifetimes;
 		Component<Thruster> thrusters;
 		Component<Weapon> weapons;
+		Component<WeaponMount> weaponMounts;
 
 	public:
 		/// <summary>
@@ -61,6 +66,7 @@ namespace Engine {
 			else if constexpr (std::is_same_v<T, Lifetime>) return lifetimes;
 			else if constexpr (std::is_same_v<T, Thruster>) return thrusters;
 			else if constexpr (std::is_same_v<T, Weapon>) return weapons;
+			else if constexpr (std::is_same_v<T, WeaponMount>) return weaponMounts;
 			else static_assert(sizeof(T) == 0, "getPool: unregistered component type");
 		}
 
@@ -81,6 +87,7 @@ namespace Engine {
 			else if constexpr (std::is_same_v<T, Lifetime>) return lifetimes;
 			else if constexpr (std::is_same_v<T, Thruster>) return thrusters;
 			else if constexpr (std::is_same_v<T, Weapon>) return weapons;
+			else if constexpr (std::is_same_v<T, WeaponMount>) return weaponMounts;
 			else static_assert(sizeof(T) == 0, "getPool: unregistered component type");
 		}
 
@@ -94,6 +101,7 @@ namespace Engine {
 			if (lifetimes.has(index)) { lifetimes.remove(index); }
 			if (thrusters.has(index)) { thrusters.remove(index); }
 			if (weapons.has(index)) { weapons.remove(index); }
+			if (weaponMounts.has(index)) { weaponMounts.remove(index); }
 		}
 	};
 

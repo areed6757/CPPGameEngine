@@ -44,6 +44,10 @@ namespace Engine {
 				if (other.id == id.id) { continue; } // skips self
 				if (other.id < id.id) { continue; } // pairs checked once
 
+				// Projectiles fired by self check/ ignore
+				if (m_ecs.hasComponent<DamagePayload>(id) && m_ecs.getComponent<DamagePayload>(id).source.id == other.id) { continue; }
+				if (m_ecs.hasComponent<DamagePayload>(other) && m_ecs.getComponent<DamagePayload>(other).source.id == id.id) { continue; }
+
 				outCandidates.push_back({ id, other });
 			}
 		}

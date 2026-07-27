@@ -24,6 +24,7 @@
 #include <Components/DamagePayload.h>
 #include <Components/Lifetime.h>
 #include <Components/Weapon.h>
+#include <Components/WeaponMount.h>
 
 // Graphics
 #include <Graphics/TextureRegistry.h>
@@ -33,3 +34,4 @@
 #include <Test/CoreSystemsTest.h>
 #include <Test/EntityStressTest.h>
 #include <Test/ThreadingStressTest.h>
+#include <Test/WeaponTest.h>

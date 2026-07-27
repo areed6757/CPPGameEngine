@@ -3,7 +3,7 @@ file(GLOB_RECURSE GAME_HEADERS CONFIGURE_DEPENDS Include/*.h Source/*.h)
 file(GLOB SHADER_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Shaders/*.vert ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Shaders/*.frag ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Shaders/*.comp)
 file(GLOB IMAGE_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Assets/Images/*.png)
 
-add_executable(Game main.cpp ${GAME_SOURCES} ${GAME_HEADERS}  "Include/Game.h" "Include/Systems/WeaponSystem.h" "Source/Systems/WeaponSystem.cpp")
+add_executable(Game main.cpp ${GAME_SOURCES} ${GAME_HEADERS}  "Include/Game.h" "Include/Systems/WeaponSystem.h" "Source/Systems/WeaponSystem.cpp" "Include/Components/WeaponMount.h" "Include/Test/WeaponTest.h" "Source/Test/WeaponTest.cpp")
 
 target_include_directories(Game
     PUBLIC Include

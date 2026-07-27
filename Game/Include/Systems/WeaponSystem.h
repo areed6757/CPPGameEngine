@@ -17,6 +17,8 @@ namespace Engine {
 
 		GameCommandBuffer& getCommandBuffer() noexcept { return m_cmdBuffer; }
 
+		void fire(EntityID id);
+
 	private:
 		GameECSWrapper& m_ecs;
 		GameCommandBuffer m_cmdBuffer;
