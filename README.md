@@ -17,4 +17,6 @@ If you are interested in any further details or potentially would like to contri
 <img width="1182" height="812" alt="image" src="https://github.com/user-attachments/assets/cdb2e995-fa51-4783-9306-9ca5be0bf9ca" />
 
 ### A beautiful square firing more squares, paused. The "ship" is actually many "parts" that fill the same space as the "array of weapons" that sit slightly inside of the edge of the "ship". All of these components are fully physics-enabled, have collision detection, damage payloads, etc. where applicable. The ship itself also has over-arching statistics like mass baked in and the "thrusters" use a force-based directional propulsion system. (Poorly displayed with the existing graphical fidelity.)
+<img width="3200" height="1478" alt="image" src="https://github.com/user-attachments/assets/930ec70f-f015-41a8-932c-a6b74b088813" />
+
 
