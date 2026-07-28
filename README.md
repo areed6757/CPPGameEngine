@@ -2,7 +2,7 @@
 
 The game is currently in the early, early development stages, though a comprehensive implementation plan is complete. The engine is mostly functional (excluding graphics right now, just primitive rendering) with a comprehensive test suite, application stack, and soon a GUI using Dear imGUI. I plan to add a developer tooling suite as well as hot-reload and an asset manager in the near-future.
 
-My primary goal for this project is to develop my skills with C++, to follow stringent design strategies focused on performance and optimization, and to better understand rendering and graphics.
+My primary goal for this project is to develop my skills with C++, to follow stringent design strategies focused on performance and optimization, and to better understand rendering and graphics, as well as to try and make my own game for release further down the road.
 
 I have made thorough use of my essentially feature-complete ECS system during testing and development and it currently utilizes a sparse/dense entity system with direct entity index references of all component parts by the systems. The systems also perform rapid look ups of valid entities in dense maps through a combination of careful selection of the "most-likely" smallest component pool, and via a component bitset signature held in the variable m_entityMask in each system file.
 
