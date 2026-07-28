@@ -1,6 +1,6 @@
-Work in progress!
+# Work in progress!
 
-The game is currently in early, early development stages. The engine is mostly functional (excluding graphics right now, just primitive rendering) with a comprehensive test suite, application stack, and soon a GUI using Dear imGUI.
+The game is currently in the early, early development stages, though a comprehensive implementation plan is complete. The engine is mostly functional (excluding graphics right now, just primitive rendering) with a comprehensive test suite, application stack, and soon a GUI using Dear imGUI. I plan to add a developer tooling suite as well as hot-reload and an asset manager in the near-future.
 
 My primary goal for this project is to develop my skills with C++, to follow stringent design strategies focused on performance and optimization, and to better understand rendering and graphics.
 
