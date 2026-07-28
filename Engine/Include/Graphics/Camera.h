@@ -7,7 +7,7 @@ namespace Engine {
 	struct CameraDesc {
 		BaseDesc base;
 		Vector2double position{ 0.0, 0.0 };
-		f32 zoom{ 75.0f };
+		f32 zoom{ 10.0f };
 	};
 
 	class Camera : public Base {

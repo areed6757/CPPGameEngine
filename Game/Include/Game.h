@@ -28,6 +28,13 @@
 #include <Components/WeaponMount.h>
 #include <Components/MovementDamper.h>
 
+// Ship Stuff
+#include <Ships/PartTypes.h>
+#include <Ships/PartVariant.h>
+#include <Ships/PartRegistry.h>
+#include <Ships/ShipGrid.h>
+#include <Ships/ShipFactory.h>
+
 // Graphics
 #include <Graphics/TextureRegistry.h>
 #include <Graphics/MeshRegistry.h>

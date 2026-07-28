@@ -34,6 +34,9 @@ namespace Engine {
 		std::unique_ptr<WeaponSystem> m_weaponSystem{};
 		std::unique_ptr<DamperSystem> m_damperSystem{};
 
+		std::unique_ptr<PartRegistry> m_partRegistry{};
+		std::unique_ptr<ShipFactory> m_shipFactory{};
+
 		std::unique_ptr<TextureRegistry> m_textureRegistry{};
 		std::unique_ptr<MeshRegistry> m_meshRegistry{};
 		std::unique_ptr<RenderSystem> m_renderSystem{};

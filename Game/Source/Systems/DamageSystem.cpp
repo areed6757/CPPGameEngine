@@ -43,7 +43,7 @@ namespace Engine {
 		auto& payload = m_ecs.getComponent<DamagePayload>(damageDealer);
 		auto& health = m_ecs.getComponent<Health>(target);
 
-		health.current -= payload.amount;
+		health.current -= std::max(0.0f, health.current - payload.amount);
 
 		EngineLogInfo("Entity {} dealt {} damage to entity {} ({} / {} remaining health)",
 			damageDealer.id, payload.amount, target.id, health.current, health.max);
