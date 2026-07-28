@@ -87,7 +87,7 @@ namespace Engine {
 		Scheduler& scheduler = m_app.getScheduler();
 		scheduler.registerFrameSystem(m_renderSystem.get());
 		scheduler.registerFrameSystem(m_cameraController.get());
-		scheduler.registerFrameSystem(m_particleSystem.get());
+		//scheduler.registerFrameSystem(m_particleSystem.get());
 		scheduler.registerFrameSystem(m_partRenderSystem.get());
 
 		scheduler.registerSystem(m_thrusterSystem.get());
@@ -172,8 +172,11 @@ namespace Engine {
 		m_shipCollisionTest = std::make_unique<ShipCollisionTest>(sctDesc);
 
 		//m_shipCollisionTest->spawnOverlappingShipPair();
-		m_shipCollisionTest->spawnProjectileAtShip(5.0f, 5.0f);
+		//m_shipCollisionTest->spawnProjectileAtShip(5.0f, 5.0f);
 		//m_shipCollisionTest->spawnSeparatedShipPair();
+		//m_shipCollisionTest->spawnMassBattle(30000, 0.3, 1.5f, 1.0f, 0.005f, 5.0f);
+		m_shipCollisionTest->spawnComplexMassBattle(400, 0.3, 1.5f, 1.0f, 0.005f, 5.0f);
+		m_app.getScheduler().togglePause();
 
 	}
 

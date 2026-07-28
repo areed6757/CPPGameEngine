@@ -110,8 +110,7 @@ namespace Engine {
 				});
 		}
 
-		EngineLogInfo("ShipFactory: baked ship, mass {}, stability {}, {} visual part(s), {} hardpoint(s)",
-			totalMass, totalStability, visual.parts.size(), hardpoints.size());
+		// EngineLogInfo("ShipFactory: baked ship, mass {}, stability {}, {} visual part(s), {} hardpoint(s)", totalMass, totalStability, visual.parts.size(), hardpoints.size());
 
 		return ship;
 	}
