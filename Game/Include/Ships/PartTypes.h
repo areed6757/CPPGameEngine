@@ -1,4 +1,6 @@
 #pragma once
+#include <Core/Common.h>
+#include <cstdint>
 
 namespace Engine {
 	enum class PartCategory : uint8_t {

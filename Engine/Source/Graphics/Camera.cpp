@@ -39,7 +39,7 @@ namespace Engine {
 		f32 aspect = static_cast<f32>(viewportWidth) / static_cast<f32>(viewportHeight);
 		f32 halfHeight = m_zoom;
 		f32 halfWidth = halfHeight * aspect;
-		return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -100.0f, 100.0f);
+		return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -50.0f, 50.0f);
 	}
 
 	Vector2double Engine::Camera::toCameraRelative(const Vector2double& worldPosition) const noexcept

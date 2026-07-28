@@ -1,5 +1,6 @@
 #pragma once
-#include <Game.h>
+#include <Ships/PartTypes.h>
+#include <Core/Common.h>
 #include <string>
 #include <variant>
 

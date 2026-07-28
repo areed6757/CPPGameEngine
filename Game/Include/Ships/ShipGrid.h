@@ -8,6 +8,7 @@ namespace Engine {
 		PartVariantID variant = INVALID_PART_VARIANT;
 		bool isAnchor = true; // False for any cell that is not the anchor point of multi-cell parts
 		i32 anchorX = -1, anchorY = -1;
+		i32 sizeX = 1, sizeY = 1;
 	};
 
 	struct ShipGridDesc {
@@ -30,6 +31,8 @@ namespace Engine {
 		[[nodiscard]] const GridCell& resolveAnchor(i32 x, i32 y) const;
 
 		bool tryPlacePart(i32 x, i32 y, i32 sizeX, i32 sizeY, PartCategory category, PartVariantID variant);
+
+		void forcePlacePart(i32 x, i32 y, i32 sizeX, i32 sizeY, PartCategory category, PartVariantID variant);
 
 		void removePart(i32 x, i32 y);
 

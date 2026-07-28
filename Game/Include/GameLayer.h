@@ -33,6 +33,7 @@ namespace Engine {
 		std::unique_ptr<ParticleSystem> m_particleSystem{};
 		std::unique_ptr<WeaponSystem> m_weaponSystem{};
 		std::unique_ptr<DamperSystem> m_damperSystem{};
+		std::unique_ptr<MountFollowSystem> m_mountFollowSystem{};
 
 		std::unique_ptr<PartRegistry> m_partRegistry{};
 		std::unique_ptr<ShipFactory> m_shipFactory{};
@@ -40,6 +41,7 @@ namespace Engine {
 		std::unique_ptr<TextureRegistry> m_textureRegistry{};
 		std::unique_ptr<MeshRegistry> m_meshRegistry{};
 		std::unique_ptr<RenderSystem> m_renderSystem{};
+		std::unique_ptr<PartRenderSystem> m_partRenderSystem{};
 
 		std::unique_ptr<CoreSystemsTest> m_coreSystemsTest{};
 		std::unique_ptr<ThreadingStressTest> m_threadingStressTest{};

@@ -2,18 +2,12 @@
 #include <Engine.h>
 #include <GameECS.h>
 
-// Systems
-#include <Systems/CollisionSystem.h>
-#include <Systems/LifetimeSystem.h>
-#include <Systems/CameraController.h>
-#include <Systems/MovementTicks.h>
-#include <Systems/ImpulseSystem.h>
-#include <Systems/ThrusterSystem.h>
-#include <Systems/DamageSystem.h>
-#include <Systems/RenderSystem.h>
-#include <Systems/ParticleSystem.h>
-#include <Systems/WeaponSystem.h>
-#include <Systems/DamperSystem.h>
+// Ship Stuff
+#include <Ships/PartTypes.h>
+#include <Ships/PartVariant.h>
+#include <Ships/PartRegistry.h>
+#include <Ships/ShipGrid.h>
+#include <Ships/ShipFactory.h>
 
 // Components
 #include <Components/Position.h>
@@ -27,17 +21,26 @@
 #include <Components/Weapon.h>
 #include <Components/WeaponMount.h>
 #include <Components/MovementDamper.h>
-
-// Ship Stuff
-#include <Ships/PartTypes.h>
-#include <Ships/PartVariant.h>
-#include <Ships/PartRegistry.h>
-#include <Ships/ShipGrid.h>
-#include <Ships/ShipFactory.h>
+#include <Components/ShipVisual.h>
 
 // Graphics
 #include <Graphics/TextureRegistry.h>
 #include <Graphics/MeshRegistry.h>
+
+// Systems
+#include <Systems/CollisionSystem.h>
+#include <Systems/LifetimeSystem.h>
+#include <Systems/CameraController.h>
+#include <Systems/MovementTicks.h>
+#include <Systems/ImpulseSystem.h>
+#include <Systems/ThrusterSystem.h>
+#include <Systems/DamageSystem.h>
+#include <Systems/RenderSystem.h>
+#include <Systems/ParticleSystem.h>
+#include <Systems/WeaponSystem.h>
+#include <Systems/DamperSystem.h>
+#include <Systems/MountFollowSystem.h>
+#include <Systems/PartRenderSystem.h>
 
 // Tests
 #include <Test/CoreSystemsTest.h>

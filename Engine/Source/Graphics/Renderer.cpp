@@ -29,8 +29,10 @@ void Engine::Renderer::beginFrame()
 
 void Engine::Renderer::drawInstanced(const Mesh& mesh, const Texture* texture, GLsizei instanceCount)
 {
+    m_shader.Activate();
+
     glUniform1i(m_useTextureUni, texture != nullptr);
-    
+
     if (texture) {
         glUniform1i(m_tex0uni, 0);
         texture->Bind();

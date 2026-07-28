@@ -70,16 +70,25 @@ namespace Engine {
 		DamperSystemDesc dampSysDesc = { {m_logger}, *m_ecsWrapper.get() };
 		m_damperSystem = std::make_unique<DamperSystem>(dampSysDesc);
 
+		MountFollowSystemDesc mountFolSysDesc = { {m_logger}, *m_ecsWrapper.get() };
+		m_mountFollowSystem = std::make_unique<MountFollowSystem>(mountFolSysDesc);
+
+		// Ship stuff
+
 		PartRegistryDesc partRegDesc = { {m_logger} };
 		m_partRegistry = std::make_unique<PartRegistry>(partRegDesc);
 
 		ShipFactoryDesc shipFactoryDesc = { {m_logger}, *m_ecsWrapper.get(), *m_partRegistry.get() };
 		m_shipFactory = std::make_unique<ShipFactory>(shipFactoryDesc);
 
+		PartRenderSystemDesc prsDesc = { {m_logger}, *m_ecsWrapper.get(), *m_renderer.get(), *m_camera.get(), *m_meshRegistry.get(), *m_partRegistry.get() };
+		m_partRenderSystem = std::make_unique<PartRenderSystem>(prsDesc);
+
 		Scheduler& scheduler = m_app.getScheduler();
 		scheduler.registerFrameSystem(m_renderSystem.get());
 		scheduler.registerFrameSystem(m_cameraController.get());
 		scheduler.registerFrameSystem(m_particleSystem.get());
+		scheduler.registerFrameSystem(m_partRenderSystem.get());
 
 		scheduler.registerSystem(m_thrusterSystem.get());
 		scheduler.registerSystem(m_collisionSystem.get());
@@ -89,6 +98,7 @@ namespace Engine {
 		scheduler.registerSystem(m_damageSystem.get());
 		scheduler.registerSystem(m_weaponSystem.get());
 		scheduler.registerSystem(m_damperSystem.get());
+		scheduler.registerSystem(m_mountFollowSystem.get());
 
 		// Command buffers process queued calls for entity and component create/destroy for parallelization
 		scheduler.registerFlushCallback([this]() { m_lifetimeSystem->getCommandBuffer().flush(); });
@@ -138,23 +148,23 @@ namespace Engine {
 		grid.tryPlacePart(2, 2, 44, 44, PartCategory::Hull, hullVariant);
 
 		// Engines along the back edge, evenly spaced
-		for (i32 y = 4; y < 46; y += 8) {
+		for (i32 y = 12; y < 38; y += 8) {
 			grid.tryPlacePart(0, y, 2, 2, PartCategory::Engine, engineVariant);
 		}
 
 		// Hardpoints along the front edge and both sides
 		for (i32 y = 4; y < 46; y += 6) {
-			grid.tryPlacePart(48, y, 1, 1, PartCategory::Hardpoint, hardpointVariant);
+			grid.forcePlacePart(44, y, 1, 1, PartCategory::Hardpoint, hardpointVariant);
 		}
 		for (i32 x = 4; x < 46; x += 10) {
-			grid.tryPlacePart(x, 0, 1, 1, PartCategory::Hardpoint, hardpointVariant);
-			grid.tryPlacePart(x, 49, 1, 1, PartCategory::Hardpoint, hardpointVariant);
+			grid.forcePlacePart(x, 3, 1, 1, PartCategory::Hardpoint, hardpointVariant);
+			grid.forcePlacePart(x, 44, 1, 1, PartCategory::Hardpoint, hardpointVariant);
 		}
 
 		EntityID testShip = m_shipFactory->bake(grid, Vector2double{ 0.0, 0.0 }, 0.0f);
 
 		auto& thruster = m_ecsWrapper->getComponent<Thruster>(testShip);
-		thruster.throttle = 1.0f;
+		thruster.throttle = 0.3f;
 		
 	}
 

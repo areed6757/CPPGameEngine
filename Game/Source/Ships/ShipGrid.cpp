@@ -52,9 +52,31 @@ namespace Engine {
 				cell.isAnchor = anchor;
 				cell.anchorX = anchor ? -1 : x;
 				cell.anchorY = anchor ? -1 : y;
+				cell.sizeX = sizeX;
+				cell.sizeY = sizeY;
 			}
 		}
 		return true;
+	}
+
+	void ShipGrid::forcePlacePart(i32 x, i32 y, i32 sizeX, i32 sizeY, PartCategory category, PartVariantID variant)
+	{
+		for (i32 dy = 0; dy < sizeY; dy++) {
+			for (i32 dx = 0; dx < sizeX; dx++) {
+				i32 cx = x + dx, cy = y + dy;
+				if (!inBounds(cx, cy)) { continue; }
+
+				GridCell& cell = m_cells[index(cx, cy)];
+				cell.partCategory = category;
+				cell.variant = variant;
+				bool anchor = (dx == 0 && dy == 0);
+				cell.isAnchor = anchor;
+				cell.anchorX = anchor ? -1 : x;
+				cell.anchorY = anchor ? -1 : y;
+				cell.sizeX = sizeX;
+				cell.sizeY = sizeY;
+			}
+		}
 	}
 
 	void ShipGrid::removePart(i32 x, i32 y)
@@ -65,6 +87,15 @@ namespace Engine {
 		i32 ax = clicked.isAnchor ? x : clicked.anchorX;
 		i32 ay = clicked.isAnchor ? y : clicked.anchorY;
 
-		m_cells[index(ax, ay)] = GridCell{};
+		const GridCell& anchor = m_cells[index(ax, ay)];
+		i32 sizeX = anchor.sizeX;
+		i32 sizeY = anchor.sizeY;
+
+		for (i32 dy = 0; dy < sizeY; dy++) {
+			for (i32 dx = 0; dx < sizeX; dx++) {
+				i32 cx = ax + dx, cy = ay + dy;
+				if (inBounds(cx, cy)) { m_cells[index(cx, cy)] = GridCell{}; }
+			}
+		}
 	}
 }
