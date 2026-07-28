@@ -53,9 +53,9 @@ namespace Engine {
 		}
 	}
 
-	// Narrow phase sweep that uses projected position comparisons to prevent tunneling from high-velocity
+	// Narrow phase generic sweep that uses projected position comparisons to prevent tunneling from high-velocity
 	// + low-radius projectile hits
-	bool CollisionSystem::narrowPhaseSwept(EntityID a, EntityID b, d64 dt) const
+	bool CollisionSystem::narrowPhaseSwept(EntityID a, EntityID b, d64 dt, Vector2double& outHitPoint) const
 	{
 		auto& posA = m_ecs.getComponent<Position>(a);
 		auto& posB = m_ecs.getComponent<Position>(b);
@@ -67,7 +67,6 @@ namespace Engine {
 		if ((m_ecs.getSignature(a) & m_movementMask) == m_movementMask) { velA = m_ecs.getComponent<Movement>(a).linearVelocity; }
 		if ((m_ecs.getSignature(b) & m_movementMask) == m_movementMask) { velB = m_ecs.getComponent<Movement>(b).linearVelocity; }
 
-		// Vector from A to B at t=0, and how that vector changes per unit time
 		Vector2double delta0 = posB.transform - posA.transform;
 		Vector2double relVel{
 			static_cast<d64>(velB.x - velA.x),
@@ -77,30 +76,54 @@ namespace Engine {
 		d64 radiusSum = static_cast<d64>(physA.radius) + static_cast<d64>(physB.radius);
 		d64 relVelSq = relVel.x * relVel.x + relVel.y * relVel.y;
 
-		// Neither entity closing on the other this tick (stationary relative to
-		// each other) closest approach is just the current distance, t=0
+		d64 t;
 		if (relVelSq < 1e-12) {
-			d64 distSq = delta0.x * delta0.x + delta0.y * delta0.y;
-			return distSq <= (radiusSum * radiusSum);
+			t = 0.0;
 		}
-
-		// Time of closest approach, unclamped, then clamped into this tick's
-		// actual window t=0 is already covered as the lower clamp bound, so
-		// this subsumes the static check rather than needing it run separately
-		d64 t = -(delta0.x * relVel.x + delta0.y * relVel.y) / relVelSq;
-		t = std::clamp(t, 0.0, dt);
+		else {
+			t = -(delta0.x * relVel.x + delta0.y * relVel.y) / relVelSq;
+			t = std::clamp(t, 0.0, dt);
+		}
 
 		Vector2double closest{ delta0.x + relVel.x * t, delta0.y + relVel.y * t };
 		d64 distSq = closest.x * closest.x + closest.y * closest.y;
 
-		return distSq <= (radiusSum * radiusSum);
+		if (distSq > (radiusSum * radiusSum)) { return false; }
+
+		Vector2double posAatT{ posA.transform.x + static_cast<d64>(velA.x) * t, posA.transform.y + static_cast<d64>(velA.y) * t };
+		d64 dist = std::sqrt(distSq);
+		Vector2double normal = (dist > 1e-6) ? Vector2double{ closest.x / dist, closest.y / dist } : Vector2double{ 1.0, 0.0 };
+		outHitPoint = Vector2double{
+			posAatT.x + normal.x * static_cast<d64>(physA.radius),
+			posAatT.y + normal.y * static_cast<d64>(physA.radius)
+		};
+
+		return true;
 	}
 
 
-	bool CollisionSystem::narrowPhaseShip(EntityID a, EntityID b, d64 dt) const {
-		// Currently defaults to simple swept check until ship baking process is complete
-		// baked ships will have grid casting based on the vector they are flattened to
-		return narrowPhaseSwept(a, b, dt);
+	bool CollisionSystem::narrowPhaseShip(EntityID a, EntityID b, d64 dt, Vector2double& outHitPoint) const
+	{
+		if (!m_ecs.hasComponent<ShipCollisionGeometry>(a) || !m_ecs.hasComponent<ShipCollisionGeometry>(b)) {
+			return narrowPhaseSwept(a, b, dt, outHitPoint); // fallback for 1 or 2 non-ships
+		}
+
+		auto& geoA = m_ecs.getComponent<ShipCollisionGeometry>(a);
+		auto& geoB = m_ecs.getComponent<ShipCollisionGeometry>(b);
+		auto& posA = m_ecs.getComponent<Position>(a);
+		auto& posB = m_ecs.getComponent<Position>(b);
+
+		if (!convexHullsOverlap(geoA.hullSupportPoints, posA.transform, posA.rotation,
+			geoB.hullSupportPoints, posB.transform, posB.rotation)) {
+			return false; // SAT prefilter
+		}
+
+		EdgeHitResult hit = boundaryEdgesIntersect(geoA.boundaryEdges, posA.transform, posA.rotation,
+			geoB.boundaryEdges, posB.transform, posB.rotation);
+		if (!hit.hit) { return false; }
+
+		outHitPoint = hit.point;
+		return true;
 	}
 
 	void CollisionSystem::Update(d64 dt)
@@ -124,11 +147,30 @@ namespace Engine {
 
 		m_events.clear();
 		for (const auto& [a, b] : m_candidates) {
-			// TODO: dispatch narrowPhaseSimple vs narrowPhaseShip once
-			// Currently all collisions are simple non-ship
-			// can differentiate the two by the presense of segment data on baked ships
-			if (narrowPhaseSwept(a, b, dt)) {
+			Vector2double hitPoint{};
+			bool hit = false;
+
+			bool aIsShip = m_ecs.hasComponent<ShipCollisionGeometry>(a);
+			bool bIsShip = m_ecs.hasComponent<ShipCollisionGeometry>(b);
+			bool aIsProjectile = m_ecs.hasComponent<DamagePayload>(a);
+			bool bIsProjectile = m_ecs.hasComponent<DamagePayload>(b);
+
+			if (aIsShip && bIsShip) {
+				hit = narrowPhaseShip(a, b, dt, hitPoint);
+			}
+			else if (bIsShip && aIsProjectile) {
+				hit = narrowPhaseProjectileVsShip(a, b, dt, hitPoint);
+			}
+			else if (aIsShip && bIsProjectile) {
+				hit = narrowPhaseProjectileVsShip(b, a, dt, hitPoint);
+			}
+			else {
+				hit = narrowPhaseSwept(a, b, dt, hitPoint);
+			}
+
+			if (hit) {
 				CollisionEvent event{ a, b };
+				event.hitPoint = hitPoint;
 				if (!((m_ecs.getSignature(a) & m_nonPhysicsCollisionMask) == m_nonPhysicsCollisionMask) &&
 					!((m_ecs.getSignature(b) & m_nonPhysicsCollisionMask) == m_nonPhysicsCollisionMask)) 
 				{
@@ -183,5 +225,39 @@ namespace Engine {
 
 		outImpulseA = Vector2float{ -impulse.x * invMassA, -impulse.y * invMassA };
 		outImpulseB = Vector2float{ impulse.x * invMassB, impulse.y * invMassB };
+	}
+
+	bool CollisionSystem::narrowPhaseProjectileVsShip(EntityID projectile, EntityID ship, d64 dt, Vector2double& outHitPoint) const
+	{
+		auto& shipGridData = m_ecs.getComponent<ShipGridData>(ship);
+		auto& shipPos = m_ecs.getComponent<Position>(ship);
+		auto& projPos = m_ecs.getComponent<Position>(projectile);
+
+		Vector2float velocity{};
+		if (m_ecs.hasComponent<Movement>(projectile)) { velocity = m_ecs.getComponent<Movement>(projectile).linearVelocity; }
+
+		Vector2double worldStart = projPos.transform;
+		Vector2double worldEnd = projPos.transform + Vector2double{ velocity.x * dt, velocity.y * dt };
+
+		// Transform world-space start/end into ship space (inverse of the ship's Position + Rotation)
+		f32 c = std::cos(-shipPos.rotation), s = std::sin(-shipPos.rotation);
+		auto toLocal = [&](const Vector2double& world) -> Vector2float {
+			Vector2double rel = world - shipPos.transform;
+			return Vector2float{
+				static_cast<f32>(rel.x * c - rel.y * s),
+				static_cast<f32>(rel.x * s + rel.y * c)
+			};
+			};
+
+		GridHitResult hit = raycastGrid(shipGridData, toLocal(worldStart), toLocal(worldEnd));
+		if (!hit.hit) { return false; }
+
+		// hit.point is local to ship, transform back to world space for the event.
+		f32 c2 = std::cos(shipPos.rotation), s2 = std::sin(shipPos.rotation);
+		outHitPoint = shipPos.transform + Vector2double{
+			hit.point.x * c2 - hit.point.y * s2,
+			hit.point.x * s2 + hit.point.y * c2
+		};
+		return true;
 	}
 }

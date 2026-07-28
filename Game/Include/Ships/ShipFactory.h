@@ -2,6 +2,9 @@
 #include <Game.h>
 
 namespace Engine {
+	class ShipGrid;
+	class PartRegistry;
+
 	struct ShipFactoryDesc {
 		BaseDesc base;
 		GameECSWrapper& ecs;

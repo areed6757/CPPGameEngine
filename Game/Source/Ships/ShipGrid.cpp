@@ -1,4 +1,6 @@
 #include <Ships/ShipGrid.h>
+#include <Ships/ShipCollisionGeometry.h>
+#include <algorithm>
 
 namespace Engine {
 	Engine::ShipGrid::ShipGrid(const ShipGridDesc& desc) : Base(desc.base),
@@ -97,5 +99,76 @@ namespace Engine {
 				if (inBounds(cx, cy)) { m_cells[index(cx, cy)] = GridCell{}; }
 			}
 		}
+	}
+
+	ShipCollisionGeometry ShipGrid::buildCollisionGeometry() const
+	{
+		ShipCollisionGeometry geo;
+		std::vector<Vector2float> occupiedCenters;
+
+		f32 halfW = m_width * 0.5f;
+		f32 halfH = m_height * 0.5f;
+		f32 cellKm = static_cast<f32>(GRID_CELL_SIZE_KM);
+
+		auto isOccupied = [&](i32 x, i32 y) -> bool {
+			if (!inBounds(x, y)) { return false; }
+			const GridCell& c = at(x, y);
+			return c.partCategory != PartCategory::None;
+			};
+
+		for (i32 y = 0; y < m_height; y++) {
+			for (i32 x = 0; x < m_width; x++) {
+				if (!isOccupied(x, y)) { continue; }
+
+				Vector2float center{ (x + 0.5f - halfW) * cellKm, (y + 0.5f - halfH) * cellKm };
+				occupiedCenters.push_back(center);
+
+				// A boundary cell is occupied with at least one empty/out-of-bounds
+				// 4-neighbor. Emit that cell's edge on each empty-facing side.
+				bool isBoundary =
+					!isOccupied(x - 1, y) || !isOccupied(x + 1, y) ||
+					!isOccupied(x, y - 1) || !isOccupied(x, y + 1);
+				if (!isBoundary) { continue; }
+
+				f32 x0 = (x - halfW) * cellKm, x1 = (x + 1 - halfW) * cellKm;
+				f32 y0 = (y - halfH) * cellKm, y1 = (y + 1 - halfH) * cellKm;
+
+				if (!isOccupied(x - 1, y)) { geo.boundaryEdges.push_back({ {x0, y0}, {x0, y1} }); }
+				if (!isOccupied(x + 1, y)) { geo.boundaryEdges.push_back({ {x1, y0}, {x1, y1} }); }
+				if (!isOccupied(x, y - 1)) { geo.boundaryEdges.push_back({ {x0, y0}, {x1, y0} }); }
+				if (!isOccupied(x, y + 1)) { geo.boundaryEdges.push_back({ {x0, y1}, {x1, y1} }); }
+			}
+		}
+
+		// Convex hull via Andrew's monotone chain over occupied cell centers
+		std::sort(occupiedCenters.begin(), occupiedCenters.end(), [](const Vector2float& a, const Vector2float& b) {
+			return a.x < b.x || (a.x == b.x && a.y < b.y);
+			});
+		auto cross = [](const Vector2float& o, const Vector2float& a, const Vector2float& b) {
+			return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+			};
+		std::vector<Vector2float> hull(2 * occupiedCenters.size());
+		i32 k = 0;
+		for (i32 i = 0; i < static_cast<i32>(occupiedCenters.size()); i++) {
+			while (k >= 2 && cross(hull[k - 2], hull[k - 1], occupiedCenters[i]) <= 0) { k--; }
+			hull[k++] = occupiedCenters[i];
+		}
+		i32 lower = k + 1;
+		for (i32 i = static_cast<i32>(occupiedCenters.size()) - 2; i >= 0; i--) {
+			while (k >= lower && cross(hull[k - 2], hull[k - 1], occupiedCenters[i]) <= 0) { k--; }
+			hull[k++] = occupiedCenters[i];
+		}
+		hull.resize(k - 1);
+		geo.hullSupportPoints = std::move(hull);
+
+		return geo;
+	}
+
+	ShipGridData ShipGrid::toRuntimeData() const
+	{
+		ShipGridData data{ m_width, m_height };
+		data.occupancy.reserve(m_cells.size());
+		for (auto& cell : m_cells) { data.occupancy.push_back(cell.partCategory); }
+		return data;
 	}
 }

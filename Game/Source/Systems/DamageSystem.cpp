@@ -8,9 +8,10 @@ namespace Engine {
 	{
 		m_healthMask = m_ecs.makeSignature<Health>();
 		m_damageMask = m_ecs.makeSignature<DamagePayload>();
+		m_stabilityMask = m_ecs.makeSignature<Stability>();
 
-		m_reads = m_ecs.makeSignature<Health, DamagePayload>();
-		m_writes = m_ecs.makeSignature<Health>();
+		m_reads = m_ecs.makeSignature<Health, Stability, DamagePayload>();
+		m_writes = m_ecs.makeSignature<Health, Stability>();
 	}
 
 	DamageSystem::~DamageSystem()
@@ -26,33 +27,41 @@ namespace Engine {
 			bool bHasDamage = (m_ecs.getSignature(event.entityB) & m_damageMask) == m_damageMask;
 			bool aHasHealth = (m_ecs.getSignature(event.entityA) & m_healthMask) == m_healthMask;
 			bool bHasHealth = (m_ecs.getSignature(event.entityB) & m_healthMask) == m_healthMask;
-		
-			if (aHasDamage && bHasHealth) {
+			bool aHasStability = (m_ecs.getSignature(event.entityA) & m_stabilityMask) == m_stabilityMask;
+			bool bHasStability = (m_ecs.getSignature(event.entityB) & m_stabilityMask) == m_stabilityMask;
+
+			if (aHasDamage && (bHasHealth || bHasStability)) {
 				applyHit(event.entityA, event.entityB);
 			}
-			else if (bHasDamage && aHasHealth) {
+			else if (bHasDamage && (aHasHealth || aHasStability)) {
 				applyHit(event.entityB, event.entityA);
 			}
 		}
 	}
-
 	void DamageSystem::applyHit(EntityID damageDealer, EntityID target)
 	{
 		if (!m_ecs.isValidEntity(damageDealer) || !m_ecs.isValidEntity(target)) { return; }
 
 		auto& payload = m_ecs.getComponent<DamagePayload>(damageDealer);
-		auto& health = m_ecs.getComponent<Health>(target);
 
-		health.current -= std::max(0.0f, health.current - payload.amount);
+		if (m_ecs.hasComponent<Health>(target)) {
+			auto& health = m_ecs.getComponent<Health>(target);
+			health.current = std::max(0.0f, health.current - payload.amount);
+			EngineLogInfo("Entity {} dealt {} damage to entity {} ({} / {} health remaining)",
+				damageDealer.id, payload.amount, target.id, health.current, health.max);
+		}
+		else if (m_ecs.hasComponent<Stability>(target)) {
+			auto& stability = m_ecs.getComponent<Stability>(target);
+			stability.current = std::max(0.0f, stability.current - payload.amount);
+			EngineLogInfo("Entity {} dealt {} damage to entity {} ({} / {} stability remaining)",
+				damageDealer.id, payload.amount, target.id, stability.current, stability.max);
 
-		EngineLogInfo("Entity {} dealt {} damage to entity {} ({} / {} remaining health)",
-			damageDealer.id, payload.amount, target.id, health.current, health.max);
-
-		if (health.current <= 0.0f) {
-			m_cmdBuffer.destroyEntity(target);
-			EngineLogInfo("Entity {} destroyed.", target.id);
+			if (stability.current <= 0.0f) {
+				m_cmdBuffer.destroyEntity(target);
+				EngineLogInfo("Entity {} destroyed.", target.id);
+			}
 		}
 
-		m_cmdBuffer.destroyEntity(damageDealer); // Currently assumes all damaging entities are temporary projectiles
+		m_cmdBuffer.destroyEntity(damageDealer);
 	}
 }

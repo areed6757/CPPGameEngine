@@ -20,7 +20,8 @@ namespace Engine {
 
 		Vector2float impulseA{};
 		Vector2float impulseB{};
-		// TODO: Add damage payload fields here?
+
+		Vector2double hitPoint{};
 	};
 
 	class CollisionSystem : public Base, public TickedSystem {
@@ -47,12 +48,10 @@ namespace Engine {
 		d64 m_maxRadiusSeenThisTick;
 
 		void broadPhase(std::vector<CollisionCandidate>& outCandidates);
-
-		// TODO: grid-cast footprint overlap + center of mass raycast for multi-part ships,
-		// these should be integrated fields from the ship baking process, will test with simple version
 		
-		[[nodiscard]] bool narrowPhaseSwept(EntityID a, EntityID b, d64 dt) const;
-		[[nodiscard]] bool narrowPhaseShip(EntityID a, EntityID b, d64 dt) const;
+		[[nodiscard]] bool narrowPhaseSwept(EntityID a, EntityID b, d64 dt, Vector2double& outHitPoint) const;
+		[[nodiscard]] bool narrowPhaseShip(EntityID a, EntityID b, d64 dt, Vector2double& outHitPoint) const;
 		[[nodiscard]] void computeImpulse(EntityID a, EntityID b, Vector2float& outImpulseA, Vector2float& outImpulseB) const;
+		[[nodiscard]] bool narrowPhaseProjectileVsShip(EntityID projectile, EntityID ship, d64 dt, Vector2double& outHitPoint) const;
 	};
 }

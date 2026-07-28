@@ -12,6 +12,9 @@
 #include <Components/WeaponMount.h>
 #include <Components/MovementDamper.h>
 #include <Components/ShipVisual.h>
+#include <Components/Stability.h>
+#include <Ships/ShipCollisionGeometry.h>
+#include <Ships/ShipGrid.h>
 
 /// <summary>
 /// This class holds pools of components as the single source of access to all components types by all systems in the game.
@@ -35,11 +38,16 @@ namespace Engine {
 	template <> struct ComponentBit<WeaponMount> { static constexpr i32 value = 9; };
 	template <> struct ComponentBit<MovementDamper> { static constexpr i32 value = 10; };
 	template <> struct ComponentBit<ShipVisual> { static constexpr i32 value = 11; };
+	template <> struct ComponentBit<Stability> { static constexpr i32 value = 12; };
+	template <> struct ComponentBit<ShipCollisionGeometry> { static constexpr i32 value = 13; };
+	template <> struct ComponentBit<ShipGridData> { static constexpr i32 value = 14; };
 
 	struct ComponentPools {
 		explicit ComponentPools(const ComponentDesc& desc) : positions(desc), movements(desc),
 			renderables(desc), physics(desc), damagePayloads(desc), healths(desc), lifetimes(desc),
-			thrusters(desc), weapons(desc), weaponMounts(desc), movementDampers(desc), shipVisuals(desc) {}
+			thrusters(desc), weapons(desc), weaponMounts(desc), movementDampers(desc), shipVisuals(desc),
+			stabilities(desc), shipCollisionGeometries(desc), shipGridDatas(desc)
+		{}
 
 	private:
 		Component<Position> positions;
@@ -54,6 +62,9 @@ namespace Engine {
 		Component<WeaponMount> weaponMounts;
 		Component<MovementDamper> movementDampers;
 		Component<ShipVisual> shipVisuals;
+		Component<Stability> stabilities;
+		Component<ShipCollisionGeometry> shipCollisionGeometries;
+		Component<ShipGridData> shipGridDatas;
 
 	public:
 		/// <summary>
@@ -75,6 +86,9 @@ namespace Engine {
 			else if constexpr (std::is_same_v<T, WeaponMount>) return weaponMounts;
 			else if constexpr (std::is_same_v<T, MovementDamper>) return movementDampers;
 			else if constexpr (std::is_same_v<T, ShipVisual>) return shipVisuals;
+			else if constexpr (std::is_same_v<T, Stability>) return stabilities;
+			else if constexpr (std::is_same_v<T, ShipCollisionGeometry>) return shipCollisionGeometries;
+			else if constexpr (std::is_same_v<T, ShipGridData>) return shipGridDatas;
 			else static_assert(sizeof(T) == 0, "getPool: unregistered component type");
 		}
 
@@ -98,6 +112,9 @@ namespace Engine {
 			else if constexpr (std::is_same_v<T, WeaponMount>) return weaponMounts;
 			else if constexpr (std::is_same_v<T, MovementDamper>) return movementDampers;
 			else if constexpr (std::is_same_v<T, ShipVisual>) return shipVisuals;
+			else if constexpr (std::is_same_v<T, Stability>) return stabilities;
+			else if constexpr (std::is_same_v<T, ShipCollisionGeometry>) return shipCollisionGeometries;
+			else if constexpr (std::is_same_v<T, ShipGridData>) return shipGridDatas;
 			else static_assert(sizeof(T) == 0, "getPool: unregistered component type");
 		}
 
@@ -114,6 +131,9 @@ namespace Engine {
 			if (weaponMounts.has(index)) { weaponMounts.remove(index); }
 			if (movementDampers.has(index)) { movementDampers.remove(index); }
 			if (shipVisuals.has(index)) { shipVisuals.remove(index); }
+			if (stabilities.has(index)) { stabilities.remove(index); }
+			if (shipCollisionGeometries.has(index)) { shipCollisionGeometries.remove(index); }
+			if (shipGridDatas.has(index)) { shipGridDatas.remove(index); }
 		}
 	};
 

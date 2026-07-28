@@ -1,8 +1,17 @@
 #pragma once
-#include <Game.h>
+#include <Core/Common.h>
+#include <Ships/PartTypes.h>
+#include <Ships/PartVariant.h>
 #include <vector>
 
 namespace Engine {
+	struct ShipCollisionGeometry;
+
+	struct ShipGridData {
+		i32 width, height;
+		std::vector<PartCategory> occupancy; // one entry per cell
+	};
+
 	struct GridCell {
 		PartCategory partCategory = PartCategory::None;
 		PartVariantID variant = INVALID_PART_VARIANT;
@@ -29,6 +38,10 @@ namespace Engine {
 		[[nodiscard]] bool inBounds(i32 x, i32 y) const noexcept;
 
 		[[nodiscard]] const GridCell& resolveAnchor(i32 x, i32 y) const;
+
+		[[nodiscard]] ShipCollisionGeometry buildCollisionGeometry() const;
+
+		[[nodiscard]] ShipGridData toRuntimeData() const;
 
 		bool tryPlacePart(i32 x, i32 y, i32 sizeX, i32 sizeY, PartCategory category, PartVariantID variant);
 

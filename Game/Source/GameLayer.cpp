@@ -129,6 +129,7 @@ namespace Engine {
 		m_damperTest->spawnComparisonRow(5.0, 5.0f, 0.5f, 0.1f);
 		*/
 
+		/*
 		PartVariantID hullVariant = m_partRegistry->registerVariant(PartVariant{
 			.name = "Basic Hull", .category = PartCategory::Hull,
 			.params = HullParams{ PartBaseStats{ 10.0f, 50.0f, 20.0f, 0.0f } }
@@ -165,7 +166,15 @@ namespace Engine {
 
 		auto& thruster = m_ecsWrapper->getComponent<Thruster>(testShip);
 		thruster.throttle = 0.3f;
-		
+		*/
+
+		ShipCollisionTestDesc sctDesc{ {m_logger}, *m_ecsWrapper.get(), *m_shipFactory.get(), *m_partRegistry.get() };
+		m_shipCollisionTest = std::make_unique<ShipCollisionTest>(sctDesc);
+
+		//m_shipCollisionTest->spawnOverlappingShipPair();
+		m_shipCollisionTest->spawnProjectileAtShip(5.0f, 5.0f);
+		//m_shipCollisionTest->spawnSeparatedShipPair();
+
 	}
 
 	void GameLayer::onDetach()

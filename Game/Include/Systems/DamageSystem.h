@@ -29,5 +29,6 @@ namespace Engine {
 
 		std::bitset<64> m_healthMask{};
 		std::bitset<64> m_damageMask{};
+		std::bitset<64> m_stabilityMask{};
 	};
 }

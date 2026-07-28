@@ -47,5 +47,6 @@ namespace Engine {
 		std::unique_ptr<ThreadingStressTest> m_threadingStressTest{};
 		std::unique_ptr<WeaponTest> m_weaponTest{};
 		std::unique_ptr<DamperTest> m_damperTest{};
+		std::unique_ptr<ShipCollisionTest> m_shipCollisionTest{};
 	};
 }

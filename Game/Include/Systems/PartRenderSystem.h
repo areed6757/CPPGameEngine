@@ -3,6 +3,8 @@
 #include <map>
 
 namespace Engine {
+	class PartRegistry;
+
 	struct PartRenderSystemDesc {
 		BaseDesc base;
 		GameECSWrapper& ecs;

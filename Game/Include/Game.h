@@ -7,6 +7,7 @@
 #include <Ships/PartVariant.h>
 #include <Ships/PartRegistry.h>
 #include <Ships/ShipGrid.h>
+#include <Ships/ShipCollisionGeometry.h>
 #include <Ships/ShipFactory.h>
 
 // Components
@@ -22,6 +23,7 @@
 #include <Components/WeaponMount.h>
 #include <Components/MovementDamper.h>
 #include <Components/ShipVisual.h>
+#include <Components/Stability.h>
 
 // Graphics
 #include <Graphics/TextureRegistry.h>
@@ -48,3 +50,4 @@
 #include <Test/ThreadingStressTest.h>
 #include <Test/WeaponTest.h>
 #include <Test/DamperTest.h>
+#include <Test/ShipCollisionTest.h>

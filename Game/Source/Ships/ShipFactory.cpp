@@ -79,7 +79,9 @@ namespace Engine {
 		m_ecs.addComponent(ship, Position{ .transform = spawnPos, .rotation = spawnRotation });
 		m_ecs.addComponent(ship, Movement{});
 		m_ecs.addComponent(ship, Physics{ .radius = radius, .mass = totalMass > 0.0f ? totalMass : 1.0f });
-		m_ecs.addComponent(ship, Health{ .current = totalStability, .max = totalStability }); // stands in for the future Stability component
+		m_ecs.addComponent(ship, Stability{ .current = totalStability, .max = totalStability });
+		m_ecs.addComponent(ship, grid.buildCollisionGeometry());
+		m_ecs.addComponent(ship, grid.toRuntimeData());
 		m_ecs.addComponent(ship, visual);
 
 		if (totalThrustForce > 0.0f) {
