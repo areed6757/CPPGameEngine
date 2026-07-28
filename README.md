@@ -13,6 +13,6 @@ The game directory includes a functioning ship "baking" system that turns a (pot
 If you are interested in any further details or potentially would like to contribute to this hobby project via recommendations for code improvements or features, I would love to hear from anyone that stumbles across it! My email address is on my profile.
 
 
-# A small portion of the debugger output from the 90%+ coverage Catch2 test suite of the Engine directory.
+### A small portion of the debugger output from the 90%+ coverage Catch2 test suite of the Engine directory.
 <img width="1182" height="812" alt="image" src="https://github.com/user-attachments/assets/cdb2e995-fa51-4783-9306-9ca5be0bf9ca" />
 
