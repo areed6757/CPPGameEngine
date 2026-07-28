@@ -1,3 +1,4 @@
-Early Validation Tests for ECS System, using custom Logger class and Catch2 library
+A small portion of the debugger output from the 90%+ coverage Catch2 test suite.
 
-<img width="639" height="1036" alt="image" src="https://github.com/user-attachments/assets/94a2d268-401a-4160-88c7-f2765c26eff8" />
+<img width="1182" height="812" alt="image" src="https://github.com/user-attachments/assets/cdb2e995-fa51-4783-9306-9ca5be0bf9ca" />
+
