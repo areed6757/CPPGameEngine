@@ -36,6 +36,9 @@ namespace Engine {
 
         glfwSetWindowUserPointer(m_window.get(), this);
         glfwSetKeyCallback(m_window.get(), &Window::keyCallback);
+        glfwSetMouseButtonCallback(m_window.get(), &Window::mouseButtonCallback);
+        glfwSetCursorPosCallback(m_window.get(), &Window::cursorPosCallback);
+        glfwSetScrollCallback(m_window.get(), &Window::scrollCallback);
         glfwSetFramebufferSizeCallback(m_window.get(), Window::framebuffer_size_callback);
 
         EngineLogInfo("GLFW window created.");
@@ -63,6 +66,24 @@ namespace Engine {
         else if (action == GLFW_RELEASE) { self->onKeyEvent(key, action, false); }
     }
 
+    void Window::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+    {
+        Window* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        self->onMouseButtonEvent(button, action);
+    }
+
+    void Window::cursorPosCallback(GLFWwindow* window, double xpos, double ypos)
+    {
+        Window* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        self->onCursorPosEvent(xpos, ypos);
+    }
+
+    void Window::scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+    {
+        Window* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        self->onScrollEvent(xoffset, yoffset);
+    }
+
     void Window::onKeyEvent(int key, int action, bool isRepeat) {
         if (!m_eventCallback) { return; }
         if (action == GLFW_RELEASE) {
@@ -73,6 +94,33 @@ namespace Engine {
             KeyPressedEvent event(key, isRepeat);
             m_eventCallback(event);
         }
+    }
+
+    void Window::onMouseButtonEvent(int button, int action)
+    {
+        if (!m_eventCallback) { return; }
+        if (action == GLFW_PRESS) {
+            MouseButtonPressedEvent event(button);
+            m_eventCallback(event);
+        }
+        else if (action == GLFW_RELEASE) {
+            MouseButtonReleasedEvent event(button);
+            m_eventCallback(event);
+        }
+    }
+
+    void Window::onCursorPosEvent(double xpos, double ypos)
+    {
+        if (!m_eventCallback) { return; }
+        MouseMovedEvent event(xpos, ypos);
+        m_eventCallback(event);
+    }
+
+    void Window::onScrollEvent(double xoffset, double yoffset)
+    {
+        if (!m_eventCallback) { return; }
+        MouseScrolledEvent event(xoffset, yoffset);
+        m_eventCallback(event);
     }
 
     void Window::framebuffer_size_callback(GLFWwindow* window, int width, int height) {

@@ -2,10 +2,6 @@
 #include <Core/Common.h>
 #include <GLFW/glfw3.h>
 
-// Maps key presses to actions as GLFW_KEY_<label>, "ActionString"
-// This uses a vector of pairs implementation to avoid overhead from unordered_map lookups
-// bindings should not be edited after compilation to maintain memory contiguity
-// ActionStrings should remain <14 characters to ensure they are stored in-line
 namespace Engine {
 	enum class ActionID : i32 {
 		Pause,

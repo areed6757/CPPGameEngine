@@ -12,6 +12,7 @@
 // Events
 #include <Events/Event.h>
 #include <Events/KeyEvent.h>
+#include <Events/MouseEvent.h>
 
 // ECS
 #include <ECS/ECSWrapper.h>

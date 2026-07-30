@@ -47,11 +47,17 @@ namespace Engine {
 		static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 		static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-		void onKeyEvent(int key, int action, bool isRepeat);
+		static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+		static void cursorPosCallback(GLFWwindow* window, double xpos, double ypos);
+		static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
-		std::function<void(Event&)> m_eventCallback;
+		void onKeyEvent(int key, int action, bool isRepeat);
+		void onMouseButtonEvent(int button, int action);
+		void onCursorPosEvent(double xpos, double ypos);
+		void onScrollEvent(double xoffset, double yoffset);
 		
 		i32 m_width{};
 		i32 m_height{};
+		std::function<void(Event&)> m_eventCallback;
 	};
 }

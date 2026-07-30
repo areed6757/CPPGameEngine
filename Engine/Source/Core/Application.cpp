@@ -31,10 +31,12 @@ namespace Engine {
 
 		EngineLogInfo("Application created.")
 	}
+
 	Application::~Application()
 	{
 		EngineLogInfo("Application shutting down...");
 	}
+
 	void Application::run()
 	{
 		while (m_isRunning && !glfwWindowShouldClose(m_window->get())) {
@@ -51,38 +53,47 @@ namespace Engine {
 			m_inputHandler->endFrame();
 		}
 	}
+
 	void Application::pushLayer(Layer* layer)
 	{
 		m_layerStack.pushLayer(layer);
 	}
+
 	void Application::pushOverlay(Layer* layer)
 	{
 		m_layerStack.pushOverlay(layer);
 	}
+
 	Window& Application::getWindow() noexcept
 	{
 		return *m_window.get();
 	}
+
 	InputHandler& Application::getInputHandler() noexcept
 	{
 		return *m_inputHandler;
 	}
+
 	Scheduler& Application::getScheduler() noexcept
 	{
 		return *m_scheduler.get();
 	}
+
 	ThreadPool& Application::getThreadPool() noexcept
 	{
 		return *m_threadPool.get();
 	}
+
 	JobController& Application::getJobController() noexcept
 	{
 		return *m_jobController.get();
 	}
+
 	GameClock& Application::getGameClock() noexcept
 	{
 		return *m_gameClock.get();
 	}
+
 	void Application::onEvent(Event& e)
 	{
 		if (e.getEventType() == EventType::KeyPressed) {
@@ -92,6 +103,22 @@ namespace Engine {
 		else if (e.getEventType() == EventType::KeyReleased) {
 			auto& kr = static_cast<KeyReleasedEvent&>(e);
 			m_inputHandler->onKey(kr.getKeyCode(), 0, GLFW_RELEASE, 0);
+		}
+		else if (e.getEventType() == EventType::MouseButtonPressed) {
+			auto& mp = static_cast<MouseButtonPressedEvent&>(e);
+			m_inputHandler->onMouseButton(mp.getButton(), GLFW_PRESS, 0);
+		}
+		else if (e.getEventType() == EventType::MouseButtonReleased) {
+			auto& mr = static_cast<MouseButtonReleasedEvent&>(e);
+			m_inputHandler->onMouseButton(mr.getButton(), GLFW_RELEASE, 0);
+		}
+		else if (e.getEventType() == EventType::MouseMoved) {
+			auto& mm = static_cast<MouseMovedEvent&>(e);
+			m_inputHandler->onMouseMove(mm.getX(), mm.getY());
+		}
+		else if (e.getEventType() == EventType::MouseScrolled) {
+			auto& ms = static_cast<MouseScrolledEvent&>(e);
+			m_inputHandler->onScroll(ms.getXOffset(), ms.getYOffset());
 		}
 
 		for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); ++it) {
