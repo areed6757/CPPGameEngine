@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <Core/Common.h>
+#include <Engine.h>
 
 namespace Engine {
 	class Layer {
@@ -10,6 +10,8 @@ namespace Engine {
 		virtual void onAttach() {}
 		virtual void onDetach() {}
 		virtual void onUpdate(d64 dt) {}
+		virtual void onEvent(Event& e) {}
+
 	protected:
 		std::string m_debugName;
 	};

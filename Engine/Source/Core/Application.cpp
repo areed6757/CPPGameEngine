@@ -10,10 +10,12 @@ namespace Engine {
 		GLFWDesc glfwDesc{ { m_logger } };
 		m_glfwContext = std::make_unique<GLFWContext>(glfwDesc);
 
-		WindowDesc windowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title, m_actionMap };
-		m_window = std::make_unique<Window>(windowDesc);
+		InputHandlerDesc inputHandlerDesc{ { m_logger}, m_actionMap };
+		m_inputHandler = std::make_unique<InputHandler>(inputHandlerDesc);
 
-		m_inputHandler = m_window->getInputHandler();
+		WindowDesc windowDesc{ {m_logger}, desc.windowWidth, desc.windowHeight, desc.title };
+		m_window = std::make_unique<Window>(windowDesc);
+		m_window->setEventCallback([this](Event& e) { onEvent(e); });
 
 		GameClockDesc clockDesc = { {m_logger} };
 		m_gameClock = std::make_unique<GameClock>(clockDesc);
@@ -38,7 +40,7 @@ namespace Engine {
 		while (m_isRunning && !glfwWindowShouldClose(m_window->get())) {
 			glfwPollEvents();
 
-			if (m_inputHandler->wasEventActivated("pause")) {
+			if (m_inputHandler->wasEventActivated(ActionID::Pause)) {
 				m_scheduler->togglePause();
 			}
 
@@ -80,5 +82,21 @@ namespace Engine {
 	GameClock& Application::getGameClock() noexcept
 	{
 		return *m_gameClock.get();
+	}
+	void Application::onEvent(Event& e)
+	{
+		if (e.getEventType() == EventType::KeyPressed) {
+			auto& kp = static_cast<KeyPressedEvent&>(e);
+			m_inputHandler->onKey(kp.getKeyCode(), 0, kp.isRepeat() ? GLFW_REPEAT : GLFW_PRESS, 0);
+		}
+		else if (e.getEventType() == EventType::KeyReleased) {
+			auto& kr = static_cast<KeyReleasedEvent&>(e);
+			m_inputHandler->onKey(kr.getKeyCode(), 0, GLFW_RELEASE, 0);
+		}
+
+		for (auto it = m_layerStack.rbegin(); it != m_layerStack.rend(); ++it) {
+			if (e.handled) { break; }
+			(*it)->onEvent(e);
+		}
 	}
 }

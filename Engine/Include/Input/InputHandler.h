@@ -25,21 +25,37 @@ namespace Engine {
 		InputHandler(const InputHandler&) = delete;
 		InputHandler& operator = (const InputHandler&) = delete;
 
-		bool wasEventActivated(std::string_view eventName) const;
-
+		bool wasEventActivated(ActionID action) const;
 		void endFrame() noexcept;
 
 		bool isKeyDown(i32 key) const noexcept;
-		[[nodiscard]] bool isKeyDown(std::string_view eventName) const noexcept;
+		[[nodiscard]] bool isKeyDown(ActionID action) const noexcept;
+
 		bool wasKeyJustPressed(i32 key) const noexcept;
+		bool wasKeyJustReleased(i32 key) const noexcept;
+
+		[[nodiscard]] bool isMouseButtonDown(i32 button) const noexcept;
+		bool wasMouseButtonJustPressed(i32 button) const noexcept;
+
+		[[nodiscard]] Vector2double getMousePosition() const noexcept { return m_mousePos; }
+		[[nodiscard]] Vector2double getMouseDelta() const noexcept { return m_mouseDelta; }
+		[[nodiscard]] f32 getScrollDelta() const noexcept { return m_scrollDelta; }
+
 
 	private:
-		// Handle inputs
 		ActionMap& m_actionMap;
 		std::vector<KeyState> m_keyStates;
-		std::vector<std::pair<std::string, KeyState>> m_eventStates;
+		std::vector<KeyState> m_mouseButtonStates;
+		Vector2double m_mousePos{};
+		Vector2double m_lastMousePos{};
+		Vector2double m_mouseDelta{};
+		f32 m_scrollDelta{ 0.0f };
 
-		friend class Window;
-		void onKey(i32 key, i32 scancode, i32 action, i32 mods); // Called by Window that creates this handler
+		friend class Application;
+		void onKey(i32 key, i32 scancode, i32 action, i32 mods);
+		void onMouseButton(i32 button, i32 action, i32 mods);
+		void onMouseMove(d64 x, d64 y);
+		void onScroll(d64 xOffset, d64 yOffset);
+
 	};
 }

@@ -9,6 +9,10 @@
 #include <Core/Logger.h>
 #include <Core/Core.h>
 
+// Events
+#include <Events/Event.h>
+#include <Events/KeyEvent.h>
+
 // ECS
 #include <ECS/ECSWrapper.h>
 #include <ECS/Component.h>
@@ -44,3 +48,4 @@
 #include <Physics/Vector2float.h>
 #include <Physics/Vector3double.h>
 #include <Physics/Vector3float.h>
+

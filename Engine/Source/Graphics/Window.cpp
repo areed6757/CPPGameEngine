@@ -2,80 +2,85 @@
 #include <Input/InputHandler.h>
 
 // Wrapper to handle creation and destruction of OpenGL windows via GLFW/glad
-Engine::Window::Window(const WindowDesc& desc) : Base(desc.base){
-    GLFWwindow* rawWindow(glfwCreateWindow(desc.windowWidth, desc.windowHeight, desc.title, NULL, NULL));   
-    if (!rawWindow) {
-        EngineLogErrorAndThrow("GLFW window creation failed.");
+namespace Engine {
+    Window::Window(const WindowDesc& desc) : Base(desc.base) {
+        GLFWwindow* rawWindow(glfwCreateWindow(desc.windowWidth, desc.windowHeight, desc.title, NULL, NULL));
+        if (!rawWindow) {
+            EngineLogErrorAndThrow("GLFW window creation failed.");
+        }
+
+        m_window.reset(rawWindow);
+
+        glfwMakeContextCurrent(m_window.get());
+
+        if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+            EngineLogErrorAndThrow("Glad initiation failed.");
+        }
+
+        if (!m_window.get()) {
+            EngineLogErrorAndThrow("GLFW window creation failed.");
+            glfwTerminate();
+        }
+
+        glfwSwapInterval(1); // int frames to wait to swap buffers (basically vsync)
+
+        // Window decoration "thicknesses"
+        i32 left, top, right, bottom;
+        glfwGetWindowFrameSize(m_window.get(), &left, &top, &right, &bottom);
+
+        i32 width, height;
+        glfwGetFramebufferSize(m_window.get(), &width, &height);
+        m_width = width;
+        m_height = height;
+        glViewport(0, 0, width, height); // From x = 0, y = 0 -> x = width, y = height
+
+        glfwSetWindowUserPointer(m_window.get(), this);
+        glfwSetKeyCallback(m_window.get(), &Window::keyCallback);
+        glfwSetFramebufferSizeCallback(m_window.get(), Window::framebuffer_size_callback);
+
+        EngineLogInfo("GLFW window created.");
     }
 
-    m_window.reset(rawWindow);
-
-    glfwMakeContextCurrent(m_window.get());
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        EngineLogErrorAndThrow("Glad initiation failed.");
+    Window::~Window()
+    {
+        EngineLogInfo("Window closing...");
     }
 
-    if (!m_window.get()) {
-        EngineLogErrorAndThrow("GLFW window creation failed.");
-        glfwTerminate();
+    bool Window::shouldClose() const noexcept
+    {
+        return glfwWindowShouldClose(m_window.get());
     }
 
-    glfwSwapInterval(1); // int frames to wait to swap buffers (basically vsync)
-
-    // Input handling - all inputs to a window will be passed through
-    InputHandlerDesc handleDesc{ BaseDesc{desc.base.logger}, desc.actionMap };
-    m_inputHandler = std::make_unique<InputHandler>(handleDesc);
-
-    if (!m_inputHandler.get()) {
-        EngineLogErrorAndThrow("Input handler not created for Window.");
+    GLFWwindow* Window::get() const noexcept
+    {
+        return m_window.get();
     }
 
-    // Window decoration "thicknesses"
-    i32 left, top, right, bottom;
-    glfwGetWindowFrameSize(m_window.get(), &left, &top, &right, &bottom);
-
-    i32 width, height;
-    glfwGetFramebufferSize(m_window.get(), &width, &height);
-    m_width = width;
-    m_height = height;
-    glViewport(0, 0, width, height); // From x = 0, y = 0 -> x = width, y = height
-
-    glfwSetWindowUserPointer(m_window.get(), this);
-    glfwSetKeyCallback(m_window.get(), Window::key_callback);
-    glfwSetFramebufferSizeCallback(m_window.get(), Window::framebuffer_size_callback);
-
-    EngineLogInfo("GLFW window created.");
-}
-
-Engine::Window::~Window()
-{
-    EngineLogInfo("Window closing...");
-}
-
-bool Engine::Window::shouldClose() const noexcept
-{
-    return glfwWindowShouldClose(m_window.get());
-}
-
-GLFWwindow* Engine::Window::get() const noexcept
-{
-    return m_window.get();
-}
-
-// Static key callback function for input handling, prompts the InputHandler associated with this Window.
-void Engine::Window::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
-    if (self && self->m_inputHandler) {
-        self->m_inputHandler->onKey(key, scancode, action, mods);
+    void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+        Window* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        if (action == GLFW_PRESS) { self->onKeyEvent(key, action, false); }
+        else if (action == GLFW_REPEAT) { self->onKeyEvent(key, action, true); }
+        else if (action == GLFW_RELEASE) { self->onKeyEvent(key, action, false); }
     }
-}
 
-void Engine::Window::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
-    auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
-    if (self) { self->m_width = width; self->m_height = height; }
-}
+    void Window::onKeyEvent(int key, int action, bool isRepeat) {
+        if (!m_eventCallback) { return; }
+        if (action == GLFW_RELEASE) {
+            KeyReleasedEvent event(key);
+            m_eventCallback(event);
+        }
+        else {
+            KeyPressedEvent event(key, isRepeat);
+            m_eventCallback(event);
+        }
+    }
 
-Engine::i32 Engine::Window::getHeight() const noexcept { return m_height; }
-Engine::i32 Engine::Window::getWidth() const noexcept { return m_width; }
+    void Window::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+        glViewport(0, 0, width, height);
+        auto* self = static_cast<Window*>(glfwGetWindowUserPointer(window));
+        if (self) { self->m_width = width; self->m_height = height; }
+    }
+
+    i32 Window::getHeight() const noexcept { return m_height; }
+    i32 Window::getWidth() const noexcept { return m_width; }
+}

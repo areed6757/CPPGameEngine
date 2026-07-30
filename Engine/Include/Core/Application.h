@@ -38,11 +38,13 @@ namespace Engine {
 		JobController& getJobController() noexcept;
 		GameClock& getGameClock() noexcept;
 
+		void onEvent(Event& e);
+
 	private:
 		std::unique_ptr<Logger> m_loggerPtr{};
 		std::unique_ptr<GLFWContext> m_glfwContext;
 		std::unique_ptr<Window> m_window;
-		InputHandler* m_inputHandler;
+		std::unique_ptr<InputHandler> m_inputHandler;
 		ActionMap m_actionMap;
 		std::unique_ptr<GameClock> m_gameClock;
 		std::unique_ptr<ThreadPool> m_threadPool;

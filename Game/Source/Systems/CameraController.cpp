@@ -15,10 +15,10 @@ void Engine::CameraController::Update(d64 dt)
 {
 	f32 fdt = static_cast<f32>(dt);
 	Vector2double panDir{};
-	if (m_inHandle.isKeyDown("panleft")) panDir.x -= 1.0;
-	if (m_inHandle.isKeyDown("panright")) panDir.x += 1.0;
-	if (m_inHandle.isKeyDown("pandown")) panDir.y -= 1.0;
-	if (m_inHandle.isKeyDown("panup")) panDir.y += 1.0;
+	if (m_inHandle.isKeyDown(ActionID::PanLeft)) panDir.x -= 1.0;
+	if (m_inHandle.isKeyDown(ActionID::PanRight)) panDir.x += 1.0;
+	if (m_inHandle.isKeyDown(ActionID::PanDown)) panDir.y -= 1.0;
+	if (m_inHandle.isKeyDown(ActionID::PanUp)) panDir.y += 1.0;
 
 	// Direct comparison to a double is acceptable because 0.0 and 1.0 are mathematically perfectly represented in a double and no
 	//	other values are ever possible for panDir
@@ -30,11 +30,11 @@ void Engine::CameraController::Update(d64 dt)
 
 	// Zoom in and out
 
-	if (m_inHandle.isKeyDown("zoomin")) {
+	if (m_inHandle.isKeyDown(ActionID::ZoomIn)) {
 		m_camera.setZoom(std::clamp(m_camera.getZoom() * std::pow(m_zoomFactor, -fdt), m_minZoom, m_maxZoom));
 	}	
 	
-	if (m_inHandle.isKeyDown("zoomout")) {
+	if (m_inHandle.isKeyDown(ActionID::ZoomOut)) {
 		m_camera.setZoom(std::clamp(m_camera.getZoom() * std::pow(m_zoomFactor, fdt), m_minZoom, m_maxZoom));
 	}
 }

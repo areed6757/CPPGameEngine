@@ -7,15 +7,22 @@
 // bindings should not be edited after compilation to maintain memory contiguity
 // ActionStrings should remain <14 characters to ensure they are stored in-line
 namespace Engine {
+	enum class ActionID : i32 {
+		Pause,
+		PanUp, PanDown, PanLeft, PanRight,
+		ZoomOut, ZoomIn, 
+		Count
+	};
+
 	struct ActionMap {
-		std::vector<std::pair<i32, std::string>> bindings = {
-			{GLFW_KEY_SPACE, "pause"},
-			{GLFW_KEY_W, "panup"},
-			{GLFW_KEY_S, "pandown"},
-			{GLFW_KEY_A, "panleft"},
-			{GLFW_KEY_D, "panright"},
-			{GLFW_KEY_UP, "zoomout"},
-			{GLFW_KEY_DOWN, "zoomin"}
+		std::vector<std::pair<i32, ActionID>> bindings = {
+			{GLFW_KEY_SPACE, ActionID::Pause},
+			{GLFW_KEY_W, ActionID::PanUp},
+			{GLFW_KEY_S, ActionID::PanDown},
+			{GLFW_KEY_A, ActionID::PanLeft},
+			{GLFW_KEY_D, ActionID::PanRight},
+			{GLFW_KEY_UP, ActionID::ZoomOut},
+			{GLFW_KEY_DOWN, ActionID::ZoomIn}
 		};
 
 		/* Unused Keys

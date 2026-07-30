@@ -3,7 +3,7 @@ file(GLOB_RECURSE ENGINE_HEADERS CONFIGURE_DEPENDS Include/*.h Source/*.h)
 
 message(STATUS "ENGINE_SOURCES: ${ENGINE_SOURCES}")
 
-add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS}  "Include/Core/Application.h" "Source/Core/Application.cpp" "Include/Engine.h")
+add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS}  "Include/Core/Application.h" "Source/Core/Application.cpp" "Include/Engine.h" "Include/Events/Event.h" "Include/Events/KeyEvent.h")
 
 target_include_directories(Engine
     PUBLIC Include

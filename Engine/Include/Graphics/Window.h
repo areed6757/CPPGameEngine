@@ -3,6 +3,8 @@
 #define GLFW_INCLUDE_NONE
 #include <ThirdParty/glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <Events/Event.h>
+#include <Events/KeyEvent.h>
 
 namespace Engine {
 	struct WindowDesc {
@@ -12,8 +14,6 @@ namespace Engine {
 		i32 windowWidth = {};
 		i32 windowHeight = {};
 		const char* title = {};
-
-		ActionMap& actionMap; // Pass-through for InputHandler of the Window
 	};
 
 	class Window final : public Base {
@@ -30,10 +30,7 @@ namespace Engine {
 		bool shouldClose() const noexcept;
 		GLFWwindow* get() const noexcept;
 
-		static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-
-		InputHandler* getInputHandler() const noexcept { return m_inputHandler.get(); };
-
+		void setEventCallback(std::function<void(Event&)> callback) { m_eventCallback = std::move(callback); }
 
 	private:
 		struct GLFWwindowDeleter {
@@ -49,7 +46,10 @@ namespace Engine {
 		
 		static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
-		std::unique_ptr<InputHandler> m_inputHandler;
+		static void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		void onKeyEvent(int key, int action, bool isRepeat);
+
+		std::function<void(Event&)> m_eventCallback;
 		
 		i32 m_width{};
 		i32 m_height{};
