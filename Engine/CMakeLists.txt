@@ -13,11 +13,15 @@ target_include_directories(Engine
 find_package(glm CONFIG REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
+
 target_link_libraries(Engine PUBLIC
     glfw
     glm::glm
     spdlog::spdlog
 )
+
+target_link_libraries(Engine PRIVATE imgui::imgui)
 
 target_compile_definitions(Engine PUBLIC
     NOMINMAX
