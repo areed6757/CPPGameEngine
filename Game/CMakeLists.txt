@@ -22,4 +22,7 @@ add_custom_command(TARGET Game POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${IMAGE_FILES} $<TARGET_FILE_DIR:Game>/Images
 )
 
+target_compile_options(Game PRIVATE $<$<CONFIG:Release>:/Zi>)
+target_link_options(Game PRIVATE $<$<CONFIG:Release>:/DEBUG /OPT:REF /OPT:ICF>)
+
 target_precompile_headers(Game PRIVATE Include/Game.h)

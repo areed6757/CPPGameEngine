@@ -47,18 +47,18 @@ namespace Engine {
 		if (m_ecs.hasComponent<Health>(target)) {
 			auto& health = m_ecs.getComponent<Health>(target);
 			health.current = std::max(0.0f, health.current - payload.amount);
-			EngineLogInfo("Entity {} dealt {} damage to entity {} ({} / {} health remaining)",
-				damageDealer.id, payload.amount, target.id, health.current, health.max);
+			//EngineLogInfo("Entity {} dealt {} damage to entity {} ({} / {} health remaining)",
+			//	damageDealer.id, payload.amount, target.id, health.current, health.max);
 		}
 		else if (m_ecs.hasComponent<Stability>(target)) {
 			auto& stability = m_ecs.getComponent<Stability>(target);
 			stability.current = std::max(0.0f, stability.current - payload.amount);
-			EngineLogInfo("Entity {} dealt {} damage to entity {} ({} / {} stability remaining)",
-				damageDealer.id, payload.amount, target.id, stability.current, stability.max);
+			//EngineLogInfo("Entity {} dealt {} damage to entity {} ({} / {} stability remaining)",
+			//	damageDealer.id, payload.amount, target.id, stability.current, stability.max);
 
 			if (stability.current <= 0.0f) {
 				m_cmdBuffer.destroyEntity(target);
-				EngineLogInfo("Entity {} destroyed.", target.id);
+				//EngineLogInfo("Entity {} destroyed.", target.id);
 			}
 		}
 

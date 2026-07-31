@@ -8,7 +8,7 @@ namespace Engine {
 		m_height(desc.height),
 		m_cells(static_cast<size_t>(desc.width) * desc.height)
 	{
-		EngineLogInfo("ShipGrid created, ({}x{})", m_width, m_height);
+		//EngineLogInfo("ShipGrid created, ({}x{})", m_width, m_height);
 	}
 
 	ShipGrid::~ShipGrid()

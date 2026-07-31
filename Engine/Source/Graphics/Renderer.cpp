@@ -43,5 +43,4 @@ void Engine::Renderer::drawInstanced(const Mesh& mesh, const Texture* texture, G
 
 void Engine::Renderer::endFrame()
 {
-    glfwSwapBuffers(m_window.get());
 }

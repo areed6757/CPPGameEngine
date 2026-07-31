@@ -175,7 +175,7 @@ namespace Engine {
 		//m_shipCollisionTest->spawnProjectileAtShip(5.0f, 5.0f);
 		//m_shipCollisionTest->spawnSeparatedShipPair();
 		//m_shipCollisionTest->spawnMassBattle(30000, 0.3, 1.5f, 1.0f, 0.005f, 5.0f);
-		m_shipCollisionTest->spawnComplexMassBattle(400, 0.3, 1.5f, 1.0f, 0.005f, 5.0f);
+		m_shipCollisionTest->spawnComplexMassBattle(50000, 0.3, 1.5f, 1.0f, 0.005f, 5.0f);
 		m_app.getScheduler().togglePause();
 
 	}
@@ -189,6 +189,5 @@ namespace Engine {
 	{
 		m_renderer->beginFrame();
 		m_app.getScheduler().advance();
-		m_renderer->endFrame();
 	}
 }

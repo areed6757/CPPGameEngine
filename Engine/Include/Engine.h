@@ -9,6 +9,9 @@
 #include <Core/Logger.h>
 #include <Core/Core.h>
 
+//GUI
+#include <GUI/ImGUILayer.h>
+
 // Events
 #include <Events/Event.h>
 #include <Events/KeyEvent.h>

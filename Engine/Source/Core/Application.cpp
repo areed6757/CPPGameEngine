@@ -50,6 +50,8 @@ namespace Engine {
 				layer->onUpdate(m_gameClock->getDelta());
 			}
 
+			glfwSwapBuffers(m_window->get()); // Moved here to draw all layers before buffer swap
+
 			m_inputHandler->endFrame();
 		}
 	}

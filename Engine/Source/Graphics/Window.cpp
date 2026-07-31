@@ -22,7 +22,7 @@ namespace Engine {
             glfwTerminate();
         }
 
-        glfwSwapInterval(1); // int frames to wait to swap buffers (basically vsync)
+        glfwSwapInterval(0); // int frames to wait to swap buffers (basically vsync), set to 1 to lock to monitor refresh
 
         // Window decoration "thicknesses"
         i32 left, top, right, bottom;
