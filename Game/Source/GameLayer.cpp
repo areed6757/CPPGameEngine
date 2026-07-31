@@ -30,8 +30,8 @@ namespace Engine {
 		MeshRegistryDesc meshRegDesc{ {m_logger} };
 		m_meshRegistry = std::make_unique<MeshRegistry>(meshRegDesc);
 
-		QuadTreeDesc qtDesc = { {m_logger} };
-		m_quadtree = std::make_unique<QuadTree>(qtDesc);
+		AABBTreeDesc aabbTreeDesc{ {m_logger}, 0.1f, 4.0f };
+		m_AABBTree = std::make_unique<AABBTree>(aabbTreeDesc);
 
 		EntityRegisterDesc eRegDesc = { {m_logger} };
 		m_entityRegister = std::make_unique<EntityRegister>(eRegDesc);
@@ -43,7 +43,7 @@ namespace Engine {
 		RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get(), *m_camera.get() };
 		m_renderSystem = std::make_unique<RenderSystem>(renderSysDesc);
 
-		CollisionSystemDesc collisionSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_quadtree.get() };
+		CollisionSystemDesc collisionSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_AABBTree.get() };
 		m_collisionSystem = std::make_unique<CollisionSystem>(collisionSysDesc);
 
 		ImpulseSystemDesc impulseSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_collisionSystem.get() };
@@ -175,7 +175,7 @@ namespace Engine {
 		//m_shipCollisionTest->spawnProjectileAtShip(5.0f, 5.0f);
 		//m_shipCollisionTest->spawnSeparatedShipPair();
 		//m_shipCollisionTest->spawnMassBattle(30000, 0.3, 1.5f, 1.0f, 0.005f, 5.0f);
-		m_shipCollisionTest->spawnComplexMassBattle(50000, 0.3, 1.5f, 1.0f, 0.005f, 5.0f);
+		m_shipCollisionTest->spawnComplexMassBattle(5000, 0.3, 1.5f, 1.0f, 0.005f, 5.0f);
 		m_app.getScheduler().togglePause();
 
 	}

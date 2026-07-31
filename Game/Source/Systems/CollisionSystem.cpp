@@ -7,8 +7,8 @@ namespace Engine {
 	CollisionSystem::CollisionSystem(const CollisionSystemDesc& desc) : Base(desc.base),
 		m_ecs(desc.ecs),
 		m_cmdBuffer({desc.base, desc.ecs}),
-		m_quadtree(desc.quadtree),
-		m_maxRadiusSeenThisTick(0.0)
+		m_aabbTree(desc.aabbTree),
+		m_proxies()
 	{
 		m_entityMask = m_ecs.makeSignature<Position, Physics>();
 		m_movementMask = m_ecs.makeSignature<Movement>();
@@ -27,27 +27,29 @@ namespace Engine {
 
 	void CollisionSystem::broadPhase(std::vector<CollisionCandidate>& outCandidates) {
 		outCandidates.clear();
-		
+
 		i32 c = m_ecs.sizeComponentPool<Physics>();
 		for (i32 i = 0; i < c; i++) {
 			i32 entityIndex = m_ecs.entityAtDenseIndex<Physics>(i);
 			EntityID id = m_ecs.entityFromIndex(entityIndex);
 			if ((m_ecs.getSignature(id) & m_entityMask) != m_entityMask) { continue; }
-		
+
 			auto& tform = m_ecs.getComponent<Position>(id);
 			auto& physics = m_ecs.getComponentAtDenseIndex<Physics>(i);
 
+			AABB queryBounds{
+				Vector2double{ tform.transform.x - physics.radius, tform.transform.y - physics.radius },
+				Vector2double{ tform.transform.x + physics.radius, tform.transform.y + physics.radius }
+			};
+
 			m_nearbyScratch.clear();
-			m_quadtree.queryRadius(tform.transform, static_cast<d64>(physics.radius) + m_maxRadiusSeenThisTick, m_nearbyScratch);
+			m_aabbTree.query(queryBounds, m_nearbyScratch);
 
 			for (EntityID other : m_nearbyScratch) {
-				if (other.id == id.id) { continue; } // skips self
-				if (other.id < id.id) { continue; } // pairs checked once
-
-				// Projectiles fired by self check/ ignore
+				if (other.id == id.id) { continue; }
+				if (other.id < id.id) { continue; }
 				if (m_ecs.hasComponent<DamagePayload>(id) && m_ecs.getComponent<DamagePayload>(id).source.id == other.id) { continue; }
 				if (m_ecs.hasComponent<DamagePayload>(other) && m_ecs.getComponent<DamagePayload>(other).source.id == id.id) { continue; }
-
 				outCandidates.push_back({ id, other });
 			}
 		}
@@ -128,8 +130,16 @@ namespace Engine {
 
 	void CollisionSystem::Update(d64 dt)
 	{
-		m_quadtree.clear();
-		m_maxRadiusSeenThisTick = 0.0; // Radius of the largest entity in shared quadtree cell
+		for (i32 idx = 0; idx < static_cast<i32>(m_proxies.size()); idx++) {
+			auto& entry = m_proxies[idx];
+			if (entry.proxyId == -1) { continue; }
+			EntityID id = m_ecs.entityFromIndex(idx);
+			if (!m_ecs.isValidEntity(id) || id.generation != entry.generation) {
+				m_aabbTree.remove(entry.proxyId);
+				entry.proxyId = -1;
+			}
+		}
+
 		i32 c = m_ecs.sizeComponentPool<Physics>();
 		for (i32 i = 0; i < c; i++) {
 			i32 entityIndex = m_ecs.entityAtDenseIndex<Physics>(i);
@@ -137,10 +147,30 @@ namespace Engine {
 			if ((m_ecs.getSignature(id) & m_entityMask) != m_entityMask) { continue; }
 
 			auto& tform = m_ecs.getComponent<Position>(id);
-			m_quadtree.insert(id, tform.transform);
-
 			auto& physics = m_ecs.getComponent<Physics>(id);
-			m_maxRadiusSeenThisTick = std::max(m_maxRadiusSeenThisTick, static_cast<d64>(physics.radius));
+
+			AABB bounds{
+				Vector2double{ tform.transform.x - physics.radius, tform.transform.y - physics.radius },
+				Vector2double{ tform.transform.x + physics.radius, tform.transform.y + physics.radius }
+			};
+
+			if (entityIndex >= static_cast<i32>(m_proxies.size())) {
+				m_proxies.resize(entityIndex + 1);
+			}
+
+			auto& entry = m_proxies[entityIndex];
+			if (entry.proxyId == -1 || entry.generation != id.generation) {
+				entry.proxyId = m_aabbTree.insert(id, bounds);
+				entry.generation = id.generation;
+			}
+			else {
+				Vector2double displacement{};
+				if (m_ecs.hasComponent<Movement>(id)) {
+					auto& mv = m_ecs.getComponent<Movement>(id);
+					displacement = Vector2double{ static_cast<d64>(mv.linearVelocity.x) * dt, static_cast<d64>(mv.linearVelocity.y) * dt };
+				}
+				m_aabbTree.moveProxy(entry.proxyId, bounds, displacement);
+			}
 		}
 
 		broadPhase(m_candidates);

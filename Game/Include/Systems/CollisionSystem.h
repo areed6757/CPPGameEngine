@@ -6,7 +6,7 @@ namespace Engine {
 	struct CollisionSystemDesc {
 		BaseDesc base;
 		GameECSWrapper& ecs;
-		QuadTree& quadtree;
+		AABBTree& aabbTree;
 	};
 
 	struct CollisionCandidate {
@@ -36,7 +36,11 @@ namespace Engine {
 	private:
 		GameECSWrapper& m_ecs;
 		GameCommandBuffer m_cmdBuffer;
-		QuadTree& m_quadtree;
+		AABBTree& m_aabbTree;
+
+		struct ProxyEntry { i32 proxyId = -1; i32 generation = -1; };
+		std::vector<ProxyEntry> m_proxies;
+
 		std::bitset<64> m_entityMask;
 		std::bitset<64> m_movementMask;
 		std::bitset<64> m_nonPhysicsCollisionMask;
@@ -44,8 +48,6 @@ namespace Engine {
 		std::vector<CollisionCandidate> m_candidates{};
 		std::vector<EntityID> m_nearbyScratch{};
 		std::vector<CollisionEvent> m_events{};
-
-		d64 m_maxRadiusSeenThisTick;
 
 		void broadPhase(std::vector<CollisionCandidate>& outCandidates);
 		

@@ -27,7 +27,7 @@
 #include <Utilities/Scheduler.h>
 #include <Utilities/ThreadPool.h>
 #include <Utilities/JobController.h>
-#include <Utilities/QuadTree.h>
+//#include <Utilities/QuadTree.h>
 #include <Utilities/GameClock.h>
 #include <Utilities/CommandBuffer.h>
 #include <Utilities/Job.h>
@@ -52,4 +52,5 @@
 #include <Physics/Vector2float.h>
 #include <Physics/Vector3double.h>
 #include <Physics/Vector3float.h>
+#include <Physics/AABBTree.h>
 

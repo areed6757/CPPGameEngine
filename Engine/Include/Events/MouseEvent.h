@@ -2,7 +2,6 @@
 #include <string>
 
 namespace Engine {
-	// MouseScrolled, MouseButtonPressed, MouseButtonReleased
 	class MouseMovedEvent : public Event {
 	public:
 		MouseMovedEvent(d64 x, d64 y) : m_x(x), m_y(y) {}
