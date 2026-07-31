@@ -24,11 +24,11 @@ namespace Engine {
 	class Texture;
 	class Camera;
 	class CameraController;
-	class QuadTree;
 	class ThreadPool;
 	class JobController;
 	class Layer;
 	class LayerStack;
+	class AABBTree;
 
 	template <typename TPools> class ECSWrapper;
 

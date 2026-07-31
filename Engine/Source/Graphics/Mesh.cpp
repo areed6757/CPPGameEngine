@@ -17,8 +17,9 @@ namespace Engine {
 		m_VAO.LinkAttrib(m_VBO, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
 		for (GLuint i = 0; i < 4; i++) {
-			m_VAO.LinkAttrib(m_instanceVBO, 3 + i, 4, GL_FLOAT, sizeof(glm::mat4), (void*)(i * sizeof(glm::vec4)), 1);
+			m_VAO.LinkAttrib(m_instanceVBO, 3 + i, 4, GL_FLOAT, sizeof(PartInstanceData), (void*)(i * sizeof(glm::vec4)), 1);
 		}
+		m_VAO.LinkAttrib(m_instanceVBO, 7, 1, GL_FLOAT, sizeof(PartInstanceData), (void*)offsetof(PartInstanceData, healthFraction), 1);
 
 		m_VAO.Unbind();
 		m_VBO.Unbind();

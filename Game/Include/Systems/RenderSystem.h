@@ -28,6 +28,6 @@ namespace Engine {
 		Renderer& m_renderer;
 		Camera& m_camera;
 		std::bitset<64> m_entityMask;
-		std::map<std::pair<MeshID, std::optional<TextureID>>, std::vector<glm::mat4>> m_batches;
+		std::map<std::pair<MeshID, std::optional<TextureID>>, std::vector<PartInstanceData>> m_batches;
 	};
 }

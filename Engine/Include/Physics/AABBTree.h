@@ -2,6 +2,7 @@
 #include <Core/Base.h>
 #include <Core/Common.h>
 #include <Physics/Vector2double.h>
+#include <ECS/EntityRegister.h>
 #include <vector>
 
 namespace Engine {

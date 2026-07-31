@@ -38,7 +38,7 @@ void Engine::RenderSystem::Update(d64 dt)
 		model = glm::rotate(model, position.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, glm::vec3(renderable.scale, renderable.scale, 1.0f));
 
-		m_batches[{ renderable.mesh, renderable.texture }].push_back(model);
+		m_batches[{ renderable.mesh, renderable.texture }].push_back(PartInstanceData{ model, 1.0f });
 	}
 
 	for (auto& [key, matrices] : m_batches) {
@@ -46,8 +46,8 @@ void Engine::RenderSystem::Update(d64 dt)
 
 		const Mesh& mesh = m_meshReg.get(key.first);
 		const Texture* texturePtr = key.second.has_value() ? &m_textureReg.get(*key.second) : nullptr;
-	
-		mesh.uploadInstanceData(matrices.data(), matrices.size() * sizeof(glm::mat4), static_cast<GLsizei>(matrices.size()));
+
+		mesh.uploadInstanceData(matrices.data(), matrices.size() * sizeof(PartInstanceData), static_cast<GLsizei>(matrices.size()));
 		m_renderer.drawInstanced(mesh, texturePtr, static_cast<GLsizei>(matrices.size()));
 	}
 }

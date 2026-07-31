@@ -4,8 +4,14 @@
 #include <Graphics/VAO.h>
 #include <Graphics/VBO.h>
 #include <ThirdParty/glad/glad.h>
+#include <glm/glm.hpp>
 
 namespace Engine {
+	struct PartInstanceData {
+		glm::mat4 model;
+		f32 healthFraction;
+	};
+
 	struct MeshDesc {
 		BaseDesc base;
 		const GLfloat* vertices;

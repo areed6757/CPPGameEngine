@@ -21,7 +21,7 @@ namespace Engine {
 		f32 totalThrustForce = 0.0f;
 
 		ShipVisual visual;
-		std::vector<std::tuple<i32, i32, const HardpointParams*>> hardpoints;
+		std::vector<std::tuple<i32, i32, const HardpointParams*, i32>> hardpoints;
 
 		auto localOffsetFor = [&](i32 x, i32 y, i32 sizeX, i32 sizeY) -> Vector2float {
 			return Vector2float{
@@ -63,10 +63,11 @@ namespace Engine {
 					else if constexpr (std::is_same_v<T, HardpointParams>) {
 						totalMass += params.mass;
 						totalStability += params.stabilityContribution;
+						i32 visualPartIndex = static_cast<i32>(visual.parts.size());
 						visual.parts.push_back({
 							localOffsetFor(x, y, cell.sizeX, cell.sizeY), cell.sizeX, cell.sizeY, PartCategory::Hardpoint, cell.variant
 							});
-						hardpoints.emplace_back(x, y, &params);
+						hardpoints.emplace_back(x, y, &params, visualPartIndex);
 					}
 					}, variant.params);
 			}
@@ -82,13 +83,12 @@ namespace Engine {
 		m_ecs.addComponent(ship, Stability{ .current = totalStability, .max = totalStability });
 		m_ecs.addComponent(ship, grid.buildCollisionGeometry());
 		m_ecs.addComponent(ship, grid.toRuntimeData());
-		m_ecs.addComponent(ship, visual);
 
 		if (totalThrustForce > 0.0f) {
 			m_ecs.addComponent(ship, Thruster{ .maxAccel = totalThrustForce / totalMass, .throttle = 0.0f });
 		}
 
-		for (auto& [hx, hy, params] : hardpoints) {
+		for (auto& [hx, hy, params, visualPartIndex] : hardpoints) {
 			Vector2float offset{
 				(static_cast<f32>(hx) + params->sizeX * 0.5f - grid.width() * 0.5f) * static_cast<f32>(GRID_CELL_SIZE_KM),
 				(static_cast<f32>(hy) + params->sizeY * 0.5f - grid.height() * 0.5f) * static_cast<f32>(GRID_CELL_SIZE_KM)
@@ -108,7 +108,11 @@ namespace Engine {
 				.cooldown = 1.0f, .timeSinceLastFire = 0.0f,
 				.projectileSpeed = 35.0f, .projectileRadius = 0.01f, .projectileDamage = 5.0f
 				});
+
+			visual.parts[visualPartIndex].linkedEntity = weaponEntity;
 		}
+
+		m_ecs.addComponent(ship, visual);
 
 		// EngineLogInfo("ShipFactory: baked ship, mass {}, stability {}, {} visual part(s), {} hardpoint(s)", totalMass, totalStability, visual.parts.size(), hardpoints.size());
 

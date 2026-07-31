@@ -3,6 +3,7 @@
 #include <Ships/PartVariant.h>
 #include <Physics/Vector2float.h>
 #include <Core/Common.h>
+#include <ECS/EntityRegister.h>
 #include <vector>
 
 namespace Engine {
@@ -11,6 +12,7 @@ namespace Engine {
 		i32 sizeX, sizeY;
 		PartCategory category;
 		PartVariantID variant;
+		EntityID linkedEntity{};
 	};
 
 	struct ShipVisual {

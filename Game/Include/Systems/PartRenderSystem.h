@@ -31,6 +31,6 @@ namespace Engine {
 		PartRegistry& m_partReg;
 		std::bitset<64> m_entityMask;
 
-		std::map<std::pair<PartCategory, PartVariantID>, std::vector<glm::mat4>> m_batches;
+		std::map<std::pair<PartCategory, PartVariantID>, std::vector<PartInstanceData>> m_batches;
 	};
 }

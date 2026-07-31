@@ -27,7 +27,6 @@
 #include <Utilities/Scheduler.h>
 #include <Utilities/ThreadPool.h>
 #include <Utilities/JobController.h>
-//#include <Utilities/QuadTree.h>
 #include <Utilities/GameClock.h>
 #include <Utilities/CommandBuffer.h>
 #include <Utilities/Job.h>
