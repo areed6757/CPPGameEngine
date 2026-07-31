@@ -9,7 +9,7 @@
 #include <Components/Lifetime.h>
 #include <Components/Thruster.h>
 #include <Components/Weapon.h>
-#include <Components/WeaponMount.h>
+#include <Components/Mount.h>
 #include <Components/MovementDamper.h>
 #include <Components/ShipVisual.h>
 #include <Components/Stability.h>
@@ -35,7 +35,7 @@ namespace Engine {
 	template <> struct ComponentBit<Lifetime> { static constexpr i32 value = 6; };
 	template <> struct ComponentBit<Thruster> { static constexpr i32 value = 7; };
 	template <> struct ComponentBit<Weapon> { static constexpr i32 value = 8; };
-	template <> struct ComponentBit<WeaponMount> { static constexpr i32 value = 9; };
+	template <> struct ComponentBit<Mount> { static constexpr i32 value = 9; };
 	template <> struct ComponentBit<MovementDamper> { static constexpr i32 value = 10; };
 	template <> struct ComponentBit<ShipVisual> { static constexpr i32 value = 11; };
 	template <> struct ComponentBit<Stability> { static constexpr i32 value = 12; };
@@ -45,7 +45,7 @@ namespace Engine {
 	struct ComponentPools {
 		explicit ComponentPools(const ComponentDesc& desc) : positions(desc), movements(desc),
 			renderables(desc), physics(desc), damagePayloads(desc), healths(desc), lifetimes(desc),
-			thrusters(desc), weapons(desc), weaponMounts(desc), movementDampers(desc), shipVisuals(desc),
+			thrusters(desc), weapons(desc), mounts(desc), movementDampers(desc), shipVisuals(desc),
 			stabilities(desc), shipCollisionGeometries(desc), shipGridDatas(desc)
 		{}
 
@@ -59,7 +59,7 @@ namespace Engine {
 		Component<Lifetime> lifetimes;
 		Component<Thruster> thrusters;
 		Component<Weapon> weapons;
-		Component<WeaponMount> weaponMounts;
+		Component<Mount> mounts;
 		Component<MovementDamper> movementDampers;
 		Component<ShipVisual> shipVisuals;
 		Component<Stability> stabilities;
@@ -83,7 +83,7 @@ namespace Engine {
 			else if constexpr (std::is_same_v<T, Lifetime>) return lifetimes;
 			else if constexpr (std::is_same_v<T, Thruster>) return thrusters;
 			else if constexpr (std::is_same_v<T, Weapon>) return weapons;
-			else if constexpr (std::is_same_v<T, WeaponMount>) return weaponMounts;
+			else if constexpr (std::is_same_v<T, Mount>) return mounts;
 			else if constexpr (std::is_same_v<T, MovementDamper>) return movementDampers;
 			else if constexpr (std::is_same_v<T, ShipVisual>) return shipVisuals;
 			else if constexpr (std::is_same_v<T, Stability>) return stabilities;
@@ -109,7 +109,7 @@ namespace Engine {
 			else if constexpr (std::is_same_v<T, Lifetime>) return lifetimes;
 			else if constexpr (std::is_same_v<T, Thruster>) return thrusters;
 			else if constexpr (std::is_same_v<T, Weapon>) return weapons;
-			else if constexpr (std::is_same_v<T, WeaponMount>) return weaponMounts;
+			else if constexpr (std::is_same_v<T, Mount>) return mounts;
 			else if constexpr (std::is_same_v<T, MovementDamper>) return movementDampers;
 			else if constexpr (std::is_same_v<T, ShipVisual>) return shipVisuals;
 			else if constexpr (std::is_same_v<T, Stability>) return stabilities;
@@ -128,7 +128,7 @@ namespace Engine {
 			if (lifetimes.has(index)) { lifetimes.remove(index); }
 			if (thrusters.has(index)) { thrusters.remove(index); }
 			if (weapons.has(index)) { weapons.remove(index); }
-			if (weaponMounts.has(index)) { weaponMounts.remove(index); }
+			if (mounts.has(index)) { mounts.remove(index); }
 			if (movementDampers.has(index)) { movementDampers.remove(index); }
 			if (shipVisuals.has(index)) { shipVisuals.remove(index); }
 			if (stabilities.has(index)) { stabilities.remove(index); }

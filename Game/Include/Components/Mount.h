@@ -1,7 +1,7 @@
 #pragma once
 
 namespace Engine {
-	struct WeaponMount {
+	struct Mount {
 		EntityID owner;
 		Vector2float offset;
 	};

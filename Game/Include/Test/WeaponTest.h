@@ -8,7 +8,7 @@ namespace Engine {
 		GameECSWrapper& ecs;
 	};
 
-	// Spawns a stationary "ship" entity, a weapon mounted to it (WeaponMount
+	// Spawns a stationary "ship" entity, a weapon mounted to it (Mount
 	// pointing at the ship, offset forward of its center), and an optional
 	// stationary target with Health downrange -- lets you watch WeaponSystem
 	// fire on cooldown and confirm the projectile hits and damages the

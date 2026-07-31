@@ -3,8 +3,8 @@
 namespace Engine {
 	MountFollowSystem::MountFollowSystem(const MountFollowSystemDesc& desc) : Base(desc.base), m_ecs(desc.ecs)
 	{
-		m_entityMask = m_ecs.makeSignature<Position, WeaponMount>();
-		m_reads = m_ecs.makeSignature<Position, WeaponMount>();
+		m_entityMask = m_ecs.makeSignature<Position, Mount>();
+		m_reads = m_ecs.makeSignature<Position, Mount>();
 		m_writes = m_ecs.makeSignature<Position>();
 	}
 
@@ -15,13 +15,13 @@ namespace Engine {
 
 	void MountFollowSystem::Update(d64 dt)
 	{
-		i32 c = m_ecs.sizeComponentPool<WeaponMount>();
+		i32 c = m_ecs.sizeComponentPool<Mount>();
 		for (i32 i = 0; i < c; i++) {
-			i32 entityIndex = m_ecs.entityAtDenseIndex<WeaponMount>(i);
+			i32 entityIndex = m_ecs.entityAtDenseIndex<Mount>(i);
 			EntityID id = m_ecs.entityFromIndex(entityIndex);
 			if ((m_ecs.getSignature(id) & m_entityMask) != m_entityMask) { continue; }
 
-			auto& mount = m_ecs.getComponent<WeaponMount>(id);
+			auto& mount = m_ecs.getComponent<Mount>(id);
 			if (!m_ecs.isValidEntity(mount.owner)) { continue; } // Weapon system handles destroy
 
 			auto& ownerPos = m_ecs.getComponent<Position>(mount.owner);

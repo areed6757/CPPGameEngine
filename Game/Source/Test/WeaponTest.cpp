@@ -21,7 +21,7 @@ namespace Engine {
 		// hit regardless, but starting the spawn point clear of the hull
 		// makes narrow-phase behavior easier to reason about while testing).
 		EntityID weaponEntity = m_ecs.createEntity();
-		m_ecs.addComponent(weaponEntity, WeaponMount{ .owner = ship, .offset = Vector2float{ 1.2f, 0.0f } });
+		m_ecs.addComponent(weaponEntity, Mount{ .owner = ship, .offset = Vector2float{ 1.2f, 0.0f } });
 		m_ecs.addComponent(weaponEntity, Weapon{
 			.cooldown = cooldown,
 			.timeSinceLastFire = 0.0f,

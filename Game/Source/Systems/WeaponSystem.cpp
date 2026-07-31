@@ -5,8 +5,8 @@ namespace Engine {
 		m_ecs(desc.ecs),
 		m_cmdBuffer({desc.base, desc.ecs})
 	{
-		m_entityMask = m_ecs.makeSignature<WeaponMount, Weapon>();
-		m_reads = m_ecs.makeSignature<WeaponMount, Weapon>();
+		m_entityMask = m_ecs.makeSignature<Mount, Weapon>();
+		m_reads = m_ecs.makeSignature<Mount, Weapon>();
 		m_writes = m_ecs.makeSignature<Weapon>();
 	}
 
@@ -22,7 +22,7 @@ namespace Engine {
 			EntityID id = m_ecs.entityFromIndex(entityIndex);
 			if ((m_ecs.getSignature(id) & m_entityMask) != m_entityMask) { continue; }
 			
-			auto& mount = m_ecs.getComponent<WeaponMount>(id);
+			auto& mount = m_ecs.getComponent<Mount>(id);
 			if (!m_ecs.isValidEntity(mount.owner)) {
 				m_cmdBuffer.destroyEntity(id);
 				continue;
@@ -35,7 +35,7 @@ namespace Engine {
 	}
 
 	void WeaponSystem::fire(EntityID id) {
-		auto& mount = m_ecs.getComponent<WeaponMount>(id);
+		auto& mount = m_ecs.getComponent<Mount>(id);
 		auto& weapon = m_ecs.getComponent<Weapon>(id);
 		auto& ownerPos = m_ecs.getComponent<Position>(mount.owner);
 

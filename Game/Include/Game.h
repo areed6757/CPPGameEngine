@@ -20,7 +20,7 @@
 #include <Components/DamagePayload.h>
 #include <Components/Lifetime.h>
 #include <Components/Weapon.h>
-#include <Components/WeaponMount.h>
+#include <Components/Mount.h>
 #include <Components/MovementDamper.h>
 #include <Components/ShipVisual.h>
 #include <Components/Stability.h>
@@ -42,6 +42,7 @@
 #include <Systems/WeaponSystem.h>
 #include <Systems/DamperSystem.h>
 #include <Systems/MountFollowSystem.h>
+#include <Systems/MountLifecycleSystem.h>
 #include <Systems/PartRenderSystem.h>
 
 // Tests

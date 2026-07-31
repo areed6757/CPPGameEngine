@@ -7,7 +7,7 @@
 #include <Components/Renderable.h>
 #include <Components/DamagePayload.h>
 #include <Components/Lifetime.h>
-#include <Components/WeaponMount.h>
+#include <Components/Mount.h>
 #include <Components/Weapon.h>
 #include <Graphics/MeshID.h>
 #include <cmath>
@@ -158,7 +158,7 @@ namespace Engine {
 				// WeaponSystem already ticks cooldown, fires along the
 				// owner's current facing, and stamps DamagePayload.source =
 				// mount.owner, so self-hits stay filtered with no extra work.
-				m_ecs.addComponent(ship, WeaponMount{ .owner = ship, .offset = Vector2float{} });
+				m_ecs.addComponent(ship, Mount{ .owner = ship, .offset = Vector2float{} });
 				m_ecs.addComponent(ship, Weapon{
 					.cooldown = cooldown, .timeSinceLastFire = phaseDist(rng),
 					.projectileSpeed = projectileSpeed, .projectileRadius = projectileRadius, .projectileDamage = projectileDamage
@@ -192,7 +192,7 @@ namespace Engine {
 				// WeaponSystem already ticks cooldown, fires along the
 				// owner's current facing, and stamps DamagePayload.source =
 				// mount.owner, so self-hits stay filtered with no extra work.
-				m_ecs.addComponent(ship, WeaponMount{ .owner = ship, .offset = Vector2float{} });
+				m_ecs.addComponent(ship, Mount{ .owner = ship, .offset = Vector2float{} });
 				m_ecs.addComponent(ship, Weapon{
 					.cooldown = cooldown, .timeSinceLastFire = phaseDist(rng),
 					.projectileSpeed = projectileSpeed, .projectileRadius = projectileRadius, .projectileDamage = projectileDamage

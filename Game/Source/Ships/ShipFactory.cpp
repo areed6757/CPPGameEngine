@@ -97,7 +97,7 @@ namespace Engine {
 			// Every hardpoint unconditionally spawns a weapon until empty-socket loadout support is added
 			// TODO: Refactor this entire block
 			EntityID weaponEntity = m_ecs.createEntity();
-			m_ecs.addComponent(weaponEntity, WeaponMount{ .owner = ship, .offset = offset });
+			m_ecs.addComponent(weaponEntity, Mount{ .owner = ship, .offset = offset });
 			m_ecs.addComponent(weaponEntity, Position{ .transform = spawnPos, .rotation = spawnRotation }); // corrects via MountFollowSystem
 			m_ecs.addComponent(weaponEntity, Renderable{
 				.mesh = MeshID::Quad, .texture = std::nullopt,

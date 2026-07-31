@@ -73,6 +73,9 @@ namespace Engine {
 		MountFollowSystemDesc mountFolSysDesc = { {m_logger}, *m_ecsWrapper.get() };
 		m_mountFollowSystem = std::make_unique<MountFollowSystem>(mountFolSysDesc);
 
+		MountLifecycleSystemDesc mlsDesc{ {m_logger}, *m_ecsWrapper.get() };
+		m_mountLifecycleSystem = std::make_unique<MountLifecycleSystem>(mlsDesc);
+
 		// Ship stuff
 
 		PartRegistryDesc partRegDesc = { {m_logger} };
@@ -99,11 +102,13 @@ namespace Engine {
 		scheduler.registerSystem(m_weaponSystem.get());
 		scheduler.registerSystem(m_damperSystem.get());
 		scheduler.registerSystem(m_mountFollowSystem.get());
+		scheduler.registerSystem(m_mountLifecycleSystem.get());
 
 		// Command buffers process queued calls for entity and component create/destroy for parallelization
 		scheduler.registerFlushCallback([this]() { m_lifetimeSystem->getCommandBuffer().flush(); });
 		scheduler.registerFlushCallback([this]() { m_damageSystem->getCommandBuffer().flush(); });
 		scheduler.registerFlushCallback([this]() { m_weaponSystem->getCommandBuffer().flush(); });
+		scheduler.registerFlushCallback([this]() { m_mountLifecycleSystem->getCommandBuffer().flush(); });
 
 		// Ordering constraints ensure certain systems are updated before others due to order dependency
 		m_app.getJobController().addOrderingConstraint(m_collisionSystem.get(), m_moveTicks.get());
