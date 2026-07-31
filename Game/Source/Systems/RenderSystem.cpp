@@ -5,7 +5,8 @@ Engine::RenderSystem::RenderSystem(const RenderSystemDesc& desc) : Base(desc.bas
 	m_meshReg(desc.meshRegistry),
 	m_textureReg(desc.textureRegistry),
 	m_renderer(desc.renderer),
-	m_camera(desc.camera)
+	m_camera(desc.camera),
+	m_window(desc.window)
 {
 	m_entityMask = m_ecs.makeSignature<Position, Renderable>();
 	m_reads = m_ecs.makeSignature<Position, Renderable>();
@@ -22,6 +23,8 @@ void Engine::RenderSystem::Update(d64 dt)
 {
 	for (auto& [key, matrices] : m_batches) { matrices.clear(); }
 
+	AABB viewport = m_camera.getViewportBounds(m_window.getWidth(), m_window.getHeight());
+
 	i32 c = m_ecs.sizeComponentPool<Renderable>();
 	for (i32 i = 0; i < c; i++) {
 		i32 entityIndex = m_ecs.entityAtDenseIndex<Renderable>(i);
@@ -30,6 +33,12 @@ void Engine::RenderSystem::Update(d64 dt)
 
 		auto& renderable = m_ecs.getComponentAtDenseIndex<Renderable>(i);
 		auto& position = m_ecs.getComponent<Position>(id);
+
+		AABB entityBounds{
+			Vector2double{ position.transform.x - renderable.scale, position.transform.y - renderable.scale },
+			Vector2double{ position.transform.x + renderable.scale, position.transform.y + renderable.scale }
+		};
+		if (!viewport.overlaps(entityBounds)) { continue; }
 
 		Vector2double relative = m_camera.toCameraRelative(position.transform);
 		glm::vec3 pos(static_cast<f32>(relative.x), static_cast<f32>(relative.y), 0.0f);

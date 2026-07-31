@@ -10,6 +10,7 @@ namespace Engine {
 		GameECSWrapper& ecs;
 		Renderer& renderer;
 		Camera& camera;
+		Window& window;
 		MeshRegistry& meshReg;
 		PartRegistry& partReg;
 	};
@@ -27,6 +28,7 @@ namespace Engine {
 		GameECSWrapper& m_ecs;
 		Renderer& m_renderer;
 		Camera& m_camera;
+		Window& m_window;
 		MeshRegistry& m_meshReg;
 		PartRegistry& m_partReg;
 		std::bitset<64> m_entityMask;

@@ -5,6 +5,7 @@ namespace Engine {
 		m_ecs(desc.ecs),
 		m_renderer(desc.renderer),
 		m_camera(desc.camera),
+		m_window(desc.window),
 		m_meshReg(desc.meshReg),
 		m_partReg(desc.partReg)
 	{
@@ -22,6 +23,8 @@ namespace Engine {
 	{
 		for (auto& [key, matrices] : m_batches) { matrices.clear(); }
 
+		AABB viewport = m_camera.getViewportBounds(m_window.getWidth(), m_window.getHeight());
+
 		i32 c = m_ecs.sizeComponentPool<ShipVisual>();
 		for (i32 i = 0; i < c; i++) {
 			i32 entityIndex = m_ecs.entityAtDenseIndex<ShipVisual>(i);
@@ -29,6 +32,16 @@ namespace Engine {
 			if ((m_ecs.getSignature(id) & m_entityMask) != m_entityMask) { continue; }
 
 			auto& shipPos = m_ecs.getComponent<Position>(id);
+
+			if (m_ecs.hasComponent<Physics>(id)) {
+				auto& shipPhysics = m_ecs.getComponent<Physics>(id);
+				AABB shipBounds{
+					Vector2double{ shipPos.transform.x - shipPhysics.radius, shipPos.transform.y - shipPhysics.radius },
+					Vector2double{ shipPos.transform.x + shipPhysics.radius, shipPos.transform.y + shipPhysics.radius }
+				};
+				if (!viewport.overlaps(shipBounds)) { continue; }
+			}
+
 			auto& visual = m_ecs.getComponentAtDenseIndex<ShipVisual>(i);
 
 			f32 shipHealthFraction = 1.0f;

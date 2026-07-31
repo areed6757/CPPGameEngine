@@ -40,7 +40,7 @@ namespace Engine {
 		ECSWrapperDesc ecsDesc = { {m_logger}, *m_entityRegister.get(), compDesc };
 		m_ecsWrapper = std::make_unique<GameECSWrapper>(ecsDesc);
 
-		RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get(), *m_camera.get() };
+		RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get(), *m_camera.get(), m_app.getWindow() };
 		m_renderSystem = std::make_unique<RenderSystem>(renderSysDesc);
 
 		CollisionSystemDesc collisionSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_AABBTree.get() };
@@ -81,7 +81,7 @@ namespace Engine {
 		ShipFactoryDesc shipFactoryDesc = { {m_logger}, *m_ecsWrapper.get(), *m_partRegistry.get() };
 		m_shipFactory = std::make_unique<ShipFactory>(shipFactoryDesc);
 
-		PartRenderSystemDesc prsDesc = { {m_logger}, *m_ecsWrapper.get(), *m_renderer.get(), *m_camera.get(), *m_meshRegistry.get(), *m_partRegistry.get() };
+		PartRenderSystemDesc prsDesc = { {m_logger}, *m_ecsWrapper.get(), *m_renderer.get(), *m_camera.get(), m_app.getWindow(), *m_meshRegistry.get(), *m_partRegistry.get() };
 		m_partRenderSystem = std::make_unique<PartRenderSystem>(prsDesc);
 
 		Scheduler& scheduler = m_app.getScheduler();

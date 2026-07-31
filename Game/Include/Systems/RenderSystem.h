@@ -13,6 +13,7 @@ namespace Engine {
 		TextureRegistry& textureRegistry;
 		Renderer& renderer;
 		Camera& camera;
+		Window& window;
 	};
 
 	class RenderSystem : public Base, public TickedSystem {
@@ -27,6 +28,7 @@ namespace Engine {
 		TextureRegistry& m_textureReg;
 		Renderer& m_renderer;
 		Camera& m_camera;
+		Window& m_window;
 		std::bitset<64> m_entityMask;
 		std::map<std::pair<MeshID, std::optional<TextureID>>, std::vector<PartInstanceData>> m_batches;
 	};

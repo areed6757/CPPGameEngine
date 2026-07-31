@@ -46,4 +46,16 @@ namespace Engine {
 	{
 		return worldPosition - m_position;
 	}
+
+	AABB Engine::Camera::getViewportBounds(i32 viewportWidth, i32 viewportHeight) const noexcept
+	{
+		f32 aspect = static_cast<f32>(viewportWidth) / static_cast<f32>(viewportHeight);
+		f32 halfHeight = m_zoom;
+		f32 halfWidth = halfHeight * aspect;
+
+		return AABB{
+			Vector2double{ m_position.x - halfWidth, m_position.y - halfHeight },
+			Vector2double{ m_position.x + halfWidth, m_position.y + halfHeight }
+		};
+	}
 }
