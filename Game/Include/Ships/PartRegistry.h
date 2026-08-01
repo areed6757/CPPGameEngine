@@ -15,6 +15,7 @@ namespace Engine {
 		PartVariantID registerVariant(const PartVariant& variant);
 		[[nodiscard]] const PartVariant& get(PartVariantID id) const;
 		[[nodiscard]] i32 size() const noexcept { return static_cast<i32>(m_variants.size()); }
+		[[nodiscard]] Weapon buildWeaponFromVariant(PartVariantID variantId) const;
 
 	private:
 		std::vector<PartVariant> m_variants;

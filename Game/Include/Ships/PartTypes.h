@@ -33,6 +33,7 @@ namespace Engine {
 		f32 damage;
 		f32 cooldown;
 		f32 projectileSpeed;
+		f32 projectileRadius;
 	};
 
 	struct HullParams : PartBaseStats {

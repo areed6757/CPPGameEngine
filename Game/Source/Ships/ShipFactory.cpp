@@ -1,4 +1,15 @@
 #include <Ships/ShipFactory.h>
+#include <Components/Position.h>
+#include <Components/Movement.h>
+#include <Components/Physics.h>
+#include <Components/Stability.h>
+#include <Components/Health.h>
+#include <Components/Thruster.h>
+#include <Components/Mount.h>
+#include <Components/Weapon.h>
+#include <Components/Renderable.h>
+#include <Components/ShipVisual.h>
+#include <Graphics/MeshID.h>
 #include <tuple>
 
 namespace Engine {
@@ -6,15 +17,14 @@ namespace Engine {
 		m_ecs(desc.ecs),
 		m_partReg(desc.partReg)
 	{
-
 	}
 
 	ShipFactory::~ShipFactory()
 	{
-
 	}
 
-	EntityID ShipFactory::bake(const ShipGrid& grid, Vector2double spawnPos, f32 spawnRotation)
+	EntityID ShipFactory::bake(const ShipGrid& grid, Vector2double spawnPos, f32 spawnRotation,
+		const std::unordered_map<std::pair<i32, i32>, PartVariantID, PairHash>& hardpointLoadout)
 	{
 		f32 totalMass = 0.0f;
 		f32 totalStability = 0.0f;
@@ -94,27 +104,28 @@ namespace Engine {
 				(static_cast<f32>(hy) + params->sizeY * 0.5f - grid.height() * 0.5f) * static_cast<f32>(GRID_CELL_SIZE_KM)
 			};
 
-			// Every hardpoint unconditionally spawns a weapon until empty-socket loadout support is added
-			// TODO: Refactor this entire block
-			EntityID weaponEntity = m_ecs.createEntity();
-			m_ecs.addComponent(weaponEntity, Mount{ .owner = ship, .offset = offset });
-			m_ecs.addComponent(weaponEntity, Position{ .transform = spawnPos, .rotation = spawnRotation }); // corrects via MountFollowSystem
-			m_ecs.addComponent(weaponEntity, Renderable{
+			EntityID mountEntity = m_ecs.createEntity();
+			m_ecs.addComponent(mountEntity, Mount{ .owner = ship, .offset = offset });
+			m_ecs.addComponent(mountEntity, Position{ .transform = spawnPos, .rotation = spawnRotation }); // corrected next tick by MountFollowSystem
+			m_ecs.addComponent(mountEntity, Renderable{
 				.mesh = MeshID::Quad, .texture = std::nullopt,
 				.scale = std::max(params->sizeX, params->sizeY) * static_cast<f32>(GRID_CELL_SIZE_KM) * 0.5f
 				});
-			m_ecs.addComponent(weaponEntity, Health{ .current = params->health, .max = params->health });
-			m_ecs.addComponent(weaponEntity, Weapon{
-				.cooldown = 1.0f, .timeSinceLastFire = 0.0f,
-				.projectileSpeed = 35.0f, .projectileRadius = 0.01f, .projectileDamage = 5.0f
-				});
+			m_ecs.addComponent(mountEntity, Health{ .current = params->health, .max = params->health });
 
-			visual.parts[visualPartIndex].linkedEntity = weaponEntity;
+			auto loadoutIt = hardpointLoadout.find({ hx, hy });
+			if (loadoutIt != hardpointLoadout.end()) {
+				m_ecs.addComponent(mountEntity, m_partReg.buildWeaponFromVariant(loadoutIt->second));
+			}
+			// no matching entry -- mount stays a bare, unequipped socket
+
+			visual.parts[visualPartIndex].linkedEntity = mountEntity;
 		}
 
 		m_ecs.addComponent(ship, visual);
 
-		// EngineLogInfo("ShipFactory: baked ship, mass {}, stability {}, {} visual part(s), {} hardpoint(s)", totalMass, totalStability, visual.parts.size(), hardpoints.size());
+		EngineLogInfo("ShipFactory: baked ship, mass {}, stability {}, {} visual part(s), {} hardpoint(s)",
+			totalMass, totalStability, visual.parts.size(), hardpoints.size());
 
 		return ship;
 	}

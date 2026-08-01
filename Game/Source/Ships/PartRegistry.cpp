@@ -24,4 +24,18 @@ namespace Engine {
 		ENGINE_ASSERT(id >= 0 && id < static_cast<PartVariantID>(m_variants.size()), "PartRegistry::get: invalid id");
 		return m_variants[id];
 	}
+	Weapon PartRegistry::buildWeaponFromVariant(PartVariantID variantId) const
+	{
+		const PartVariant& variant = get(variantId);
+		ENGINE_ASSERT(variant.category == PartCategory::Weapon, "buildWeaponFromVariant: variant is not a Weapon");
+
+		const WeaponParams& params = std::get<WeaponParams>(variant.params);
+		return Weapon{
+			.cooldown = params.cooldown,
+			.timeSinceLastFire = 0.0f,
+			.projectileSpeed = params.projectileSpeed,
+			.projectileRadius = params.projectileRadius,
+			.projectileDamage = params.damage
+		};
+	}
 }

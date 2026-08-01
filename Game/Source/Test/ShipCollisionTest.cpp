@@ -32,6 +32,11 @@ namespace Engine {
 			.name = "Test Armor", .category = PartCategory::Armor,
 			.params = ArmorParams{ PartBaseStats{ 2.0f, 10.0f, 5.0f, 0.0f } }
 			});
+
+		m_hardpointVariant = m_registry.registerVariant(PartVariant{
+			.name = "Test Hardpoint", .category = PartCategory::Hardpoint,
+			.params = HardpointParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f }, 1, 1 }
+			});
 	}
 
 	ShipCollisionTest::~ShipCollisionTest() {}
@@ -41,22 +46,16 @@ namespace Engine {
 		ShipGridDesc sgDesc{ {m_logger}, 5, 5 };
 		ShipGrid grid(sgDesc);
 		grid.tryPlacePart(0, 0, 5, 5, PartCategory::Hull, m_hullVariant);
-		return m_shipFactory.bake(grid, pos, rotation);
+
+		static const std::unordered_map<std::pair<i32, i32>, PartVariantID, PairHash> noHardpoints;
+		return m_shipFactory.bake(grid, pos, rotation, noHardpoints);
 	}
 
-	EntityID ShipCollisionTest::buildComplexShip(Vector2double pos, f32 rotation, std::mt19937& rng)
+	EntityID ShipCollisionTest::buildComplexShip(Vector2double pos, f32 rotation, std::mt19937& rng,
+		PartVariantID hardpointVariant, PartVariantID weaponVariant)
 	{
-		// Randomized organic growth instead of a fixed symmetric layout:
-		// start from a single hull seed cell and repeatedly attach a new
-		// 1x1 part to a random empty neighbor of an already-placed cell.
-		// tryPlacePart() safely no-ops (returns false, grid unchanged) on
-		// an out-of-bounds or already-occupied target, so failed growth
-		// attempts just get skipped -- the result is an irregular hull/armor
-		// cluster, never a clean square/plus, and different per call. No
-		// Engine part is ever placed, so bake() never attaches a Thruster
-		// and the ship stays stationary.
 		constexpr i32 GRID_SIZE = 7;
-		constexpr i32 TARGET_PARTS = 8;
+		constexpr i32 TARGET_PARTS = 8; // includes the hardpoint now, not just hull/armor
 		constexpr i32 DX[4] = { 1, -1, 0, 0 };
 		constexpr i32 DY[4] = { 0, 0, 1, -1 };
 
@@ -71,6 +70,7 @@ namespace Engine {
 		std::uniform_int_distribution<i32> pickDir(0, 3);
 		std::uniform_int_distribution<i32> pickPart(0, 4); // 1-in-5 chance of armor instead of hull
 
+		std::pair<i32, i32> hardpointPos{ -1, -1 };
 		i32 attempts = 0;
 		while (static_cast<i32>(placed.size()) < TARGET_PARTS && attempts < TARGET_PARTS * 8) {
 			++attempts;
@@ -79,6 +79,19 @@ namespace Engine {
 			auto [fromX, fromY] = placed[pickPlaced(rng)];
 			i32 dir = pickDir(rng);
 			i32 nx = fromX + DX[dir], ny = fromY + DY[dir];
+
+			// Reserve the last growth slot for the hardpoint, once everything
+			// else has grown -- guarantees exactly one hardpoint per ship
+			// rather than leaving it to chance alongside hull/armor picks.
+			bool placeHardpoint = (hardpointPos.first == -1) && (static_cast<i32>(placed.size()) == TARGET_PARTS - 1);
+
+			if (placeHardpoint) {
+				if (grid.tryPlacePart(nx, ny, 1, 1, PartCategory::Hardpoint, hardpointVariant)) {
+					hardpointPos = { nx, ny };
+					placed.emplace_back(nx, ny);
+				}
+				continue;
+			}
 
 			bool useArmor = pickPart(rng) == 4;
 			PartCategory category = useArmor ? PartCategory::Armor : PartCategory::Hull;
@@ -89,7 +102,10 @@ namespace Engine {
 			}
 		}
 
-		return m_shipFactory.bake(grid, pos, rotation);
+		std::unordered_map<std::pair<i32, i32>, PartVariantID, PairHash> loadout;
+		if (hardpointPos.first != -1) { loadout[hardpointPos] = weaponVariant; }
+
+		return m_shipFactory.bake(grid, pos, rotation, loadout);
 	}
 
 	void ShipCollisionTest::spawnOverlappingShipPair()
@@ -139,10 +155,13 @@ namespace Engine {
 
 	void ShipCollisionTest::spawnMassBattle(i32 shipCount, d64 spacing, f32 cooldown, f32 projectileSpeed, f32 projectileRadius, f32 projectileDamage)
 	{
-		std::mt19937 rng{ std::random_device{}() };
-		std::uniform_real_distribution<f32> angleDist(0.0f, 6.2831853f); // 0..2*pi
-		std::uniform_real_distribution<f32> phaseDist(0.0f, cooldown); // stagger first shots instead of one synchronized volley
+		PartVariantID weaponVariant = m_registry.registerVariant(PartVariant{
+			.name = "Test Weapon", .category = PartCategory::Weapon,
+			.params = WeaponParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f }, projectileDamage, cooldown, projectileSpeed, 0.005f }
+			});
 
+		std::mt19937 rng{ std::random_device{}() };
+		std::uniform_real_distribution<f32> angleDist(0.0f, 6.2831853f);
 		i32 side = static_cast<i32>(std::ceil(std::sqrt(static_cast<d64>(shipCount))));
 		d64 half = (side - 1) * spacing / 2.0;
 
@@ -150,58 +169,11 @@ namespace Engine {
 		for (i32 y = 0; y < side && spawned < shipCount; ++y) {
 			for (i32 x = 0; x < side && spawned < shipCount; ++x) {
 				Vector2double shipPos{ x * spacing - half, y * spacing - half };
-				f32 facing = angleDist(rng); // ship's random facing IS its (fixed) firing direction
-
-				EntityID ship = buildSmallShip(shipPos, facing);
-
-				// Self-mounted weapon: owner == the ship itself, zero offset.
-				// WeaponSystem already ticks cooldown, fires along the
-				// owner's current facing, and stamps DamagePayload.source =
-				// mount.owner, so self-hits stay filtered with no extra work.
-				m_ecs.addComponent(ship, Mount{ .owner = ship, .offset = Vector2float{} });
-				m_ecs.addComponent(ship, Weapon{
-					.cooldown = cooldown, .timeSinceLastFire = phaseDist(rng),
-					.projectileSpeed = projectileSpeed, .projectileRadius = projectileRadius, .projectileDamage = projectileDamage
-					});
-
+				f32 facing = angleDist(rng);
+				buildComplexShip(shipPos, facing, rng, m_hardpointVariant, weaponVariant);
 				++spawned;
 			}
 		}
-
-		EngineLogInfo("ShipCollisionTest: spawned mass battle ({} ships, each firing on a {}s cooldown in a random direction).", spawned, cooldown);
-	}
-
-	void ShipCollisionTest::spawnComplexMassBattle(i32 shipCount, d64 spacing, f32 cooldown, f32 projectileSpeed, f32 projectileRadius, f32 projectileDamage)
-	{
-		std::mt19937 rng{ std::random_device{}() };
-		std::uniform_real_distribution<f32> angleDist(0.0f, 6.2831853f); // 0..2*pi
-		std::uniform_real_distribution<f32> phaseDist(0.0f, cooldown); // stagger first shots instead of one synchronized volley
-
-		i32 side = static_cast<i32>(std::ceil(std::sqrt(static_cast<d64>(shipCount))));
-		d64 half = (side - 1) * spacing / 2.0;
-
-		i32 spawned = 0;
-		for (i32 y = 0; y < side && spawned < shipCount; ++y) {
-			for (i32 x = 0; x < side && spawned < shipCount; ++x) {
-				Vector2double shipPos{ x * spacing - half, y * spacing - half };
-				f32 facing = angleDist(rng); // ship's random facing IS its (fixed) firing direction
-
-				EntityID ship = buildComplexShip(shipPos, facing, rng);
-
-				// Self-mounted weapon: owner == the ship itself, zero offset.
-				// WeaponSystem already ticks cooldown, fires along the
-				// owner's current facing, and stamps DamagePayload.source =
-				// mount.owner, so self-hits stay filtered with no extra work.
-				m_ecs.addComponent(ship, Mount{ .owner = ship, .offset = Vector2float{} });
-				m_ecs.addComponent(ship, Weapon{
-					.cooldown = cooldown, .timeSinceLastFire = phaseDist(rng),
-					.projectileSpeed = projectileSpeed, .projectileRadius = projectileRadius, .projectileDamage = projectileDamage
-					});
-
-				++spawned;
-			}
-		}
-
-		EngineLogInfo("ShipCollisionTest: spawned complex mass battle ({} irregular multi-part ships, each firing on a {}s cooldown in a random direction).", spawned, cooldown);
+		EngineLogInfo("ShipCollisionTest: spawned mass battle ({} irregular multi-part ships, each firing via a real grown hardpoint).", spawned);
 	}
 }
