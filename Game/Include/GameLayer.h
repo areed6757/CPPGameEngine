@@ -43,6 +43,7 @@ namespace Engine {
 		std::unique_ptr<MeshRegistry> m_meshRegistry{};
 		std::unique_ptr<RenderSystem> m_renderSystem{};
 		std::unique_ptr<PartRenderSystem> m_partRenderSystem{};
+		std::unique_ptr<AISystem> m_aiSystem{};
 
 		std::unique_ptr<CoreSystemsTest> m_coreSystemsTest{};
 		std::unique_ptr<ThreadingStressTest> m_threadingStressTest{};

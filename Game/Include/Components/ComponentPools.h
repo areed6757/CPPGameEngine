@@ -15,6 +15,7 @@
 #include <Components/Stability.h>
 #include <Ships/ShipCollisionGeometry.h>
 #include <Ships/ShipGrid.h>
+#include <Components/AIController.h>
 
 /// <summary>
 /// This class holds pools of components as the single source of access to all components types by all systems in the game.
@@ -41,12 +42,13 @@ namespace Engine {
 	template <> struct ComponentBit<Stability> { static constexpr i32 value = 12; };
 	template <> struct ComponentBit<ShipCollisionGeometry> { static constexpr i32 value = 13; };
 	template <> struct ComponentBit<ShipGridData> { static constexpr i32 value = 14; };
+	template <> struct ComponentBit<AIController> { static constexpr i32 value = 15; };
 
 	struct ComponentPools {
 		explicit ComponentPools(const ComponentDesc& desc) : positions(desc), movements(desc),
 			renderables(desc), physics(desc), damagePayloads(desc), healths(desc), lifetimes(desc),
 			thrusters(desc), weapons(desc), mounts(desc), movementDampers(desc), shipVisuals(desc),
-			stabilities(desc), shipCollisionGeometries(desc), shipGridDatas(desc)
+			stabilities(desc), shipCollisionGeometries(desc), shipGridDatas(desc), aiControllers(desc)
 		{}
 
 	private:
@@ -65,6 +67,7 @@ namespace Engine {
 		Component<Stability> stabilities;
 		Component<ShipCollisionGeometry> shipCollisionGeometries;
 		Component<ShipGridData> shipGridDatas;
+		Component<AIController> aiControllers;
 
 	public:
 		/// <summary>
@@ -89,6 +92,7 @@ namespace Engine {
 			else if constexpr (std::is_same_v<T, Stability>) return stabilities;
 			else if constexpr (std::is_same_v<T, ShipCollisionGeometry>) return shipCollisionGeometries;
 			else if constexpr (std::is_same_v<T, ShipGridData>) return shipGridDatas;
+			else if constexpr (std::is_same_v<T, AIController>) return aiControllers;
 			else static_assert(sizeof(T) == 0, "getPool: unregistered component type");
 		}
 
@@ -115,6 +119,7 @@ namespace Engine {
 			else if constexpr (std::is_same_v<T, Stability>) return stabilities;
 			else if constexpr (std::is_same_v<T, ShipCollisionGeometry>) return shipCollisionGeometries;
 			else if constexpr (std::is_same_v<T, ShipGridData>) return shipGridDatas;
+			else if constexpr (std::is_same_v<T, AIController>) return aiControllers;
 			else static_assert(sizeof(T) == 0, "getPool: unregistered component type");
 		}
 
@@ -134,6 +139,7 @@ namespace Engine {
 			if (stabilities.has(index)) { stabilities.remove(index); }
 			if (shipCollisionGeometries.has(index)) { shipCollisionGeometries.remove(index); }
 			if (shipGridDatas.has(index)) { shipGridDatas.remove(index); }
+			if (aiControllers.has(index)) { aiControllers.remove(index); }
 		}
 	};
 

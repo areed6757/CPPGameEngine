@@ -76,6 +76,9 @@ namespace Engine {
 		MountLifecycleSystemDesc mlsDesc{ {m_logger}, *m_ecsWrapper.get() };
 		m_mountLifecycleSystem = std::make_unique<MountLifecycleSystem>(mlsDesc);
 
+		AISystemDesc aiDesc{ {m_logger}, *m_ecsWrapper.get() };
+		m_aiSystem = std::make_unique<AISystem>(aiDesc);
+
 		// Ship stuff
 
 		PartRegistryDesc partRegDesc = { {m_logger} };
@@ -93,6 +96,7 @@ namespace Engine {
 		//scheduler.registerFrameSystem(m_particleSystem.get());
 		scheduler.registerFrameSystem(m_partRenderSystem.get());
 
+		scheduler.registerSystem(m_aiSystem.get());
 		scheduler.registerSystem(m_thrusterSystem.get());
 		scheduler.registerSystem(m_collisionSystem.get());
 		scheduler.registerSystem(m_impulseSystem.get());
@@ -176,11 +180,7 @@ namespace Engine {
 		ShipCollisionTestDesc sctDesc{ {m_logger}, *m_ecsWrapper.get(), *m_shipFactory.get(), *m_partRegistry.get() };
 		m_shipCollisionTest = std::make_unique<ShipCollisionTest>(sctDesc);
 
-		//m_shipCollisionTest->spawnOverlappingShipPair();
-		//m_shipCollisionTest->spawnProjectileAtShip(5.0f, 5.0f);
-		//m_shipCollisionTest->spawnSeparatedShipPair();
-		//m_shipCollisionTest->spawnMassBattle(30000, 0.3, 1.5f, 1.0f, 0.005f, 5.0f);
-		m_shipCollisionTest->spawnMassBattle(5000, 0.3, 1.5f, 1.0f, 0.005f, 5.0f);
+		m_shipCollisionTest->spawnTwoSidedBattle(100, 15.0, 1.0, 1.0f, 4.0f, 0.005f, 5.0f, 2.0f, 3.0f);
 		m_app.getScheduler().togglePause();
 
 	}

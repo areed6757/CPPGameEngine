@@ -24,6 +24,7 @@
 #include <Components/MovementDamper.h>
 #include <Components/ShipVisual.h>
 #include <Components/Stability.h>
+#include <Components/AIController.h>
 
 // Graphics
 #include <Graphics/TextureRegistry.h>
@@ -44,6 +45,7 @@
 #include <Systems/MountFollowSystem.h>
 #include <Systems/MountLifecycleSystem.h>
 #include <Systems/PartRenderSystem.h>
+#include <Systems/AISystem.h>
 
 // Tests
 #include <Test/CoreSystemsTest.h>

@@ -52,10 +52,10 @@ namespace Engine {
 	}
 
 	EntityID ShipCollisionTest::buildComplexShip(Vector2double pos, f32 rotation, std::mt19937& rng,
-		PartVariantID hardpointVariant, PartVariantID weaponVariant)
+		i32 hardpointCount, PartVariantID hardpointVariant, PartVariantID weaponVariant, PartVariantID engineVariant)
 	{
 		constexpr i32 GRID_SIZE = 7;
-		constexpr i32 TARGET_PARTS = 8; // includes the hardpoint now, not just hull/armor
+		i32 targetParts = 7 + hardpointCount; // base hull/armor growth + N hardpoints + 1 engine
 		constexpr i32 DX[4] = { 1, -1, 0, 0 };
 		constexpr i32 DY[4] = { 0, 0, 1, -1 };
 
@@ -68,11 +68,13 @@ namespace Engine {
 		placed.emplace_back(seed, seed);
 
 		std::uniform_int_distribution<i32> pickDir(0, 3);
-		std::uniform_int_distribution<i32> pickPart(0, 4); // 1-in-5 chance of armor instead of hull
+		std::uniform_int_distribution<i32> pickPart(0, 4);
 
-		std::pair<i32, i32> hardpointPos{ -1, -1 };
+		std::vector<std::pair<i32, i32>> hardpointPositions;
+		std::pair<i32, i32> enginePos{ -1, -1 };
 		i32 attempts = 0;
-		while (static_cast<i32>(placed.size()) < TARGET_PARTS && attempts < TARGET_PARTS * 8) {
+
+		while (static_cast<i32>(placed.size()) < targetParts && attempts < targetParts * 8) {
 			++attempts;
 
 			std::uniform_int_distribution<size_t> pickPlaced(0, placed.size() - 1);
@@ -80,14 +82,24 @@ namespace Engine {
 			i32 dir = pickDir(rng);
 			i32 nx = fromX + DX[dir], ny = fromY + DY[dir];
 
-			// Reserve the last growth slot for the hardpoint, once everything
-			// else has grown -- guarantees exactly one hardpoint per ship
-			// rather than leaving it to chance alongside hull/armor picks.
-			bool placeHardpoint = (hardpointPos.first == -1) && (static_cast<i32>(placed.size()) == TARGET_PARTS - 1);
+			// Reserve the last (hardpointCount + 1) growth slots: hardpointCount
+			// of them for hardpoints, the final one for the engine. Same
+			// "guaranteed, not left to chance" reservation as before, just
+			// generalized to N hardpoints instead of exactly one.
+			i32 remaining = targetParts - static_cast<i32>(placed.size());
+			bool needsEngine = enginePos.first == -1;
+			bool needsHardpoint = static_cast<i32>(hardpointPositions.size()) < hardpointCount;
 
-			if (placeHardpoint) {
+			if (needsHardpoint && remaining <= hardpointCount + 1) {
 				if (grid.tryPlacePart(nx, ny, 1, 1, PartCategory::Hardpoint, hardpointVariant)) {
-					hardpointPos = { nx, ny };
+					hardpointPositions.emplace_back(nx, ny);
+					placed.emplace_back(nx, ny);
+				}
+				continue;
+			}
+			if (needsEngine && remaining <= 1) {
+				if (grid.tryPlacePart(nx, ny, 1, 1, PartCategory::Engine, engineVariant)) {
+					enginePos = { nx, ny };
 					placed.emplace_back(nx, ny);
 				}
 				continue;
@@ -103,7 +115,7 @@ namespace Engine {
 		}
 
 		std::unordered_map<std::pair<i32, i32>, PartVariantID, PairHash> loadout;
-		if (hardpointPos.first != -1) { loadout[hardpointPos] = weaponVariant; }
+		for (auto& hp : hardpointPositions) { loadout[hp] = weaponVariant; }
 
 		return m_shipFactory.bake(grid, pos, rotation, loadout);
 	}
@@ -131,49 +143,47 @@ namespace Engine {
 			a.id, b.id);
 	}
 
-	void ShipCollisionTest::spawnProjectileAtShip(f32 projectileSpeed, f32 projectileDamage)
-	{
-		EntityID ship = buildSmallShip(Vector2double{ 0.0, -3.0 }, 0.0f);
-		EntityID other = buildSmallShip(Vector2double{ 0.0, -6.0 }, 0.0f);
-
-		// Projectile starts well outside the ship's hull, on a direct
-		// collision course -- should hit via raycastGrid, not the generic
-		// swept-circle fallback (the ship has ShipCollisionGeometry +
-		// ShipGridData, so the dispatch in CollisionSystem::Update() should
-		// route this to narrowPhaseProjectileVsShip).
-		EntityID projectile = m_ecs.createEntity();
-		m_ecs.addComponent(projectile, Position{ .transform = Vector2double{ 0.0, -6.0 }, .rotation = 1.5708f });
-		m_ecs.addComponent(projectile, Movement{ .linearVelocity = Vector2float{ 0.0f, projectileSpeed } });
-		m_ecs.addComponent(projectile, Physics{ .radius = 0.005f, .mass = 0.01f });
-		m_ecs.addComponent(projectile, Renderable{ .mesh = MeshID::Quad, .texture = std::nullopt, .scale = 0.01f });
-		m_ecs.addComponent(projectile, DamagePayload{ .amount = projectileDamage, .source = other });
-		m_ecs.addComponent(projectile, Lifetime{ .remaining = 5.0f });
-
-		EngineLogInfo("ShipCollisionTest: spawned ship {} and projectile {} on a collision course -- expect a projectile-vs-ship CollisionEvent via raycastGrid.",
-			ship.id, projectile.id);
-	}
-
-	void ShipCollisionTest::spawnMassBattle(i32 shipCount, d64 spacing, f32 cooldown, f32 projectileSpeed, f32 projectileRadius, f32 projectileDamage)
+	void ShipCollisionTest::spawnTwoSidedBattle(i32 shipsPerSide, d64 sideSpacing, d64 shipSpacing,
+		f32 cooldown, f32 projectileSpeed, f32 projectileRadius, f32 projectileDamage,
+		f32 engineThrust, f32 engineMaxAccel)
 	{
 		PartVariantID weaponVariant = m_registry.registerVariant(PartVariant{
-			.name = "Test Weapon", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f }, projectileDamage, cooldown, projectileSpeed, 0.005f }
+			.name = "Battle Weapon", .category = PartCategory::Weapon,
+			.params = WeaponParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f }, projectileDamage, cooldown, projectileSpeed, projectileRadius }
+			});
+		m_engineVariant = m_registry.registerVariant(PartVariant{
+			.name = "Battle Engine", .category = PartCategory::Engine,
+			.params = EngineParams{ PartBaseStats{ 3.0f, 15.0f, 3.0f, 0.0f }, engineThrust, engineMaxAccel }
 			});
 
 		std::mt19937 rng{ std::random_device{}() };
-		std::uniform_real_distribution<f32> angleDist(0.0f, 6.2831853f);
-		i32 side = static_cast<i32>(std::ceil(std::sqrt(static_cast<d64>(shipCount))));
-		d64 half = (side - 1) * spacing / 2.0;
+		i32 side = static_cast<i32>(std::ceil(std::sqrt(static_cast<d64>(shipsPerSide))));
+		d64 half = (side - 1) * shipSpacing / 2.0;
 
-		i32 spawned = 0;
-		for (i32 y = 0; y < side && spawned < shipCount; ++y) {
-			for (i32 x = 0; x < side && spawned < shipCount; ++x) {
-				Vector2double shipPos{ x * spacing - half, y * spacing - half };
-				f32 facing = angleDist(rng);
-				buildComplexShip(shipPos, facing, rng, m_hardpointVariant, weaponVariant);
-				++spawned;
+		auto spawnSide = [&](d64 xOffset, f32 facing, i32 teamId, i32 count) {
+			i32 spawned = 0;
+			for (i32 y = 0; y < side && spawned < count; ++y) {
+				for (i32 x = 0; x < side && spawned < count; ++x) {
+					Vector2double pos{ xOffset + x * shipSpacing - half, y * shipSpacing - half };
+					EntityID ship = buildComplexShip(pos, facing, rng, 2, m_hardpointVariant, weaponVariant, m_engineVariant);
+
+					m_ecs.addComponent(ship, AIController{
+						.teamId = teamId,
+						.target = EntityID{},
+						.engageRange = 3.0f,
+						.separationRadius = 0.5f
+						});
+
+					++spawned;
+				}
 			}
-		}
-		EngineLogInfo("ShipCollisionTest: spawned mass battle ({} irregular multi-part ships, each firing via a real grown hardpoint).", spawned);
+			};
+
+		// Two groups facing each other, separated by sideSpacing along X --
+		// team 0 faces +x (rotation 0), team 1 faces -x (rotation pi).
+		spawnSide(-sideSpacing / 2.0, 0.0f, 0, shipsPerSide);
+		spawnSide(sideSpacing / 2.0, 3.14159265f, 1, shipsPerSide);
+
+		EngineLogInfo("ShipCollisionTest: spawned two-sided battle ({} ships per side, {} total).", shipsPerSide, shipsPerSide * 2);
 	}
 }

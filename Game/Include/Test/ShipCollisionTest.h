@@ -35,21 +35,20 @@ namespace Engine {
 		// worst the SAT prefilter) should reject the pair outright.
 		void spawnSeparatedShipPair();
 
-		// One stationary ship, one projectile launched directly at it from
-		// outside its hull -- should register a projectile-vs-ship hit via
-		// raycastGrid, not the generic swept-circle fallback.
-		void spawnProjectileAtShip(f32 projectileSpeed, f32 projectileDamage);
-
-		void spawnMassBattle(i32 shipCount, d64 spacing, f32 cooldown, f32 projectileSpeed, f32 projectileRadius, f32 projectileDamage);
+		void spawnTwoSidedBattle(i32 shipsPerSide, d64 sideSpacing, d64 shipSpacing,
+			f32 cooldown, f32 projectileSpeed, f32 projectileRadius, f32 projectileDamage,
+			f32 engineThrust, f32 engineMaxAccel);
 
 	private:
 		EntityID buildSmallShip(Vector2double pos, f32 rotation);
+
 		EntityID buildComplexShip(Vector2double pos, f32 rotation, std::mt19937& rng,
-			PartVariantID hardpointVariant, PartVariantID weaponVariant);
+			i32 hardpointCount, PartVariantID hardpointVariant, PartVariantID weaponVariant, PartVariantID engineVariant);
+
+		PartVariantID m_hullVariant, m_armorVariant, m_hardpointVariant, m_engineVariant;
 
 		GameECSWrapper& m_ecs;
 		ShipFactory& m_shipFactory;
 		PartRegistry& m_registry;
-		PartVariantID m_hullVariant, m_armorVariant, m_hardpointVariant;
 	};
 }
