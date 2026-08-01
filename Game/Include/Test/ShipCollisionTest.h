@@ -1,10 +1,6 @@
 // ShipCollisionTest.h
 #pragma once
-#include <Core/Base.h>
-#include <Core/Common.h>
-#include <GameECS.h>
-#include <Ships/ShipFactory.h>
-#include <Ships/PartRegistry.h>
+#include <Game.h>
 #include <random>
 
 namespace Engine {

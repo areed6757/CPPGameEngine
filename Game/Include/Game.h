@@ -25,6 +25,7 @@
 #include <Components/ShipVisual.h>
 #include <Components/Stability.h>
 #include <Components/AIController.h>
+#include <Components/Faction.h>
 
 // Graphics
 #include <Graphics/TextureRegistry.h>

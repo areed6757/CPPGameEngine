@@ -167,6 +167,7 @@ namespace Engine {
 					Vector2double pos{ xOffset + x * shipSpacing - half, y * shipSpacing - half };
 					EntityID ship = buildComplexShip(pos, facing, rng, 2, m_hardpointVariant, weaponVariant, m_engineVariant);
 
+					m_ecs.addComponent(ship, Faction{ .teamId = teamId });
 					m_ecs.addComponent(ship, AIController{
 						.teamId = teamId,
 						.target = EntityID{},

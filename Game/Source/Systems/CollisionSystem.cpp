@@ -14,7 +14,7 @@ namespace Engine {
 		m_movementMask = m_ecs.makeSignature<Movement>();
 		m_nonPhysicsCollisionMask = m_ecs.makeSignature<DamagePayload>();
 
-		m_reads = m_ecs.makeSignature<Position, Physics, Movement, DamagePayload>();
+		m_reads = m_ecs.makeSignature<Position, Physics, Movement, DamagePayload, Faction>();
 		m_writes = m_ecs.makeSignature<>();
 
 		EngineLogInfo("Collision system created.");
@@ -48,8 +48,23 @@ namespace Engine {
 			for (EntityID other : m_nearbyScratch) {
 				if (other.id == id.id) { continue; }
 				if (other.id < id.id) { continue; }
+
 				if (m_ecs.hasComponent<DamagePayload>(id) && m_ecs.getComponent<DamagePayload>(id).source.id == other.id) { continue; }
 				if (m_ecs.hasComponent<DamagePayload>(other) && m_ecs.getComponent<DamagePayload>(other).source.id == id.id) { continue; }
+
+				if (m_ecs.hasComponent<DamagePayload>(id)) {
+					auto& payload = m_ecs.getComponent<DamagePayload>(id);
+					if (m_ecs.hasComponent<Faction>(payload.source) && m_ecs.hasComponent<Faction>(other)) {
+						if (m_ecs.getComponent<Faction>(payload.source).teamId == m_ecs.getComponent<Faction>(other).teamId) { continue; }
+					}
+				}
+				if (m_ecs.hasComponent<DamagePayload>(other)) {
+					auto& payload = m_ecs.getComponent<DamagePayload>(other);
+					if (m_ecs.hasComponent<Faction>(payload.source) && m_ecs.hasComponent<Faction>(id)) {
+						if (m_ecs.getComponent<Faction>(payload.source).teamId == m_ecs.getComponent<Faction>(id).teamId) { continue; }
+					}
+				}
+
 				outCandidates.push_back({ id, other });
 			}
 		}
