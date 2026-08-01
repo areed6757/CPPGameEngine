@@ -30,10 +30,9 @@ namespace Engine {
 			i32 entityIndex = m_ecs.entityAtDenseIndex<AIController>(i);
 			EntityID other = m_ecs.entityFromIndex(entityIndex);
 			if (other.id == self.id) { continue; }
-			if (!m_ecs.hasComponent<Position>(other)) { continue; }
+			if (!m_ecs.hasComponent<Position>(other) || !m_ecs.hasComponent<Faction>(other)) { continue; }
 
-			auto& otherAI = m_ecs.getComponentAtDenseIndex<AIController>(i);
-			if (otherAI.teamId == selfTeam) { continue; }
+			if (m_ecs.getComponent<Faction>(other).teamId == selfTeam) { continue; }
 
 			auto& otherPos = m_ecs.getComponent<Position>(other);
 			Vector2double delta = otherPos.transform - selfPos;
@@ -58,9 +57,10 @@ namespace Engine {
 			auto& pos = m_ecs.getComponent<Position>(id);
 			auto& movement = m_ecs.getComponent<Movement>(id);
 			auto& thruster = m_ecs.getComponent<Thruster>(id);
+			i32 myTeam = m_ecs.getComponent<Faction>(id).teamId;
 
 			if (!m_ecs.isValidEntity(ai.target)) {
-				ai.target = findNearestEnemy(id, ai.teamId, pos.transform);
+				ai.target = findNearestEnemy(id, myTeam, pos.transform);
 			}
 
 			if (m_ecs.isValidEntity(ai.target) && m_ecs.hasComponent<Position>(ai.target)) {
@@ -81,10 +81,9 @@ namespace Engine {
 			for (i32 j = 0; j < sc; j++) {
 				i32 otherIndex = m_ecs.entityAtDenseIndex<AIController>(j);
 				EntityID other = m_ecs.entityFromIndex(otherIndex);
-				if (other.id == id.id || !m_ecs.hasComponent<Position>(other)) { continue; }
+				if (other.id == id.id || !m_ecs.hasComponent<Position>(other) || !m_ecs.hasComponent<Faction>(other)) { continue; }
 
-				auto& otherAI = m_ecs.getComponentAtDenseIndex<AIController>(j);
-				if (otherAI.teamId != ai.teamId) { continue; }
+				if (m_ecs.getComponent<Faction>(other).teamId != myTeam) { continue; }
 
 				auto& otherPos = m_ecs.getComponent<Position>(other);
 				Vector2double away = pos.transform - otherPos.transform;

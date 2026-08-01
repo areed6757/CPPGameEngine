@@ -169,7 +169,6 @@ namespace Engine {
 
 					m_ecs.addComponent(ship, Faction{ .teamId = teamId });
 					m_ecs.addComponent(ship, AIController{
-						.teamId = teamId,
 						.target = EntityID{},
 						.engageRange = 3.0f,
 						.separationRadius = 0.5f
