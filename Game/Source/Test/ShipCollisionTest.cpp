@@ -37,6 +37,8 @@ namespace Engine {
 			.name = "Test Hardpoint", .category = PartCategory::Hardpoint,
 			.params = HardpointParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f }, 1, 1 }
 			});
+		
+		m_engineVariant = {};
 	}
 
 	ShipCollisionTest::~ShipCollisionTest() {}
@@ -171,7 +173,7 @@ namespace Engine {
 					m_ecs.addComponent(ship, Separation{ .margin = 0.1f });
 					m_ecs.addComponent(ship, AIController{
 						.target = EntityID{},
-						.engageRange = 3.0f,
+						.engageRange = 3.0f
 						});
 
 					++spawned;
