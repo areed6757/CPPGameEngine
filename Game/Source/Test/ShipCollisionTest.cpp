@@ -55,7 +55,7 @@ namespace Engine {
 		i32 hardpointCount, PartVariantID hardpointVariant, PartVariantID weaponVariant, PartVariantID engineVariant)
 	{
 		constexpr i32 GRID_SIZE = 7;
-		i32 targetParts = 7 + hardpointCount; // base hull/armor growth + N hardpoints + 1 engine
+		i32 targetParts = 37 + hardpointCount; // base hull/armor growth + N hardpoints + 1 engine
 		constexpr i32 DX[4] = { 1, -1, 0, 0 };
 		constexpr i32 DY[4] = { 0, 0, 1, -1 };
 
