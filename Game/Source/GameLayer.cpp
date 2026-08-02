@@ -133,8 +133,8 @@ namespace Engine {
 		m_partEditor = std::make_unique<PartEditorLayer>(m_app, *m_partRegistry.get());
 		m_imGuiLayer.addPanel([this]() { m_partEditor->draw(); });
 
-		i32 loaded = m_partRegistry->loadAllFromDirectory("parts");
-		EngineLogInfo("Loaded {} part variants from disk.", loaded);
+		i32 loaded = m_partRegistry->loadAllFromDirectory("Assets/Parts");
+		EngineLogInfo("Loaded {} part variants.", loaded);
 
 		ShipCollisionTestDesc sctDesc{ {m_logger}, *m_ecsWrapper.get(), *m_shipFactory.get(), *m_partRegistry.get() };
 		m_shipCollisionTest = std::make_unique<ShipCollisionTest>(sctDesc);

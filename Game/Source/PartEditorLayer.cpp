@@ -86,7 +86,7 @@ namespace Engine {
 		default: return;
 		}
 
-		std::filesystem::path outPath = std::filesystem::path("parts") / (trimmedName + ".json");
+		std::filesystem::path outPath = std::filesystem::path(SOURCE_ROOT) / "Assets" / "Parts" / (trimmedName + ".json");
 		std::filesystem::create_directories(outPath.parent_path());
 
 		if (savePartVariant(variant, outPath)) {
