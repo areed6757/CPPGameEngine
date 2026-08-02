@@ -7,6 +7,7 @@ namespace Engine {
 		BaseDesc base;
 		GameECSWrapper& ecs;
 		AABBTree& aabbTree;
+		ThreadPool& threadPool;
 	};
 
 	struct CollisionCandidate {
@@ -55,5 +56,8 @@ namespace Engine {
 		[[nodiscard]] bool narrowPhaseShip(EntityID a, EntityID b, d64 dt, Vector2double& outHitPoint) const;
 		[[nodiscard]] void computeImpulse(EntityID a, EntityID b, Vector2float& outImpulseA, Vector2float& outImpulseB) const;
 		[[nodiscard]] bool narrowPhaseProjectileVsShip(EntityID projectile, EntityID ship, d64 dt, Vector2double& outHitPoint) const;
+
+		ThreadPool& m_threadPool;
+		std::vector<std::vector<CollisionCandidate>> m_chunkCandidates;
 	};
 }

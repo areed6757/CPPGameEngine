@@ -8,7 +8,8 @@ namespace Engine {
 		m_ecs(desc.ecs),
 		m_cmdBuffer({desc.base, desc.ecs}),
 		m_aabbTree(desc.aabbTree),
-		m_proxies()
+		m_proxies(),
+		m_threadPool(desc.threadPool)
 	{
 		m_entityMask = m_ecs.makeSignature<Position, Physics>();
 		m_movementMask = m_ecs.makeSignature<Movement>();
@@ -29,44 +30,63 @@ namespace Engine {
 		outCandidates.clear();
 
 		i32 c = m_ecs.sizeComponentPool<Physics>();
-		for (i32 i = 0; i < c; i++) {
-			i32 entityIndex = m_ecs.entityAtDenseIndex<Physics>(i);
-			EntityID id = m_ecs.entityFromIndex(entityIndex);
-			if ((m_ecs.getSignature(id) & m_entityMask) != m_entityMask) { continue; }
+		i32 threadCount = m_threadPool.threadCount();
+		i32 chunkSize = (c + threadCount - 1) / threadCount;
 
-			auto& tform = m_ecs.getComponent<Position>(id);
-			auto& physics = m_ecs.getComponentAtDenseIndex<Physics>(i);
+		m_chunkCandidates.assign(threadCount, {});
 
-			AABB queryBounds{
-				Vector2double{ tform.transform.x - physics.radius, tform.transform.y - physics.radius },
-				Vector2double{ tform.transform.x + physics.radius, tform.transform.y + physics.radius }
-			};
+		for (i32 t = 0; t < threadCount; t++) {
+			i32 start = t * chunkSize;
+			i32 end = std::min(start + chunkSize, c);
+			if (start >= end) { continue; }
 
-			m_nearbyScratch.clear();
-			m_aabbTree.query(queryBounds, m_nearbyScratch);
+			m_threadPool.submit([this, start, end, t]() {
+				auto& localCandidates = m_chunkCandidates[t];
+				for (i32 i = start; i < end; i++) {
+					i32 entityIndex = m_ecs.entityAtDenseIndex<Physics>(i);
+					EntityID id = m_ecs.entityFromIndex(entityIndex);
+					if ((m_ecs.getSignature(id) & m_entityMask) != m_entityMask) { continue; }
 
-			for (EntityID other : m_nearbyScratch) {
-				if (other.id == id.id) { continue; }
-				if (other.id < id.id) { continue; }
+					auto& tform = m_ecs.getComponent<Position>(id);
+					auto& physics = m_ecs.getComponentAtDenseIndex<Physics>(i);
 
-				if (m_ecs.hasComponent<DamagePayload>(id) && m_ecs.getComponent<DamagePayload>(id).source.id == other.id) { continue; }
-				if (m_ecs.hasComponent<DamagePayload>(other) && m_ecs.getComponent<DamagePayload>(other).source.id == id.id) { continue; }
+					AABB queryBounds{
+						Vector2double{ tform.transform.x - physics.radius, tform.transform.y - physics.radius },
+						Vector2double{ tform.transform.x + physics.radius, tform.transform.y + physics.radius }
+					};
 
-				if (m_ecs.hasComponent<DamagePayload>(id)) {
-					auto& payload = m_ecs.getComponent<DamagePayload>(id);
-					if (m_ecs.hasComponent<Faction>(payload.source) && m_ecs.hasComponent<Faction>(other)) {
-						if (m_ecs.getComponent<Faction>(payload.source).teamId == m_ecs.getComponent<Faction>(other).teamId) { continue; }
+					std::vector<EntityID> nearby; // thread-local
+					m_aabbTree.query(queryBounds, nearby);
+
+					for (EntityID other : nearby) {
+						if (other.id == id.id) { continue; }
+						if (other.id < id.id) { continue; }
+						if (m_ecs.hasComponent<DamagePayload>(id) && m_ecs.getComponent<DamagePayload>(id).source.id == other.id) { continue; }
+						if (m_ecs.hasComponent<DamagePayload>(other) && m_ecs.getComponent<DamagePayload>(other).source.id == id.id) { continue; }
+						if (m_ecs.hasComponent<DamagePayload>(id)) {
+							auto& payload = m_ecs.getComponent<DamagePayload>(id);
+							if (m_ecs.hasComponent<Faction>(payload.source) && m_ecs.hasComponent<Faction>(other) &&
+								m_ecs.getComponent<Faction>(payload.source).teamId == m_ecs.getComponent<Faction>(other).teamId) {
+								continue;
+							}
+						}
+						if (m_ecs.hasComponent<DamagePayload>(other)) {
+							auto& payload = m_ecs.getComponent<DamagePayload>(other);
+							if (m_ecs.hasComponent<Faction>(payload.source) && m_ecs.hasComponent<Faction>(id) &&
+								m_ecs.getComponent<Faction>(payload.source).teamId == m_ecs.getComponent<Faction>(id).teamId) {
+								continue;
+							}
+						}
+						localCandidates.push_back({ id, other });
 					}
 				}
-				if (m_ecs.hasComponent<DamagePayload>(other)) {
-					auto& payload = m_ecs.getComponent<DamagePayload>(other);
-					if (m_ecs.hasComponent<Faction>(payload.source) && m_ecs.hasComponent<Faction>(id)) {
-						if (m_ecs.getComponent<Faction>(payload.source).teamId == m_ecs.getComponent<Faction>(id).teamId) { continue; }
-					}
-				}
+			});
+		}
 
-				outCandidates.push_back({ id, other });
-			}
+		m_threadPool.waitForAll(); // real barrier -- nothing below runs until every chunk is done
+
+		for (auto& chunk : m_chunkCandidates) {
+			outCandidates.insert(outCandidates.end(), chunk.begin(), chunk.end());
 		}
 	}
 

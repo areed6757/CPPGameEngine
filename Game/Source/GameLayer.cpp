@@ -33,6 +33,11 @@ namespace Engine {
 		AABBTreeDesc aabbTreeDesc{ {m_logger}, 0.1f, 4.0f };
 		m_AABBTree = std::make_unique<AABBTree>(aabbTreeDesc);
 
+		unsigned int hwThreads = std::thread::hardware_concurrency();
+		i32 collisionThreadCount = (hwThreads > 1) ? static_cast<i32>(hwThreads - 1) : 1;
+		ThreadPoolDesc collisionTpDesc{ {m_logger}, collisionThreadCount };
+		m_collisionThreadPool = std::make_unique<ThreadPool>(collisionTpDesc);
+
 		EntityRegisterDesc eRegDesc = { {m_logger} };
 		m_entityRegister = std::make_unique<EntityRegister>(eRegDesc);
 
@@ -43,7 +48,7 @@ namespace Engine {
 		RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get(), *m_camera.get(), m_app.getWindow() };
 		m_renderSystem = std::make_unique<RenderSystem>(renderSysDesc);
 
-		CollisionSystemDesc collisionSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_AABBTree.get() };
+		CollisionSystemDesc collisionSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_AABBTree.get(), *m_collisionThreadPool.get() };
 		m_collisionSystem = std::make_unique<CollisionSystem>(collisionSysDesc);
 
 		ImpulseSystemDesc impulseSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_collisionSystem.get() };
@@ -180,7 +185,7 @@ namespace Engine {
 		ShipCollisionTestDesc sctDesc{ {m_logger}, *m_ecsWrapper.get(), *m_shipFactory.get(), *m_partRegistry.get() };
 		m_shipCollisionTest = std::make_unique<ShipCollisionTest>(sctDesc);
 
-		m_shipCollisionTest->spawnTwoSidedBattle(100, 15.0, 1.0, 1.0f, 4.0f, 0.005f, 5.0f, 2.0f, 3.0f);
+		m_shipCollisionTest->spawnTwoSidedBattle(1000, 15.0, 1.0, 1.0f, 4.0f, 0.005f, 5.0f, 2.0f, 3.0f);
 		m_app.getScheduler().togglePause();
 
 	}

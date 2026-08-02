@@ -24,6 +24,7 @@ namespace Engine {
 		std::unique_ptr<GameECSWrapper> m_ecsWrapper{};
 
 		std::unique_ptr<AABBTree> m_AABBTree{};
+		std::unique_ptr<ThreadPool> m_collisionThreadPool{};
 		std::unique_ptr<CollisionSystem> m_collisionSystem{};
 		std::unique_ptr<ImpulseSystem> m_impulseSystem{};
 		std::unique_ptr<MovementTicks> m_moveTicks{};
