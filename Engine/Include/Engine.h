@@ -30,6 +30,7 @@
 #include <Utilities/GameClock.h>
 #include <Utilities/CommandBuffer.h>
 #include <Utilities/Job.h>
+#include <Utilities/Serialization.h>
 
 // Graphics
 #include <Graphics/Renderer.h>

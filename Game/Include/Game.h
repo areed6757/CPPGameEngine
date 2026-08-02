@@ -50,6 +50,9 @@
 #include <Systems/AISystem.h>
 #include <Systems/SeparationSystem.h>
 
+// Layers and Overlays
+#include <PartEditorLayer.h>
+
 // Tests
 #include <Test/CoreSystemsTest.h>
 #include <Test/EntityStressTest.h>

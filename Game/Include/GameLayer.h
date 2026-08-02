@@ -4,12 +4,14 @@
 namespace Engine {
 	class GameLayer : public Base, public Layer {
 	public:
-		explicit GameLayer(Application& app);
+		GameLayer(Application& app, ImGUILayer& imguiLayer);
 		~GameLayer() override;
 
 		void onAttach() override;
 		void onDetach() override;
 		void onUpdate(d64 dt) override;
+
+		PartRegistry& getPartRegistry() noexcept { return *m_partRegistry.get(); }
 
 	private:
 		Application& m_app;
@@ -46,6 +48,9 @@ namespace Engine {
 		std::unique_ptr<RenderSystem> m_renderSystem{};
 		std::unique_ptr<PartRenderSystem> m_partRenderSystem{};
 		std::unique_ptr<AISystem> m_aiSystem{};
+
+		ImGUILayer& m_imGuiLayer;
+		std::unique_ptr<PartEditorLayer> m_partEditor{};
 
 		std::unique_ptr<CoreSystemsTest> m_coreSystemsTest{};
 		std::unique_ptr<ThreadingStressTest> m_threadingStressTest{};

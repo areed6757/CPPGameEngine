@@ -12,5 +12,6 @@ namespace Engine {
 		std::string name;
 		PartCategory category;
 		std::variant<HullParams, ArmorParams, EngineParams, HardpointParams, WeaponParams> params;
+		std::optional<TextureID> texture;
 	};
 }

@@ -3,7 +3,7 @@ file(GLOB_RECURSE ENGINE_HEADERS CONFIGURE_DEPENDS Include/*.h Source/*.h)
 
 message(STATUS "ENGINE_SOURCES: ${ENGINE_SOURCES}")
 
-add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS}  "Include/Core/Application.h" "Source/Core/Application.cpp" "Include/Engine.h" "Include/Events/Event.h" "Include/Events/KeyEvent.h" "Include/Events/MouseEvent.h" "Include/Physics/AABBTree.h" "Source/Physics/AABBTree.cpp")
+add_library(Engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS}  "Include/Core/Application.h" "Source/Core/Application.cpp" "Include/Engine.h" "Include/Events/Event.h" "Include/Events/KeyEvent.h" "Include/Events/MouseEvent.h" "Include/Physics/AABBTree.h" "Source/Physics/AABBTree.cpp" "Include/Utilities/Serialization.h")
 
 target_include_directories(Engine
     PUBLIC Include
@@ -14,11 +14,13 @@ find_package(glm CONFIG REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 target_link_libraries(Engine PUBLIC
     glfw
     glm::glm
     spdlog::spdlog
+    nlohmann_json::nlohmann_json
 )
 
 target_link_libraries(Engine PRIVATE imgui::imgui)

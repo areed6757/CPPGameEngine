@@ -42,21 +42,28 @@ namespace Engine {
 		f32 rot = ownerPos.rotation;
 		Vector2float facing{ std::cos(rot), std::sin(rot) };
 
-		Vector2double worldMountPos = ownerPos.transform + Vector2double{
-			mount.offset.x * facing.x - mount.offset.y * facing.y,
-			mount.offset.x * facing.y + mount.offset.y * facing.x
-		};
+		for (i32 b = 0; b < weapon.barrelCount; b++) {
+			Vector2float barrelLocal = weapon.barrelOffsets[b];
+			Vector2double barrelWorldOffset{
+				barrelLocal.x * facing.x - barrelLocal.y * facing.y,
+				barrelLocal.x * facing.y + barrelLocal.y * facing.x
+			};
+			Vector2double worldMountPos = ownerPos.transform + Vector2double{
+				mount.offset.x * facing.x - mount.offset.y * facing.y,
+				mount.offset.x * facing.y + mount.offset.y * facing.x
+			} + barrelWorldOffset;
 
-		// TODO: These are hardcoded and need to be prefabs
-		EntityID projectile = m_cmdBuffer.createEntity();
-		m_cmdBuffer.addComponent(projectile, Position{ .transform = worldMountPos, .rotation = rot });
-		m_cmdBuffer.addComponent(projectile, Movement{
-			.linearVelocity = Vector2float{ facing.x * weapon.projectileSpeed, facing.y * weapon.projectileSpeed }
-			});
-		m_cmdBuffer.addComponent(projectile, Physics{ .radius = weapon.projectileRadius, .mass = 0.01f });
-		m_cmdBuffer.addComponent(projectile, Lifetime{ .remaining = 3.0f });
-		m_cmdBuffer.addComponent(projectile, DamagePayload{ .amount = weapon.projectileDamage, .source = mount.owner });
-		m_cmdBuffer.addComponent(projectile, Renderable{ .mesh = MeshID::Quad, .texture = std::nullopt, .scale = weapon.projectileRadius * 2.0f });
+			EntityID projectile = m_cmdBuffer.createEntity();
+			m_cmdBuffer.addComponent(projectile, Position{ .transform = worldMountPos, .rotation = rot });
+			m_cmdBuffer.addComponent(projectile, Movement{
+				.linearVelocity = Vector2float{ facing.x * weapon.projectileSpeed, facing.y * weapon.projectileSpeed }
+				});
+			m_cmdBuffer.addComponent(projectile, Physics{ .radius = weapon.projectileRadius, .mass = 0.01f });
+			m_cmdBuffer.addComponent(projectile, DamagePayload{ .amount = weapon.projectileDamage, .source = mount.owner });
+			m_cmdBuffer.addComponent(projectile, Lifetime{ .remaining = 3.0f });
+			m_cmdBuffer.addComponent(projectile, Renderable{ .mesh = MeshID::Quad, .texture = std::nullopt, .scale = weapon.projectileRadius * 2.0f });
+		}
+
 		weapon.timeSinceLastFire = 0.0f;
 	}
 }

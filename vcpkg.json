@@ -7,6 +7,7 @@
         "catch2",
         "glm",
         "spdlog",
+        "nlohmann-json",
         {
             "name": "imgui",
             "features" : ["glfw-binding", "opengl3-binding"]

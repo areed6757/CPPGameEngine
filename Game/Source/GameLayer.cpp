@@ -1,10 +1,11 @@
 #include <GameLayer.h>
 
 namespace Engine {
-	GameLayer::GameLayer(Application& app) :
+	GameLayer::GameLayer(Application& app, ImGUILayer& imguiLayer) :
 		Base({ app.getLogger() }),
 		Layer("GameLayer"),
-		m_app(app)
+		m_app(app),
+		m_imGuiLayer(imguiLayer)
 	{
 	}
 
@@ -129,62 +130,8 @@ namespace Engine {
 
 		EngineLogInfo("GameLayer attached, game initialized successfully.");
 
-		/*
-		CoreSystemsTestDesc cstDesc{ {m_logger}, *m_ecsWrapper.get() };
-		m_coreSystemsTest = std::make_unique<CoreSystemsTest>(cstDesc);
-		m_coreSystemsTest->spawnAll();
-		*/
-
-		/*
-		WeaponTestDesc wtDesc{ {m_logger}, *m_ecsWrapper.get() };
-		m_weaponTest = std::make_unique<WeaponTest>(wtDesc);
-		m_weaponTest->spawnFiringShip(20.0, 0.1f, 30.0f, 0.10f, 5.0f, 100.0f);
-		*/
-
-		/*
-		DamperTestDesc dTestDesc{ {m_logger}, *m_ecsWrapper.get() };
-		m_damperTest = std::make_unique<DamperTest>(dTestDesc);
-		m_damperTest->spawnComparisonRow(5.0, 5.0f, 0.5f, 0.1f);
-		*/
-
-		/*
-		PartVariantID hullVariant = m_partRegistry->registerVariant(PartVariant{
-			.name = "Basic Hull", .category = PartCategory::Hull,
-			.params = HullParams{ PartBaseStats{ 10.0f, 50.0f, 20.0f, 0.0f } }
-			});
-		PartVariantID engineVariant = m_partRegistry->registerVariant(PartVariant{
-			.name = "Basic Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 5.0f, 20.0f, 5.0f, 0.0f }, 50.0f, 10.0f }
-			});
-		PartVariantID hardpointVariant = m_partRegistry->registerVariant(PartVariant{
-			.name = "Small Hardpoint", .category = PartCategory::Hardpoint,
-			.params = HardpointParams{ PartBaseStats{ 2.0f, 15.0f, 5.0f, 0.0f }, 1, 1 }
-			});
-
-		ShipGridDesc sgDesc{ {m_logger}, 50, 50 };
-		ShipGrid grid(sgDesc);
-
-		grid.tryPlacePart(2, 2, 44, 44, PartCategory::Hull, hullVariant);
-
-		// Engines along the back edge, evenly spaced
-		for (i32 y = 12; y < 38; y += 8) {
-			grid.tryPlacePart(0, y, 2, 2, PartCategory::Engine, engineVariant);
-		}
-
-		// Hardpoints along the front edge and both sides
-		for (i32 y = 4; y < 46; y += 6) {
-			grid.forcePlacePart(44, y, 1, 1, PartCategory::Hardpoint, hardpointVariant);
-		}
-		for (i32 x = 4; x < 46; x += 10) {
-			grid.forcePlacePart(x, 3, 1, 1, PartCategory::Hardpoint, hardpointVariant);
-			grid.forcePlacePart(x, 44, 1, 1, PartCategory::Hardpoint, hardpointVariant);
-		}
-
-		EntityID testShip = m_shipFactory->bake(grid, Vector2double{ 0.0, 0.0 }, 0.0f);
-
-		auto& thruster = m_ecsWrapper->getComponent<Thruster>(testShip);
-		thruster.throttle = 0.3f;
-		*/
+		m_partEditor = std::make_unique<PartEditorLayer>(m_app, *m_partRegistry.get());
+		m_imGuiLayer.addPanel([this]() { m_partEditor->draw(); });
 
 		ShipCollisionTestDesc sctDesc{ {m_logger}, *m_ecsWrapper.get(), *m_shipFactory.get(), *m_partRegistry.get() };
 		m_shipCollisionTest = std::make_unique<ShipCollisionTest>(sctDesc);

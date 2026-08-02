@@ -26,16 +26,16 @@ namespace Engine {
 	}
 	Weapon PartRegistry::buildWeaponFromVariant(PartVariantID variantId) const
 	{
-		const PartVariant& variant = get(variantId);
-		ENGINE_ASSERT(variant.category == PartCategory::Weapon, "buildWeaponFromVariant: variant is not a Weapon");
-
-		const WeaponParams& params = std::get<WeaponParams>(variant.params);
-		return Weapon{
-			.cooldown = params.cooldown,
-			.timeSinceLastFire = 0.0f,
-			.projectileSpeed = params.projectileSpeed,
-			.projectileRadius = params.projectileRadius,
-			.projectileDamage = params.damage
+		const WeaponParams& params = std::get<WeaponParams>(get(variantId).params);
+		Weapon weapon{
+			.cooldown = params.cooldown, .timeSinceLastFire = 0.0f,
+			.projectileSpeed = params.projectileSpeed, .projectileRadius = params.projectileRadius,
+			.projectileDamage = params.damage, .barrelCount = std::clamp(params.barrelCount, 1, 4)
 		};
+		f32 half = (weapon.barrelCount - 1) * 0.5f;
+		for (i32 i = 0; i < weapon.barrelCount; i++) {
+			weapon.barrelOffsets[i] = Vector2float{ 0.0f, (static_cast<f32>(i) - half) * params.barrelSpread };
+		}
+		return weapon;
 	}
 }

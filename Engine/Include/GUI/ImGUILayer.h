@@ -11,8 +11,10 @@ namespace Engine {
 		void onDetach() override;
 		void onUpdate(d64 dt) override;
 
+		void addPanel(std::function<void()> drawFn);
+
 	private:
 		Application& m_app;
-		
+		std::vector<std::function<void()>> m_panels;
 	};
 }

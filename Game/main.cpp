@@ -8,9 +8,13 @@ int main()
 	try {
 		Engine::ApplicationDesc desc{};
 		Engine::Application app(desc);
-		app.pushLayer(new Engine::GameLayer(app));
-		app.pushOverlay(new Engine::ImGUILayer(app));
-		app.run();		
+
+		Engine::ImGUILayer* imguiLayer = new Engine::ImGUILayer(app);
+		Engine::GameLayer* gameLayer = new Engine::GameLayer(app, *imguiLayer);
+
+		app.pushLayer(gameLayer);
+		app.pushOverlay(imguiLayer);
+		app.run();
 	}
 	catch (const std::runtime_error&) {
 		return EXIT_FAILURE;

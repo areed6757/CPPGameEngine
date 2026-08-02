@@ -11,6 +11,8 @@ namespace Engine {
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGui::StyleColorsDark();
+		ImGui::GetIO().FontGlobalScale = 1.5f;
+		ImGui::GetIO().DisplayFramebufferScale;
 
 		// Setting arg2, install_callbacks, saves whatever callback is on the window already
 		// and chains to it after processing input itself
@@ -42,9 +44,18 @@ namespace Engine {
 		ImGui::Begin("Debug Overlay");
 		ImGui::Text("Frame time: %.3f ms (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		// Tick time, entity count, particle count, need getters and counts for these
+
+		for (auto& panel : m_panels) { panel(); }
+
 		ImGui::End();
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
+
+	void ImGUILayer::addPanel(std::function<void()> drawFn)
+	{
+		m_panels.push_back(std::move(drawFn));
+	}
+
 }
