@@ -22,7 +22,7 @@ namespace Engine {
 
 		std::visit([&](auto&& params) {
 			using T = std::decay_t<decltype(params)>;
-			Json base = serializeBaseStats(params); // every *Params type inherits PartBaseStats
+			Json base = serializeBaseStats(params); // every Params type inherits PartBaseStats
 
 			if constexpr (std::is_same_v<T, HullParams>) {
 				j["paramsType"] = "Hull";

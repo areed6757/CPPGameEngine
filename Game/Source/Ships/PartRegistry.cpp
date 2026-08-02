@@ -38,4 +38,27 @@ namespace Engine {
 		}
 		return weapon;
 	}
+
+	PartVariantID PartRegistry::loadVariantFromFile(const std::filesystem::path& path)
+	{
+		PartVariant variant;
+		if (!loadPartVariant(path, variant)) {
+			EngineLogError("PartRegistry::loadVariantFromFile: failed to load {}", path.string());
+			return INVALID_PART_VARIANT;
+		}
+		return registerVariant(variant);
+	}
+
+	i32 PartRegistry::loadAllFromDirectory(const std::filesystem::path& dir)
+	{
+		i32 count = 0;
+		if (!std::filesystem::exists(dir)) { return count; }
+		for (auto& entry : std::filesystem::directory_iterator(dir)) {
+			EngineLogInfo("Found entry: {}", entry.path().string());
+			
+			if (entry.path().extension() != ".json") { continue; }
+			if (loadVariantFromFile(entry.path()) != INVALID_PART_VARIANT) { count++; }
+		}
+		return count;
+	}
 }

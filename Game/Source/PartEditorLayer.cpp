@@ -13,9 +13,9 @@ namespace Engine {
 	void PartEditorLayer::drawCategoryPicker()
 	{
 		static const char* categoryNames[] = { "Hull", "Armor", "Engine", "Weapon", "Hardpoint" };
-		i32 current = static_cast<i32>(m_editCategory);
+		i32 current = static_cast<i32>(m_editCategory) - 1; // categoryNames[0] corresponds to Hull (value 1) not None (value 0)
 		if (ImGui::Combo("Category", &current, categoryNames, IM_ARRAYSIZE(categoryNames))) {
-			m_editCategory = static_cast<PartCategory>(current);
+			m_editCategory = static_cast<PartCategory>(current +1);
 		}
 	}
 
@@ -71,8 +71,10 @@ namespace Engine {
 
 	void PartEditorLayer::save()
 	{
+		std::string trimmedName = m_editName.substr(0, m_editName.find('\0'));
+
 		PartVariant variant;
-		variant.name = m_editName.substr(0, m_editName.find('\0'));
+		variant.name = trimmedName;
 		variant.category = m_editCategory;
 
 		switch (m_editCategory) {
@@ -84,7 +86,7 @@ namespace Engine {
 		default: return;
 		}
 
-		std::filesystem::path outPath = std::filesystem::path("parts") / (m_editName + ".json");
+		std::filesystem::path outPath = std::filesystem::path("parts") / (trimmedName + ".json");
 		std::filesystem::create_directories(outPath.parent_path());
 
 		if (savePartVariant(variant, outPath)) {

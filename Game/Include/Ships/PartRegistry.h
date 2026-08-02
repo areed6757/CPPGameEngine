@@ -17,6 +17,9 @@ namespace Engine {
 		[[nodiscard]] i32 size() const noexcept { return static_cast<i32>(m_variants.size()); }
 		[[nodiscard]] Weapon buildWeaponFromVariant(PartVariantID variantId) const;
 
+		[[nodiscard]] PartVariantID loadVariantFromFile(const std::filesystem::path& path);
+		i32 loadAllFromDirectory(const std::filesystem::path& dir);
+
 	private:
 		std::vector<PartVariant> m_variants;
 	};
