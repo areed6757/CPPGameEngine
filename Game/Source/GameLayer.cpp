@@ -81,6 +81,9 @@ namespace Engine {
 		MountLifecycleSystemDesc mlsDesc{ {m_logger}, *m_ecsWrapper.get() };
 		m_mountLifecycleSystem = std::make_unique<MountLifecycleSystem>(mlsDesc);
 
+		SeparationSystemDesc sepSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_AABBTree.get() };
+		m_separationSystem = std::make_unique<SeparationSystem>(sepSysDesc);
+
 		AISystemDesc aiDesc{ {m_logger}, *m_ecsWrapper.get() };
 		m_aiSystem = std::make_unique<AISystem>(aiDesc);
 
@@ -103,6 +106,7 @@ namespace Engine {
 
 		scheduler.registerSystem(m_aiSystem.get());
 		scheduler.registerSystem(m_thrusterSystem.get());
+		scheduler.registerSystem(m_separationSystem.get());
 		scheduler.registerSystem(m_collisionSystem.get());
 		scheduler.registerSystem(m_impulseSystem.get());
 		scheduler.registerSystem(m_moveTicks.get());
@@ -185,7 +189,7 @@ namespace Engine {
 		ShipCollisionTestDesc sctDesc{ {m_logger}, *m_ecsWrapper.get(), *m_shipFactory.get(), *m_partRegistry.get() };
 		m_shipCollisionTest = std::make_unique<ShipCollisionTest>(sctDesc);
 
-		m_shipCollisionTest->spawnTwoSidedBattle(1000, 15.0, 1.0, 1.0f, 4.0f, 0.005f, 5.0f, 2.0f, 3.0f);
+		m_shipCollisionTest->spawnTwoSidedBattle(600, 35.0, 1.0, 1.0f, 4.0f, 0.005f, 5.0f, 2.0f, 3.0f);
 		m_app.getScheduler().togglePause();
 
 	}

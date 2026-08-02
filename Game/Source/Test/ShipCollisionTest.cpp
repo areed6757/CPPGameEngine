@@ -168,10 +168,10 @@ namespace Engine {
 					EntityID ship = buildComplexShip(pos, facing, rng, 2, m_hardpointVariant, weaponVariant, m_engineVariant);
 
 					m_ecs.addComponent(ship, Faction{ .teamId = teamId });
+					m_ecs.addComponent(ship, Separation{ .margin = 0.1f });
 					m_ecs.addComponent(ship, AIController{
 						.target = EntityID{},
 						.engageRange = 3.0f,
-						.separationRadius = 0.5f
 						});
 
 					++spawned;

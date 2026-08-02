@@ -35,9 +35,6 @@ namespace Engine {
 	void MovementTicks::Update(d64 dt)
 	{
 		updateRange(0, m_ecs.sizeComponentPool<Movement>(), dt);
-
-		// Debug
-		// EngineLogInfo("Entity: {} moved to position: x {} y {}, velocity: ({}, {})", id.id, tform.transform.x, tform.transform.y, movement.linearVelocity);
 	}
 
 	std::vector<Job> MovementTicks::buildJobs(d64 dt) {

@@ -88,13 +88,6 @@ namespace Engine {
 				auto& otherPos = m_ecs.getComponent<Position>(other);
 				Vector2double away = pos.transform - otherPos.transform;
 				d64 distSq = away.x * away.x + away.y * away.y;
-				d64 sepSq = static_cast<d64>(ai.separationRadius) * static_cast<d64>(ai.separationRadius);
-				if (distSq < sepSq && distSq > 1e-6) {
-					d64 dist = std::sqrt(distSq);
-					f32 pushStrength = 1.0f - static_cast<f32>(dist / ai.separationRadius);
-					movement.linearVelocity.x += static_cast<f32>(away.x / dist) * pushStrength;
-					movement.linearVelocity.y += static_cast<f32>(away.y / dist) * pushStrength;
-				}
 			}
 		}
 	}

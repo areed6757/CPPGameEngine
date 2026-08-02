@@ -26,6 +26,7 @@
 #include <Components/Stability.h>
 #include <Components/AIController.h>
 #include <Components/Faction.h>
+#include <Components/Separation.h>
 
 // Graphics
 #include <Graphics/TextureRegistry.h>
@@ -47,6 +48,7 @@
 #include <Systems/MountLifecycleSystem.h>
 #include <Systems/PartRenderSystem.h>
 #include <Systems/AISystem.h>
+#include <Systems/SeparationSystem.h>
 
 // Tests
 #include <Test/CoreSystemsTest.h>

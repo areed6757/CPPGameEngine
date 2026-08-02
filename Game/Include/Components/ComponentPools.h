@@ -17,6 +17,7 @@
 #include <Ships/ShipGrid.h>
 #include <Components/AIController.h>
 #include <Components/Faction.h>
+#include <Components/Separation.h>
 
 /// <summary>
 /// This class holds pools of components as the single source of access to all components types by all systems in the game.
@@ -45,13 +46,14 @@ namespace Engine {
 	template <> struct ComponentBit<ShipGridData> { static constexpr i32 value = 14; };
 	template <> struct ComponentBit<AIController> { static constexpr i32 value = 15; };
 	template <> struct ComponentBit<Faction> { static constexpr i32 value = 16; };
+	template <> struct ComponentBit<Separation> { static constexpr i32 value = 17; };
 
 	struct ComponentPools {
 		explicit ComponentPools(const ComponentDesc& desc) : positions(desc), movements(desc),
 			renderables(desc), physics(desc), damagePayloads(desc), healths(desc), lifetimes(desc),
 			thrusters(desc), weapons(desc), mounts(desc), movementDampers(desc), shipVisuals(desc),
 			stabilities(desc), shipCollisionGeometries(desc), shipGridDatas(desc), aiControllers(desc),
-			factions(desc)
+			factions(desc), separations(desc)
 		{}
 
 	private:
@@ -72,6 +74,7 @@ namespace Engine {
 		Component<ShipGridData> shipGridDatas;
 		Component<AIController> aiControllers;
 		Component<Faction> factions;
+		Component<Separation> separations;
 
 	public:
 		/// <summary>
@@ -98,6 +101,7 @@ namespace Engine {
 			else if constexpr (std::is_same_v<T, ShipGridData>) return shipGridDatas;
 			else if constexpr (std::is_same_v<T, AIController>) return aiControllers;
 			else if constexpr (std::is_same_v<T, Faction>) return factions;
+			else if constexpr (std::is_same_v<T, Separation>) return separations;
 			else static_assert(sizeof(T) == 0, "getPool: unregistered component type");
 		}
 
@@ -126,6 +130,7 @@ namespace Engine {
 			else if constexpr (std::is_same_v<T, ShipGridData>) return shipGridDatas;
 			else if constexpr (std::is_same_v<T, AIController>) return aiControllers;
 			else if constexpr (std::is_same_v<T, Faction>) return factions;
+			else if constexpr (std::is_same_v<T, Separation>) return separations;
 			else static_assert(sizeof(T) == 0, "getPool: unregistered component type");
 		}
 
@@ -147,6 +152,7 @@ namespace Engine {
 			if (shipGridDatas.has(index)) { shipGridDatas.remove(index); }
 			if (aiControllers.has(index)) { aiControllers.remove(index); }
 			if (factions.has(index)) { factions.remove(index); }
+			if (separations.has(index)) { separations.remove(index); }
 		}
 	};
 
