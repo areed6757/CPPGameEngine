@@ -83,7 +83,7 @@ namespace Engine {
 			});
 		}
 
-		m_threadPool.waitForAll(); // real barrier -- nothing below runs until every chunk is done
+		m_threadPool.waitForAll();
 
 		for (auto& chunk : m_chunkCandidates) {
 			outCandidates.insert(outCandidates.end(), chunk.begin(), chunk.end());

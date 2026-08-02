@@ -185,7 +185,7 @@ namespace Engine {
 		ShipCollisionTestDesc sctDesc{ {m_logger}, *m_ecsWrapper.get(), *m_shipFactory.get(), *m_partRegistry.get() };
 		m_shipCollisionTest = std::make_unique<ShipCollisionTest>(sctDesc);
 
-		m_shipCollisionTest->spawnTwoSidedBattle(1000, 15.0, 1.0, 1.0f, 4.0f, 0.005f, 5.0f, 2.0f, 3.0f);
+		m_shipCollisionTest->spawnTwoSidedBattle(600, 25.0, 1.0, 1.0f, 4.0f, 0.005f, 5.0f, 2.0f, 3.0f);
 		m_app.getScheduler().togglePause();
 
 	}

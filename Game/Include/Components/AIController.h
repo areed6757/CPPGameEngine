@@ -7,6 +7,6 @@ namespace Engine {
 	struct AIController {
 		EntityID target{}; // invalid/default until a target is found
 		f32 engageRange{ 3.0f }; // stop closing once within this distance, hold and let WeaponSystem fire
-		f32 separationRadius{ 1.0f }; // nearby same-team ships closer than this get a small avoidance push
+		f32 separationRadius{ 0.3f }; // nearby same-team ships closer than this get a small avoidance push
 	};
 }
