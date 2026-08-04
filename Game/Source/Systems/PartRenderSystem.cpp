@@ -118,6 +118,7 @@ namespace Engine {
 	{
 		if (partCount < 10) return 0;
 		if (partCount < 30) return 1;
-		return 2;
+		if (partCount < 60) return 2; // frigate
+		return 3; // destroyer, up to ~100 parts
 	}
 }

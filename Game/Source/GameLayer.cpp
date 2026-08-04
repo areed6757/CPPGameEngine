@@ -152,6 +152,7 @@ namespace Engine {
 					ImGui::DragFloat("Fighter tier 1", &g_shipIconTiers[0].minPixelSize, 0.5f, 1.0f, 200.0f);
 					ImGui::DragFloat("Fighter tier 2", &g_shipIconTiers[1].minPixelSize, 0.5f, 1.0f, 200.0f);
 					ImGui::DragFloat("Frigate tier", &g_shipIconTiers[2].minPixelSize, 0.5f, 1.0f, 200.0f);
+					ImGui::DragFloat("Destroyer tier", &g_shipIconTiers[3].minPixelSize, 0.5f, 1.0f, 200.0f);
 					ImGui::Separator();
 					ImGui::Text("Projectiles (applies to newly-fired projectiles)");
 					ImGui::DragFloat("Projectile icon threshold", &g_projectileIconMinPixelSize, 0.25f, 0.0f, 100.0f);
@@ -170,6 +171,9 @@ namespace Engine {
 
 		//m_shipCollisionTest->spawnTwoSidedBattle(600, 35.0, 1.0, 1.0f, 4.0f, 0.005f, 5.0f, 2.0f, 3.0f);
 		m_shipCollisionTest->spawnTieredFleetBattle(60.0, 4.0);
+
+		// TEMP: 500-part ship stress test, remove once confirmed.
+		m_shipCollisionTest->spawnMassiveShipTest(Vector2double{ 0.0, 0.0 });
 		m_app.getScheduler().togglePause();
 
 	}

@@ -14,7 +14,8 @@ namespace Engine {
 	inline ShipIconTier g_shipIconTiers[]{
 		{ 14.0f, TextureID::FighterIcon },
 		{ 20.0f, TextureID::FighterIcon },
-		{ 30.0f, TextureID::FrigateIcon }
+		{ 30.0f, TextureID::FrigateIcon },
+		{ 45.0f, TextureID::DestroyerIcon }
 	};
 
 	// Applied to newly-fired projectiles by WeaponSystem; changing this at runtime only affects subsequent projectiles spawned
