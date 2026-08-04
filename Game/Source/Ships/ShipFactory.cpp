@@ -117,7 +117,8 @@ namespace Engine {
 			if (loadoutIt != hardpointLoadout.end()) {
 				m_ecs.addComponent(mountEntity, m_partReg.buildWeaponFromVariant(loadoutIt->second));
 			}
-			// no matching entry -- mount stays a bare, unequipped socket
+			// No matching entity, mount stays empty
+
 
 			visual.parts[visualPartIndex].linkedEntity = mountEntity;
 		}

@@ -21,6 +21,10 @@ void Engine::Renderer::beginFrame()
 {
     glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     m_shader.Activate();
 
     glm::mat4 projection = m_camera.getProjection(m_window.getWidth(), m_window.getHeight());

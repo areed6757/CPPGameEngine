@@ -9,6 +9,9 @@ namespace Engine {
 		std::optional<TextureID> texture = TextureID(0);
 		f32 scale{ 1.0f };
 
-		// tint scale etc, added here
+		// If set, RenderSystem swaps to this texture (at a floored world-space scale) once the entity's on-screen diameter drops below iconMinPixelSize
+		// zero/nullopt disables the swap for this entity.
+		std::optional<TextureID> iconTexture{};
+		f32 iconMinPixelSize{ 0.0f };
 	};
 }

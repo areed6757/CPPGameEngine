@@ -1,4 +1,5 @@
 #include <GameLayer.h>
+#include <imgui.h>
 
 namespace Engine {
 	GameLayer::GameLayer(Application& app, ImGUILayer& imguiLayer) :
@@ -96,7 +97,7 @@ namespace Engine {
 		ShipFactoryDesc shipFactoryDesc = { {m_logger}, *m_ecsWrapper.get(), *m_partRegistry.get() };
 		m_shipFactory = std::make_unique<ShipFactory>(shipFactoryDesc);
 
-		PartRenderSystemDesc prsDesc = { {m_logger}, *m_ecsWrapper.get(), *m_renderer.get(), *m_camera.get(), m_app.getWindow(), *m_meshRegistry.get(), *m_partRegistry.get() };
+		PartRenderSystemDesc prsDesc = { {m_logger}, *m_ecsWrapper.get(), *m_renderer.get(), *m_camera.get(), m_app.getWindow(), *m_meshRegistry.get(), *m_partRegistry.get(), *m_textureRegistry.get() };
 		m_partRenderSystem = std::make_unique<PartRenderSystem>(prsDesc);
 
 		Scheduler& scheduler = m_app.getScheduler();
@@ -132,6 +133,18 @@ namespace Engine {
 
 		m_partEditor = std::make_unique<PartEditorLayer>(m_app, *m_partRegistry.get());
 		m_imGuiLayer.addPanel([this]() { m_partEditor->draw(); });
+
+		m_imGuiLayer.addPanel([]() {
+			ImGui::Begin("Icon LOD");
+			ImGui::Text("Ship icon swap thresholds (screen-space pixel diameter)");
+			ImGui::DragFloat("Fighter tier 1", &g_shipIconTiers[0].minPixelSize, 0.5f, 1.0f, 200.0f);
+			ImGui::DragFloat("Fighter tier 2", &g_shipIconTiers[1].minPixelSize, 0.5f, 1.0f, 200.0f);
+			ImGui::DragFloat("Frigate tier", &g_shipIconTiers[2].minPixelSize, 0.5f, 1.0f, 200.0f);
+			ImGui::Separator();
+			ImGui::Text("Projectiles (applies to newly-fired projectiles)");
+			ImGui::DragFloat("Projectile icon threshold", &g_projectileIconMinPixelSize, 0.25f, 0.0f, 100.0f);
+			ImGui::End();
+			});
 
 		i32 loaded = m_partRegistry->loadAllFromDirectory("Assets/Parts");
 		EngineLogInfo("Loaded {} part variants.", loaded);

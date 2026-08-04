@@ -29,6 +29,10 @@ namespace Engine {
 
 		[[nodiscard]] AABB getViewportBounds(i32 viewportWidth, i32 viewportHeight) const noexcept;
 
+		[[nodiscard]] f32 getWorldUnitsPerPixel(i32 viewportHeight) const noexcept {
+			return (2.0f * m_zoom) / static_cast<f32>(viewportHeight);
+		}
+
 	private:
 		Vector2double m_position{};
 		f32 m_zoom{ 1.0f };

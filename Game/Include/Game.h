@@ -9,6 +9,7 @@
 #include <Ships/ShipGrid.h>
 #include <Ships/ShipCollisionGeometry.h>
 #include <Ships/ShipFactory.h>
+#include <Ships/IconLOD.h>
 
 // Components
 #include <Components/Position.h>

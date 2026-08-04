@@ -100,9 +100,6 @@ namespace Engine {
 
 	void ParticleSystem::draw()
 	{
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		m_drawShader.Activate();
 		glm::mat4 proj = m_camera.getProjection(m_window.getWidth(), m_window.getHeight());
 		glUniformMatrix4fv(m_projLoc, 1, GL_FALSE, &proj[0][0]);
@@ -116,8 +113,6 @@ namespace Engine {
 		glBindVertexArray(m_dummyVAO);
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, MAX_PARTICLES);
 		glBindVertexArray(0);
-
-		glDisable(GL_BLEND);
 	}
 
 	void ParticleSystem::debugLogSample()

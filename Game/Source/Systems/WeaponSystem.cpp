@@ -1,4 +1,5 @@
 #include <Systems/WeaponSystem.h>
+#include <Ships/IconLOD.h>
 
 namespace Engine {
 	WeaponSystem::WeaponSystem(const WeaponSystemDesc& desc) : Base(desc.base),
@@ -61,7 +62,13 @@ namespace Engine {
 			m_cmdBuffer.addComponent(projectile, Physics{ .radius = weapon.projectileRadius, .mass = 0.01f });
 			m_cmdBuffer.addComponent(projectile, DamagePayload{ .amount = weapon.projectileDamage, .source = mount.owner });
 			m_cmdBuffer.addComponent(projectile, Lifetime{ .remaining = 3.0f });
-			m_cmdBuffer.addComponent(projectile, Renderable{ .mesh = MeshID::Quad, .texture = std::nullopt, .scale = weapon.projectileRadius * 2.0f });
+			m_cmdBuffer.addComponent(projectile, Renderable{
+				.mesh = MeshID::Quad,
+				.texture = std::nullopt,
+				.scale = weapon.projectileRadius * 2.0f,
+				.iconTexture = g_projectileIconTexture,
+				.iconMinPixelSize = g_projectileIconMinPixelSize
+				});
 		}
 
 		weapon.timeSinceLastFire = 0.0f;

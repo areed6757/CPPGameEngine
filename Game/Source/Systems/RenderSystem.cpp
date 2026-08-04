@@ -1,4 +1,5 @@
 #include <Systems/RenderSystem.h>
+#include <Ships/IconLOD.h>
 
 Engine::RenderSystem::RenderSystem(const RenderSystemDesc& desc) : Base(desc.base),
 	m_ecs(desc.ecs),
@@ -24,6 +25,7 @@ void Engine::RenderSystem::Update(d64 dt)
 	for (auto& [key, matrices] : m_batches) { matrices.clear(); }
 
 	AABB viewport = m_camera.getViewportBounds(m_window.getWidth(), m_window.getHeight());
+	f32 worldUnitsPerPixel = m_camera.getWorldUnitsPerPixel(m_window.getHeight());
 
 	i32 c = m_ecs.sizeComponentPool<Renderable>();
 	for (i32 i = 0; i < c; i++) {
@@ -40,14 +42,27 @@ void Engine::RenderSystem::Update(d64 dt)
 		};
 		if (!viewport.overlaps(entityBounds)) { continue; }
 
+		f32 scale = renderable.scale;
+		std::optional<TextureID> texture = renderable.texture;
+		f32 rotation = position.rotation;
+
+		if (renderable.iconTexture.has_value()) {
+			f32 pixelDiameter = renderable.scale / worldUnitsPerPixel;
+			if (pixelDiameter < renderable.iconMinPixelSize) {
+				scale = renderable.iconMinPixelSize * worldUnitsPerPixel;
+				texture = renderable.iconTexture;
+				rotation += ICON_ART_ROTATION_OFFSET;
+			}
+		}
+
 		Vector2double relative = m_camera.toCameraRelative(position.transform);
 		glm::vec3 pos(static_cast<f32>(relative.x), static_cast<f32>(relative.y), 0.0f);
 
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
-		model = glm::rotate(model, position.rotation, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(renderable.scale, renderable.scale, 1.0f));
+		model = glm::rotate(model, rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(scale, scale, 1.0f));
 
-		m_batches[{ renderable.mesh, renderable.texture }].push_back(PartInstanceData{ model, 1.0f });
+		m_batches[{ renderable.mesh, texture }].push_back(PartInstanceData{ model, 1.0f });
 	}
 
 	for (auto& [key, matrices] : m_batches) {
