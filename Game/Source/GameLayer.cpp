@@ -132,17 +132,33 @@ namespace Engine {
 		EngineLogInfo("GameLayer attached, game initialized successfully.");
 
 		m_partEditor = std::make_unique<PartEditorLayer>(m_app, *m_partRegistry.get());
-		m_imGuiLayer.addPanel([this]() { m_partEditor->draw(); });
 
-		m_imGuiLayer.addPanel([]() {
-			ImGui::Begin("Icon LOD");
-			ImGui::Text("Ship icon swap thresholds (screen-space pixel diameter)");
-			ImGui::DragFloat("Fighter tier 1", &g_shipIconTiers[0].minPixelSize, 0.5f, 1.0f, 200.0f);
-			ImGui::DragFloat("Fighter tier 2", &g_shipIconTiers[1].minPixelSize, 0.5f, 1.0f, 200.0f);
-			ImGui::DragFloat("Frigate tier", &g_shipIconTiers[2].minPixelSize, 0.5f, 1.0f, 200.0f);
-			ImGui::Separator();
-			ImGui::Text("Projectiles (applies to newly-fired projectiles)");
-			ImGui::DragFloat("Projectile icon threshold", &g_projectileIconMinPixelSize, 0.25f, 0.0f, 100.0f);
+		// Part Editor and Icon LOD tuning share one "Editor" window as tabs, so dragging its
+		// title bar out past the main window's edge (ImGuiConfigFlags_ViewportsEnable) pops
+		// both tools out together as one native OS window instead of two separate ones
+		m_imGuiLayer.addPanel([this]() {
+			const ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGui::SetNextWindowPos(ImVec2(viewport->WorkPos.x + viewport->WorkSize.x - DEBUG_OVERLAY_WIDTH, viewport->WorkPos.y + DEBUG_OVERLAY_HEIGHT), ImGuiCond_FirstUseEver);
+			ImGui::SetNextWindowSize(ImVec2(DEBUG_OVERLAY_WIDTH, viewport->WorkSize.y - DEBUG_OVERLAY_HEIGHT), ImGuiCond_FirstUseEver);
+
+			ImGui::Begin("Editor");
+			if (ImGui::BeginTabBar("EditorTabs")) {
+				if (ImGui::BeginTabItem("Part Editor")) {
+					m_partEditor->draw();
+					ImGui::EndTabItem();
+				}
+				if (ImGui::BeginTabItem("Icon LOD")) {
+					ImGui::Text("Ship icon swap thresholds (screen-space pixel diameter)");
+					ImGui::DragFloat("Fighter tier 1", &g_shipIconTiers[0].minPixelSize, 0.5f, 1.0f, 200.0f);
+					ImGui::DragFloat("Fighter tier 2", &g_shipIconTiers[1].minPixelSize, 0.5f, 1.0f, 200.0f);
+					ImGui::DragFloat("Frigate tier", &g_shipIconTiers[2].minPixelSize, 0.5f, 1.0f, 200.0f);
+					ImGui::Separator();
+					ImGui::Text("Projectiles (applies to newly-fired projectiles)");
+					ImGui::DragFloat("Projectile icon threshold", &g_projectileIconMinPixelSize, 0.25f, 0.0f, 100.0f);
+					ImGui::EndTabItem();
+				}
+				ImGui::EndTabBar();
+			}
 			ImGui::End();
 			});
 

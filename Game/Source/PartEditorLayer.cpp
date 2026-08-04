@@ -102,8 +102,6 @@ namespace Engine {
 
 	void PartEditorLayer::draw()
 	{
-		ImGui::Begin("Part Editor");
-
 		ImGui::InputText("Name", m_editName.data(), m_editName.capacity() + 1);
 		drawCategoryPicker();
 		ImGui::Separator();
@@ -112,7 +110,5 @@ namespace Engine {
 
 		if (ImGui::Button("Save")) { save(); }
 		if (!m_saveStatus.empty()) { ImGui::TextUnformatted(m_saveStatus.c_str()); }
-
-		ImGui::End();
 	}
 }

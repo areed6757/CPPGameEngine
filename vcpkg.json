@@ -10,7 +10,7 @@
         "nlohmann-json",
         {
             "name": "imgui",
-            "features" : ["glfw-binding", "opengl3-binding"]
+            "features" : ["docking-experimental", "glfw-binding", "opengl3-binding"]
         }
     ]
 }

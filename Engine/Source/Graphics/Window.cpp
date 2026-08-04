@@ -4,6 +4,10 @@
 // Wrapper to handle creation and destruction of OpenGL windows via GLFW/glad
 namespace Engine {
     Window::Window(const WindowDesc& desc) : Base(desc.base) {
+        // Requested width/height are just the pre-maximize backing size GLFW briefly reports;
+        // GLFW_MAXIMIZED makes the OS immediately snap the window to the monitor's work area,
+        // so the game opens fullscreen-sized on whatever display it's launched on.
+        glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
         GLFWwindow* rawWindow(glfwCreateWindow(desc.windowWidth, desc.windowHeight, desc.title, NULL, NULL));
         if (!rawWindow) {
             EngineLogErrorAndThrow("GLFW window creation failed.");
