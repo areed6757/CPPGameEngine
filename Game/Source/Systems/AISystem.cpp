@@ -6,11 +6,15 @@
 #include <cmath>
 
 namespace Engine {
+	// Below this closing speed the ship is considered "stopped enough" to resume a held chase
+	// burn -- matches MovementDamper's default linearStopThreshold, not tied to any one ship's.
+	constexpr f32 AI_CHASE_RESUME_SPEED_THRESHOLD = 0.05f;
+
 	AISystem::AISystem(const AISystemDesc& desc) : Base(desc.base),
 		m_ecs(desc.ecs)
 	{
 		m_entityMask = m_ecs.makeSignature<AIController, Position, Movement, Thruster>();
-		m_reads = m_ecs.makeSignature<AIController, Position>();
+		m_reads = m_ecs.makeSignature<AIController, Position, Movement>();
 		m_writes = m_ecs.makeSignature<AIController, Position, Thruster>();
 		EngineLogInfo("AI system created.");
 	}
@@ -71,10 +75,38 @@ namespace Engine {
 				// Snap-face the target no smoothing/angularVelocity
 				pos.rotation = static_cast<f32>(std::atan2(toTarget.y, toTarget.x));
 
-				thruster.throttle = (dist > static_cast<d64>(ai.engageRange)) ? 1.0f : 0.0f;
+				if (dist <= static_cast<d64>(ai.engageRange)) {
+					thruster.throttle = 0.0f;
+					ai.throttleHeld = false;
+				}
+				else if (ai.throttleHeld) {
+					// Coasting off a losing chase -- wait until velocity has bled down near
+					// zero (MovementDamper does the actual killing) before burning again.
+					f32 speed = std::sqrt(movement.linearVelocity.x * movement.linearVelocity.x +
+						movement.linearVelocity.y * movement.linearVelocity.y);
+					if (speed < AI_CHASE_RESUME_SPEED_THRESHOLD) {
+						ai.throttleHeld = false;
+						thruster.throttle = 1.0f;
+					}
+					else {
+						thruster.throttle = 0.0f;
+					}
+				}
+				else if (ai.lastTargetDist >= 0.0 && dist > ai.lastTargetDist) {
+					// Target is outrunning us -- stop burning into a chase we're losing.
+					ai.throttleHeld = true;
+					thruster.throttle = 0.0f;
+				}
+				else {
+					thruster.throttle = 1.0f;
+				}
+
+				ai.lastTargetDist = dist;
 			}
 			else {
 				thruster.throttle = 0.0f; // no enemies left, sit idle
+				ai.lastTargetDist = -1.0;
+				ai.throttleHeld = false;
 			}
 
 			i32 sc = m_ecs.sizeComponentPool<AIController>();

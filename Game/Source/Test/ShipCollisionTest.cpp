@@ -54,10 +54,12 @@ namespace Engine {
 	}
 
 	EntityID ShipCollisionTest::buildComplexShip(Vector2double pos, f32 rotation, std::mt19937& rng,
-		i32 hardpointCount, PartVariantID hardpointVariant, PartVariantID weaponVariant, PartVariantID engineVariant)
+		i32 basePartCount, i32 hardpointCount, PartVariantID hardpointVariant, PartVariantID weaponVariant, PartVariantID engineVariant)
 	{
-		constexpr i32 GRID_SIZE = 7;
-		i32 targetParts = 37 + hardpointCount; // base hull/armor growth + N hardpoints + 1 engine
+		i32 targetParts = basePartCount + hardpointCount; // base hull/armor growth + N hardpoints + 1 engine
+		// Grid must comfortably outgrow targetParts (random-walk placement can't fill every
+		// cell) -- scale it to the requested ship size instead of a size fixed for one tier.
+		i32 GRID_SIZE = static_cast<i32>(std::ceil(std::sqrt(static_cast<f32>(targetParts)))) + 2;
 		constexpr i32 DX[4] = { 1, -1, 0, 0 };
 		constexpr i32 DY[4] = { 0, 0, 1, -1 };
 
@@ -167,7 +169,7 @@ namespace Engine {
 			for (i32 y = 0; y < side && spawned < count; ++y) {
 				for (i32 x = 0; x < side && spawned < count; ++x) {
 					Vector2double pos{ xOffset + x * shipSpacing - half, y * shipSpacing - half };
-					EntityID ship = buildComplexShip(pos, facing, rng, 2, m_hardpointVariant, weaponVariant, m_engineVariant);
+					EntityID ship = buildComplexShip(pos, facing, rng, 37, 2, m_hardpointVariant, weaponVariant, m_engineVariant);
 
 					m_ecs.addComponent(ship, Faction{ .teamId = teamId });
 					m_ecs.addComponent(ship, Separation{ .margin = 0.1f });
@@ -187,5 +189,79 @@ namespace Engine {
 		spawnSide(sideSpacing / 2.0, 3.14159265f, 1, shipsPerSide);
 
 		EngineLogInfo("ShipCollisionTest: spawned two-sided battle ({} ships per side, {} total).", shipsPerSide, shipsPerSide * 2);
+	}
+
+	void ShipCollisionTest::spawnTieredFleetBattle(d64 sideSpacing, d64 shipSpacing)
+	{
+		// Small fighter: single engine, fires fast and weak, short range (speed * 3s Lifetime),
+		// stays quick by being both light and modestly thrust-heavy.
+		PartVariantID smallWeapon = m_registry.registerVariant(PartVariant{
+			.name = "Fighter Light Gun", .category = PartCategory::Weapon,
+			.params = WeaponParams{ PartBaseStats{ 0.5f, 5.0f, 1.0f, 0.0f }, 3.0f, 0.3f, 5.0f, 0.003f }
+			});
+		PartVariantID smallEngine = m_registry.registerVariant(PartVariant{
+			.name = "Fighter Engine", .category = PartCategory::Engine,
+			.params = EngineParams{ PartBaseStats{ 2.0f, 10.0f, 2.0f, 0.0f }, 6.0f, 2.0f }
+			});
+
+		// Medium fighter: same archetype, a notch stronger/slower/tankier in every stat.
+		PartVariantID mediumWeapon = m_registry.registerVariant(PartVariant{
+			.name = "Fighter Medium Gun", .category = PartCategory::Weapon,
+			.params = WeaponParams{ PartBaseStats{ 0.75f, 8.0f, 1.5f, 0.0f }, 8.0f, 0.6f, 6.0f, 0.004f }
+			});
+		PartVariantID mediumEngine = m_registry.registerVariant(PartVariant{
+			.name = "Medium Fighter Engine", .category = PartCategory::Engine,
+			.params = EngineParams{ PartBaseStats{ 3.0f, 15.0f, 3.0f, 0.0f }, 8.0f, 3.0f }
+			});
+
+		// Frigate: 4 size-1 hardpoints (m_hardpointVariant is already 1x1), fires slow and
+		// hard, and its far higher projectile speed gives it several times the effective
+		// range of a fighter's gun over the same 3s projectile lifetime.
+		PartVariantID frigateWeapon = m_registry.registerVariant(PartVariant{
+			.name = "Frigate Long Gun", .category = PartCategory::Weapon,
+			.params = WeaponParams{ PartBaseStats{ 2.0f, 25.0f, 4.0f, 0.0f }, 40.0f, 2.5f, 16.0f, 0.01f }
+			});
+		PartVariantID frigateEngine = m_registry.registerVariant(PartVariant{
+			.name = "Frigate Engine", .category = PartCategory::Engine,
+			.params = EngineParams{ PartBaseStats{ 6.0f, 30.0f, 6.0f, 0.0f }, 12.0f, 5.0f }
+			});
+
+		std::mt19937 rng{ std::random_device{}() };
+
+		// Formation slots, laid out per side: 5 small fighters, 3 medium fighters, 1 frigate.
+		struct FleetSlot { i32 basePartCount, hardpointCount; PartVariantID weapon, engine; f32 engageRange; };
+		const FleetSlot SMALL_FIGHTER{ 6, 1, smallWeapon, smallEngine, 4.0f };   // ~15km gun range, brawls close
+		const FleetSlot MEDIUM_FIGHTER{ 15, 2, mediumWeapon, mediumEngine, 6.0f }; // ~18km gun range
+		const FleetSlot FRIGATE{ 41, 4, frigateWeapon, frigateEngine, 40.0f };    // ~48km gun range, stands off
+
+		std::vector<FleetSlot> formation;
+		for (i32 i = 0; i < 5; i++) { formation.push_back(SMALL_FIGHTER); }
+		for (i32 i = 0; i < 3; i++) { formation.push_back(MEDIUM_FIGHTER); }
+		formation.push_back(FRIGATE);
+
+		auto spawnSide = [&](d64 xOffset, f32 facing, i32 teamId) {
+			d64 half = (static_cast<d64>(formation.size()) - 1) * shipSpacing / 2.0;
+			for (size_t i = 0; i < formation.size(); i++) {
+				const FleetSlot& slot = formation[i];
+				Vector2double pos{ xOffset, static_cast<d64>(i) * shipSpacing - half };
+				EntityID ship = buildComplexShip(pos, facing, rng, slot.basePartCount, slot.hardpointCount,
+					m_hardpointVariant, slot.weapon, slot.engine);
+
+				m_ecs.addComponent(ship, Faction{ .teamId = teamId });
+				m_ecs.addComponent(ship, Separation{ .margin = 0.1f });
+				m_ecs.addComponent(ship, AIController{
+					.target = EntityID{},
+					.engageRange = slot.engageRange,
+					});
+			}
+			};
+
+		// Two fleets facing each other, separated by sideSpacing along X -- team 0 faces +x
+		// (rotation 0), team 1 faces -x (rotation pi).
+		spawnSide(-sideSpacing / 2.0, 0.0f, 0);
+		spawnSide(sideSpacing / 2.0, 3.14159265f, 1);
+
+		EngineLogInfo("ShipCollisionTest: spawned tiered fleet battle ({} small fighters, {} medium fighters, {} frigate per side, {} total).",
+			5, 3, 1, formation.size() * 2);
 	}
 }

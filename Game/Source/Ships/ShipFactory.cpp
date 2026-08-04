@@ -5,6 +5,7 @@
 #include <Components/Stability.h>
 #include <Components/Health.h>
 #include <Components/Thruster.h>
+#include <Components/MovementDamper.h>
 #include <Components/Mount.h>
 #include <Components/Weapon.h>
 #include <Components/Renderable.h>
@@ -96,6 +97,7 @@ namespace Engine {
 
 		if (totalThrustForce > 0.0f) {
 			m_ecs.addComponent(ship, Thruster{ .maxAccel = totalThrustForce / totalMass, .throttle = 0.0f });
+			m_ecs.addComponent(ship, MovementDamper{});
 		}
 
 		for (auto& [hx, hy, params, visualPartIndex] : hardpoints) {
