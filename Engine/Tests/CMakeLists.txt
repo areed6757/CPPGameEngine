@@ -5,7 +5,8 @@ add_executable(EngineTests
     test_vector3.cpp
     test_layerstack.cpp
     test_logger.cpp
-    test_quadtree.cpp
+
+    test_aabbtree.cpp
     test_threadpool.cpp
     test_jobcontroller.cpp
     test_scheduler.cpp

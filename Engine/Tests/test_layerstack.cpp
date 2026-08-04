@@ -36,6 +36,14 @@ namespace {
         }
         return names;
     }
+
+    std::vector<std::string> namesInReverseOrder(LayerStack& stack) {
+        std::vector<std::string> names;
+        for (auto it = stack.rbegin(); it != stack.rend(); ++it) {
+            names.push_back(static_cast<RecordingLayer*>(*it)->name());
+        }
+        return names;
+    }
 }
 
 TEST_CASE_METHOD(LayerLogFixture, "pushLayer and pushOverlay call onAttach immediately", "[LayerStack]") {
@@ -96,6 +104,20 @@ TEST_CASE_METHOD(LayerLogFixture, "popOverlay detaches and removes only the targ
     REQUIRE(namesInOrder(stack) == std::vector<std::string>{"OverlayB"});
 
     delete overlayA; // popOverlay does not take ownership of the overlay it removes
+}
+
+TEST_CASE_METHOD(LayerLogFixture, "rbegin/rend walk the stack top-most first, the order Application::onEvent dispatches in", "[LayerStack]") {
+    std::vector<std::string> record;
+    LayerStack stack{ LayerStackDesc{ {logger} } };
+
+    stack.pushLayer(new RecordingLayer("LayerA", record));
+    stack.pushOverlay(new RecordingLayer("OverlayA", record));
+    stack.pushLayer(new RecordingLayer("LayerB", record)); // forward order is [LayerA, LayerB, OverlayA]
+
+    auto reverseOrder = namesInReverseOrder(stack);
+    logger.log(Logger::LogLevel::Info, "Reverse-order walk: [{}, {}, {}]", reverseOrder[0], reverseOrder[1], reverseOrder[2]);
+
+    REQUIRE(reverseOrder == std::vector<std::string>{"OverlayA", "LayerB", "LayerA"});
 }
 
 TEST_CASE_METHOD(LayerLogFixture, "LayerStack destructor detaches and frees every layer still owned when it goes out of scope", "[LayerStack]") {

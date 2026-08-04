@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
-#include <Engine.h>
+#include <Core/Common.h>
 
 namespace Engine {
+	class Event;
+
 	class Layer {
 	public:
 		explicit Layer(const std::string& name = "Layer");
