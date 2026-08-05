@@ -24,19 +24,24 @@ namespace Engine {
 		ENGINE_ASSERT(id >= 0 && id < static_cast<PartVariantID>(m_variants.size()), "PartRegistry::get: invalid id");
 		return m_variants[id];
 	}
-	Weapon PartRegistry::buildWeaponFromVariant(PartVariantID variantId) const
+	Weapon PartRegistry::buildWeaponFromVariant(PartVariantID variantId, f32 mountRotation) const
 	{
 		const WeaponParams& params = std::get<WeaponParams>(get(variantId).params);
 		Weapon weapon{
 			.cooldown = params.cooldown, .timeSinceLastFire = 0.0f,
 			.projectileSpeed = params.projectileSpeed, .projectileRadius = params.projectileRadius,
 			.projectileDamage = params.damage, .projectileLifetime = params.projectileLifetime,
-			.barrelCount = std::clamp(params.barrelCount, 1, 4)
+			.barrelCount = std::clamp(params.barrelCount, 1, 4),
+			.traverseSpeed = params.traverseSpeed, .accuracy = params.accuracy
 		};
 		f32 half = (weapon.barrelCount - 1) * 0.5f;
 		for (i32 i = 0; i < weapon.barrelCount; i++) {
 			weapon.barrelOffsets[i] = Vector2float{ params.muzzleForwardOffset, (static_cast<f32>(i) - half) * params.barrelSpread };
 		}
+		weapon.minRotationAbs = mountRotation + params.minRotation;
+		weapon.maxRotationAbs = mountRotation + params.maxRotation;
+		weapon.restRotationAbs = (weapon.minRotationAbs + weapon.maxRotationAbs) * 0.5f;
+		weapon.aimRotation = weapon.restRotationAbs;
 		return weapon;
 	}
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <Core/Common.h>
+#include <Physics/Vector2float.h>
 #include <cstdint>
 
 namespace Engine {
@@ -35,6 +36,11 @@ namespace Engine {
 		i32 barrelCount{ 1 };
 		f32 barrelSpread{ 0.0f };
 		f32 muzzleForwardOffset{ 0.0f };
+		Vector2float anchorOffset{}; // local to the part's own unrotated space; mount attach point AND sprite rotation pivot
+		f32 minRotation{ -3.14159265f }; // traverse arc, relative to the mount's rotation
+		f32 maxRotation{ 3.14159265f };
+		f32 traverseSpeed{ 1000.0f }; // rad/s; large default == effectively instant snap for unconfigured weapons
+		f32 accuracy{ 0.0f }; // cone half-angle (radians) of random spread at fire time; 0 == perfectly precise
 	};
 
 	struct HullParams : PartBaseStats {

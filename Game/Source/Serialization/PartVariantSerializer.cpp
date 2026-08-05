@@ -45,6 +45,12 @@ namespace Engine {
 				base["barrelCount"] = params.barrelCount;
 				base["barrelSpread"] = params.barrelSpread;
 				base["muzzleForwardOffset"] = params.muzzleForwardOffset;
+				base["anchorOffsetX"] = params.anchorOffset.x;
+				base["anchorOffsetY"] = params.anchorOffset.y;
+				base["minRotation"] = params.minRotation;
+				base["maxRotation"] = params.maxRotation;
+				base["traverseSpeed"] = params.traverseSpeed;
+				base["accuracy"] = params.accuracy;
 			}
 			else if constexpr (std::is_same_v<T, HardpointParams>) {
 				j["paramsType"] = "Hardpoint";
@@ -82,7 +88,10 @@ namespace Engine {
 					p.at("projectileSpeed").get<f32>(), p.at("projectileRadius").get<f32>(),
 					p.value("projectileLifetime", 3.0f),
 					p.value("barrelCount", 1), p.value("barrelSpread", 0.0f),
-					p.value("muzzleForwardOffset", 0.0f) };
+					p.value("muzzleForwardOffset", 0.0f),
+					Vector2float{ p.value("anchorOffsetX", 0.0f), p.value("anchorOffsetY", 0.0f) },
+					p.value("minRotation", -3.14159265f), p.value("maxRotation", 3.14159265f),
+					p.value("traverseSpeed", 1000.0f), p.value("accuracy", 0.0f) };
 			}
 			else if (paramsType == "Hardpoint") {
 				outVariant.params = HardpointParams{ base, p.at("sizeX").get<i32>(), p.at("sizeY").get<i32>() };

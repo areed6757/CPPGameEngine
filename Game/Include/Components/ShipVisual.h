@@ -13,6 +13,7 @@ namespace Engine {
 		PartCategory category;
 		PartVariantID variant;
 		EntityID linkedEntity{};
+		Vector2float anchorOffset{}; // rotation pivot offset from localOffset, local to the part's unrotated space
 	};
 
 	struct ShipVisual {

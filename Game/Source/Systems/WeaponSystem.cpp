@@ -1,5 +1,6 @@
 #include <Systems/WeaponSystem.h>
 #include <Ships/IconLOD.h>
+#include <random>
 
 namespace Engine {
 	WeaponSystem::WeaponSystem(const WeaponSystemDesc& desc) : Base(desc.base),
@@ -40,24 +41,33 @@ namespace Engine {
 		auto& weapon = m_ecs.getComponent<Weapon>(id);
 		auto& ownerPos = m_ecs.getComponent<Position>(mount.owner);
 
-		f32 rot = ownerPos.rotation;
-		Vector2float facing{ std::cos(rot), std::sin(rot) };
+		f32 shipRot = ownerPos.rotation;
+		Vector2float mountFacing{ std::cos(shipRot), std::sin(shipRot) };
+
+		f32 aimRot = shipRot + weapon.aimRotation;
+		Vector2float facing{ std::cos(aimRot), std::sin(aimRot) };
+
+		static std::mt19937 rng{ std::random_device{}() };
+		std::uniform_real_distribution<f32> spreadDist(-weapon.accuracy, weapon.accuracy);
 
 		for (i32 b = 0; b < weapon.barrelCount; b++) {
+			f32 shotRot = aimRot + spreadDist(rng);
+			Vector2float shotFacing{ std::cos(shotRot), std::sin(shotRot) };
+
 			Vector2float barrelLocal = weapon.barrelOffsets[b];
 			Vector2double barrelWorldOffset{
 				barrelLocal.x * facing.x - barrelLocal.y * facing.y,
 				barrelLocal.x * facing.y + barrelLocal.y * facing.x
 			};
 			Vector2double worldMountPos = ownerPos.transform + Vector2double{
-				mount.offset.x * facing.x - mount.offset.y * facing.y,
-				mount.offset.x * facing.y + mount.offset.y * facing.x
+				mount.offset.x * mountFacing.x - mount.offset.y * mountFacing.y,
+				mount.offset.x * mountFacing.y + mount.offset.y * mountFacing.x
 			} + barrelWorldOffset;
 
 			EntityID projectile = m_cmdBuffer.createEntity();
-			m_cmdBuffer.addComponent(projectile, Position{ .transform = worldMountPos, .rotation = rot });
+			m_cmdBuffer.addComponent(projectile, Position{ .transform = worldMountPos, .rotation = shotRot });
 			m_cmdBuffer.addComponent(projectile, Movement{
-				.linearVelocity = Vector2float{ facing.x * weapon.projectileSpeed, facing.y * weapon.projectileSpeed }
+				.linearVelocity = Vector2float{ shotFacing.x * weapon.projectileSpeed, shotFacing.y * weapon.projectileSpeed }
 				});
 			m_cmdBuffer.addComponent(projectile, Physics{ .radius = weapon.projectileRadius, .mass = 0.01f });
 			m_cmdBuffer.addComponent(projectile, DamagePayload{ .amount = weapon.projectileDamage, .source = mount.owner });

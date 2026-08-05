@@ -44,6 +44,7 @@
 #include <Systems/RenderSystem.h>
 #include <Systems/ParticleSystem.h>
 #include <Systems/WeaponSystem.h>
+#include <Systems/WeaponAimSystem.h>
 #include <Systems/DamperSystem.h>
 #include <Systems/MountFollowSystem.h>
 #include <Systems/MountLifecycleSystem.h>

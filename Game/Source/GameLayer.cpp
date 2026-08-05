@@ -71,6 +71,9 @@ namespace Engine {
 		ParticleSystemDesc partSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_camera.get(), m_app.getWindow() };
 		m_particleSystem = std::make_unique<ParticleSystem>(partSysDesc);
 
+		WeaponAimSystemDesc wepAimSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_AABBTree.get() };
+		m_weaponAimSystem = std::make_unique<WeaponAimSystem>(wepAimSysDesc);
+
 		WeaponSystemDesc wepSysDesc = { {m_logger}, *m_ecsWrapper.get() };
 		m_weaponSystem = std::make_unique<WeaponSystem>(wepSysDesc);
 
@@ -114,6 +117,7 @@ namespace Engine {
 		scheduler.registerSystem(m_moveTicks.get());
 		scheduler.registerSystem(m_lifetimeSystem.get());
 		scheduler.registerSystem(m_damageSystem.get());
+		scheduler.registerSystem(m_weaponAimSystem.get());
 		scheduler.registerSystem(m_weaponSystem.get());
 		scheduler.registerSystem(m_damperSystem.get());
 		scheduler.registerSystem(m_mountFollowSystem.get());
@@ -128,14 +132,12 @@ namespace Engine {
 		// Ordering constraints ensure certain systems are updated before others due to order dependency
 		m_app.getJobController().addOrderingConstraint(m_collisionSystem.get(), m_moveTicks.get());
 		m_app.getJobController().addOrderingConstraint(m_collisionSystem.get(), m_damageSystem.get());
+		m_app.getJobController().addOrderingConstraint(m_collisionSystem.get(), m_weaponAimSystem.get());
 
 		EngineLogInfo("GameLayer attached, game initialized successfully.");
 
 		m_partEditor = std::make_unique<PartEditorLayer>(m_app, *m_partRegistry.get());
 
-		// Part Editor and Icon LOD tuning share one "Editor" window as tabs, so dragging its
-		// title bar out past the main window's edge (ImGuiConfigFlags_ViewportsEnable) pops
-		// both tools out together as one native OS window instead of two separate ones
 		m_imGuiLayer.addPanel([this]() {
 			const ImGuiViewport* viewport = ImGui::GetMainViewport();
 			ImGui::SetNextWindowPos(ImVec2(viewport->WorkPos.x + viewport->WorkSize.x - DEBUG_OVERLAY_WIDTH, viewport->WorkPos.y + DEBUG_OVERLAY_HEIGHT), ImGuiCond_FirstUseEver);

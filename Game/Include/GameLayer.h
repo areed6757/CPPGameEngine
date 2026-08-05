@@ -34,6 +34,7 @@ namespace Engine {
 		std::unique_ptr<LifetimeSystem> m_lifetimeSystem{};
 		std::unique_ptr<DamageSystem> m_damageSystem{};
 		std::unique_ptr<ParticleSystem> m_particleSystem{};
+		std::unique_ptr<WeaponAimSystem> m_weaponAimSystem{};
 		std::unique_ptr<WeaponSystem> m_weaponSystem{};
 		std::unique_ptr<DamperSystem> m_damperSystem{};
 		std::unique_ptr<MountFollowSystem> m_mountFollowSystem{};

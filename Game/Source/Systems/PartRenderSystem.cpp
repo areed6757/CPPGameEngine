@@ -75,9 +75,10 @@ namespace Engine {
 			f32 rot = shipPos.rotation;
 			f32 cosR = std::cos(rot), sinR = std::sin(rot);
 			for (auto& part : visual.parts) {
+				Vector2float anchorLocal = part.localOffset + part.anchorOffset;
 				Vector2double worldOffset{
-					part.localOffset.x * cosR - part.localOffset.y * sinR,
-					part.localOffset.x * sinR + part.localOffset.y * cosR
+					anchorLocal.x * cosR - anchorLocal.y * sinR,
+					anchorLocal.x * sinR + anchorLocal.y * cosR
 				};
 				Vector2double worldPos = shipPos.transform + worldOffset;
 				Vector2double relative = m_camera.toCameraRelative(worldPos);
@@ -85,6 +86,7 @@ namespace Engine {
 				glm::vec3 pos(static_cast<f32>(relative.x), static_cast<f32>(relative.y), 0.0f);
 				glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);
 				model = glm::rotate(model, rot, glm::vec3(0.0f, 0.0f, 1.0f));
+				model = glm::translate(model, glm::vec3(-part.anchorOffset.x, -part.anchorOffset.y, 0.0f));
 				f32 partScale = std::max(part.sizeX, part.sizeY) * static_cast<f32>(GRID_CELL_SIZE_KM);
 				model = glm::scale(model, glm::vec3(partScale, partScale, 1.0f));
 
