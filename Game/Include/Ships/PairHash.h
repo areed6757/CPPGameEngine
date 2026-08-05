@@ -1,5 +1,7 @@
 #pragma once
 #include <Core/Common.h>
+#include <Ships/PartVariant.h>
+#include <unordered_map>
 #include <utility>
 
 namespace Engine {
@@ -9,4 +11,6 @@ namespace Engine {
 			return std::hash<uint64_t>{}(combined);
 		}
 	};
+
+	using HardpointLoadout = std::unordered_map<std::pair<i32, i32>, PartVariantID, PairHash>;
 }

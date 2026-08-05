@@ -9,6 +9,7 @@
 #include <Ships/ShipGrid.h>
 #include <Ships/ShipCollisionGeometry.h>
 #include <Ships/ShipFactory.h>
+#include <Ships/ShipBuilder.h>
 #include <Ships/IconLOD.h>
 
 // Components
@@ -54,6 +55,7 @@
 
 // Layers and Overlays
 #include <PartEditorLayer.h>
+#include <ShipBuilderLayer.h>
 
 // Tests
 #include <Test/CoreSystemsTest.h>

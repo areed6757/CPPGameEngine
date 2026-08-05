@@ -27,6 +27,14 @@ namespace Engine {
 		ENGINE_ASSERT(id >= 0 && id < static_cast<PartVariantID>(m_variants.size()), "PartRegistry::get: invalid id");
 		return m_variants[id];
 	}
+	PartVariantID PartRegistry::findByName(const std::string& name) const noexcept
+	{
+		for (i32 i = 0; i < static_cast<i32>(m_variants.size()); i++) {
+			if (m_variants[i].name == name) { return i; }
+		}
+		return INVALID_PART_VARIANT;
+	}
+
 	Weapon PartRegistry::buildWeaponFromVariant(PartVariantID variantId, f32 mountRotation) const
 	{
 		const WeaponParams& params = std::get<WeaponParams>(get(variantId).params);

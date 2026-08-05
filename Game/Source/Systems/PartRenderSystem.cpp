@@ -116,12 +116,4 @@ namespace Engine {
 			m_renderer.drawInstanced(iconMesh, &iconTexture, static_cast<GLsizei>(matrices.size()));
 		}
 	}
-
-	i32 PartRenderSystem::tierForPartCount(i32 partCount)
-	{
-		if (partCount < 10) return 0;
-		if (partCount < 30) return 1;
-		if (partCount < 60) return 2; // frigate
-		return 3; // destroyer, up to ~100 parts
-	}
 }

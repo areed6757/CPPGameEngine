@@ -2,6 +2,9 @@
 #include <imgui.h>
 
 namespace Engine {
+	constexpr i32 SHIP_BUILDER_GRID_WIDTH = 12;
+	constexpr i32 SHIP_BUILDER_GRID_HEIGHT = 12;
+
 	GameLayer::GameLayer(Application& app, ImGUILayer& imguiLayer) :
 		Base({ app.getLogger() }),
 		Layer("GameLayer"),
@@ -100,6 +103,9 @@ namespace Engine {
 		ShipFactoryDesc shipFactoryDesc = { {m_logger}, *m_ecsWrapper.get(), *m_partRegistry.get() };
 		m_shipFactory = std::make_unique<ShipFactory>(shipFactoryDesc);
 
+		ShipBuilderDesc shipBuilderDesc{ {m_logger}, *m_partRegistry.get(), SHIP_BUILDER_GRID_WIDTH, SHIP_BUILDER_GRID_HEIGHT };
+		m_shipBuilder = std::make_unique<ShipBuilder>(shipBuilderDesc);
+
 		PartRenderSystemDesc prsDesc = { {m_logger}, *m_ecsWrapper.get(), *m_renderer.get(), *m_camera.get(), m_app.getWindow(), *m_meshRegistry.get(), *m_partRegistry.get(), *m_textureRegistry.get() };
 		m_partRenderSystem = std::make_unique<PartRenderSystem>(prsDesc);
 
@@ -168,6 +174,19 @@ namespace Engine {
 				}
 				ImGui::EndTabBar();
 			}
+			ImGui::End();
+			});
+
+		ShipBuilderLayerDesc sblDesc{ {m_logger}, *m_shipBuilder.get(), *m_partRegistry.get(), *m_shipFactory.get(), *m_ecsWrapper.get() };
+		m_shipBuilderLayer = std::make_unique<ShipBuilderLayer>(sblDesc);
+
+		m_imGuiLayer.addPanel([this]() {
+			const ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGui::SetNextWindowPos(ImVec2(viewport->WorkPos.x, viewport->WorkPos.y), ImGuiCond_FirstUseEver);
+			ImGui::SetNextWindowSize(ImVec2(420.0f, viewport->WorkSize.y), ImGuiCond_FirstUseEver);
+
+			ImGui::Begin("Ship Builder");
+			m_shipBuilderLayer->draw();
 			ImGui::End();
 			});
 

@@ -43,6 +43,7 @@ namespace Engine {
 
 		std::unique_ptr<PartRegistry> m_partRegistry{};
 		std::unique_ptr<ShipFactory> m_shipFactory{};
+		std::unique_ptr<ShipBuilder> m_shipBuilder{};
 
 		std::unique_ptr<TextureRegistry> m_textureRegistry{};
 		std::unique_ptr<MeshRegistry> m_meshRegistry{};
@@ -52,6 +53,7 @@ namespace Engine {
 
 		ImGUILayer& m_imGuiLayer;
 		std::unique_ptr<PartEditorLayer> m_partEditor{};
+		std::unique_ptr<ShipBuilderLayer> m_shipBuilderLayer{};
 
 		std::unique_ptr<CoreSystemsTest> m_coreSystemsTest{};
 		std::unique_ptr<ThreadingStressTest> m_threadingStressTest{};

@@ -39,6 +39,7 @@ namespace Engine {
 			ImGui::DragFloat("Health", &m_hullParams.health, 0.5f, 0.0f, 1000.0f);
 			ImGui::DragFloat("Stability Contribution", &m_hullParams.stabilityContribution, 0.5f, 0.0f, 1000.0f);
 			ImGui::DragFloat("Kinetic Resistance", &m_hullParams.kineticResistance, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("System Capacity", &m_hullParams.systemCapacityContribution, 0.1f, -100.0f, 100.0f);
 			break;
 		}
 		case PartCategory::Armor: {
@@ -46,6 +47,7 @@ namespace Engine {
 			ImGui::DragFloat("Health", &m_armorParams.health, 0.5f, 0.0f, 1000.0f);
 			ImGui::DragFloat("Stability Contribution", &m_armorParams.stabilityContribution, 0.5f, 0.0f, 1000.0f);
 			ImGui::DragFloat("Kinetic Resistance", &m_armorParams.kineticResistance, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("System Capacity", &m_armorParams.systemCapacityContribution, 0.1f, -100.0f, 100.0f);
 			break;
 		}
 		case PartCategory::Engine: {
@@ -55,6 +57,7 @@ namespace Engine {
 			ImGui::DragFloat("Kinetic Resistance", &m_engineParams.kineticResistance, 0.01f, 0.0f, 1.0f);
 			ImGui::DragFloat("Thrust Force", &m_engineParams.thrustForce, 1.0f, 0.0f, 10000.0f);
 			ImGui::DragFloat("Power Draw", &m_engineParams.powerDraw, 0.5f, 0.0f, 1000.0f);
+			ImGui::DragFloat("System Capacity", &m_engineParams.systemCapacityContribution, 0.1f, -100.0f, 100.0f);
 			break;
 		}
 		case PartCategory::Weapon: {
@@ -70,6 +73,7 @@ namespace Engine {
 			ImGui::SliderInt("Barrel Count", &m_weaponParams.barrelCount, 1, 4);
 			ImGui::DragFloat("Barrel Spacing", &m_weaponParams.barrelSpread, 0.001f, 0.0f, 0.25f);
 			ImGui::DragFloat("Muzzle Forward Offset", &m_weaponParams.muzzleForwardOffset, 0.001f, 0.0f, 0.25f);
+			ImGui::DragFloat("System Capacity", &m_weaponParams.systemCapacityContribution, 0.1f, -100.0f, 100.0f);
 			drawWeaponRolePicker();
 			break;
 		}
@@ -80,6 +84,7 @@ namespace Engine {
 			ImGui::DragFloat("Kinetic Resistance", &m_hardpointParams.kineticResistance, 0.01f, 0.0f, 1.0f);
 			ImGui::SliderInt("Size X", &m_hardpointParams.sizeX, 1, 4);
 			ImGui::SliderInt("Size Y", &m_hardpointParams.sizeY, 1, 4);
+			ImGui::DragFloat("System Capacity", &m_hardpointParams.systemCapacityContribution, 0.1f, -100.0f, 100.0f);
 			break;
 		}
 		default: break;

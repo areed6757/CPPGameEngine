@@ -39,7 +39,5 @@ namespace Engine {
 
 		std::map<std::pair<PartCategory, PartVariantID>, std::vector<PartInstanceData>> m_batches;
 		std::map<TextureID, std::vector<PartInstanceData>> m_iconBatches;
-
-		static i32 tierForPartCount(i32 partCount);
 	};
 }

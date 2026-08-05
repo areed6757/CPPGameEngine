@@ -1,0 +1,309 @@
+{
+  "hardpointLoadout": [
+    {
+      "weapon": "Destroyer Heavy Gun",
+      "x": 6,
+      "y": 7
+    },
+    {
+      "weapon": "Frigate Rapid Gun",
+      "x": 5,
+      "y": 5
+    },
+    {
+      "weapon": "Destroyer Heavy Gun",
+      "x": 7,
+      "y": 7
+    },
+    {
+      "weapon": "Frigate Rapid Gun",
+      "x": 4,
+      "y": 7
+    },
+    {
+      "weapon": "Frigate Rapid Gun",
+      "x": 5,
+      "y": 6
+    },
+    {
+      "weapon": "Frigate Rapid Gun",
+      "x": 3,
+      "y": 7
+    }
+  ],
+  "height": 12,
+  "name": "Ship1",
+  "parts": [
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 4,
+      "y": 4
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 5,
+      "y": 4
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 6,
+      "y": 4
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 2,
+      "y": 5
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 3,
+      "y": 5
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 4,
+      "y": 5
+    },
+    {
+      "part": "Test Hardpoint",
+      "rotation": 0.0,
+      "x": 5,
+      "y": 5
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 6,
+      "y": 5
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 7,
+      "y": 5
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 8,
+      "y": 5
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 2,
+      "y": 6
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 3,
+      "y": 6
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 4,
+      "y": 6
+    },
+    {
+      "part": "Test Hardpoint",
+      "rotation": 0.0,
+      "x": 5,
+      "y": 6
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 6,
+      "y": 6
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 7,
+      "y": 6
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 8,
+      "y": 6
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 2,
+      "y": 7
+    },
+    {
+      "part": "Test Hardpoint",
+      "rotation": 0.0,
+      "x": 3,
+      "y": 7
+    },
+    {
+      "part": "Test Hardpoint",
+      "rotation": 0.0,
+      "x": 4,
+      "y": 7
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 5,
+      "y": 7
+    },
+    {
+      "part": "Test Hardpoint",
+      "rotation": 0.0,
+      "x": 6,
+      "y": 7
+    },
+    {
+      "part": "Test Hardpoint",
+      "rotation": 0.0,
+      "x": 7,
+      "y": 7
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 8,
+      "y": 7
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 2,
+      "y": 8
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 3,
+      "y": 8
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 4,
+      "y": 8
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 5,
+      "y": 8
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 6,
+      "y": 8
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 7,
+      "y": 8
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 8,
+      "y": 8
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 1,
+      "y": 9
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 2,
+      "y": 9
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 3,
+      "y": 9
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 4,
+      "y": 9
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 5,
+      "y": 9
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 6,
+      "y": 9
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 7,
+      "y": 9
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 8,
+      "y": 9
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 9,
+      "y": 9
+    },
+    {
+      "part": "Destroyer Engine",
+      "rotation": 0.0,
+      "x": 3,
+      "y": 10
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 4,
+      "y": 10
+    },
+    {
+      "part": "Destroyer Engine",
+      "rotation": 0.0,
+      "x": 5,
+      "y": 10
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 6,
+      "y": 10
+    },
+    {
+      "part": "Destroyer Engine",
+      "rotation": 0.0,
+      "x": 7,
+      "y": 10
+    }
+  ],
+  "width": 12
+}

@@ -34,6 +34,15 @@ void Engine::RenderSystem::Update(d64 dt)
 		EntityID id = m_ecs.entityFromIndex(entityIndex);
 		if ((m_ecs.getSignature(id) & m_entityMask) != m_entityMask) continue;
 
+		if (m_ecs.hasComponent<Mount>(id)) {
+			auto& mount = m_ecs.getComponent<Mount>(id);
+			if (m_ecs.isValidEntity(mount.owner) && m_ecs.hasComponent<ShipVisual>(mount.owner) && m_ecs.hasComponent<Physics>(mount.owner)) {
+				auto& ownerVisual = m_ecs.getComponent<ShipVisual>(mount.owner);
+				auto& ownerPhysics = m_ecs.getComponent<Physics>(mount.owner);
+				if (shouldRenderAsIcon(static_cast<i32>(ownerVisual.parts.size()), ownerPhysics.radius, worldUnitsPerPixel)) { continue; }
+			}
+		}
+
 		auto& renderable = m_ecs.getComponentAtDenseIndex<Renderable>(i);
 		auto& position = m_ecs.getComponent<Position>(id);
 
