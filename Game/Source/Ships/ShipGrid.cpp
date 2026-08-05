@@ -122,7 +122,7 @@ namespace Engine {
 			for (i32 x = 0; x < m_width; x++) {
 				if (!isOccupied(x, y)) { continue; }
 
-				Vector2float center{ (x + 0.5f - halfW) * cellKm, (y + 0.5f - halfH) * cellKm };
+				Vector2float center = gridAxesToLocal((x + 0.5f - halfW) * cellKm, (y + 0.5f - halfH) * cellKm);
 				occupiedCenters.push_back(center);
 
 				// A boundary cell is occupied with at least one empty/out-of-bounds
@@ -134,11 +134,13 @@ namespace Engine {
 
 				f32 x0 = (x - halfW) * cellKm, x1 = (x + 1 - halfW) * cellKm;
 				f32 y0 = (y - halfH) * cellKm, y1 = (y + 1 - halfH) * cellKm;
+				Vector2float c00 = gridAxesToLocal(x0, y0), c01 = gridAxesToLocal(x0, y1);
+				Vector2float c10 = gridAxesToLocal(x1, y0), c11 = gridAxesToLocal(x1, y1);
 
-				if (!isOccupied(x - 1, y)) { geo.boundaryEdges.push_back({ {x0, y0}, {x0, y1} }); }
-				if (!isOccupied(x + 1, y)) { geo.boundaryEdges.push_back({ {x1, y0}, {x1, y1} }); }
-				if (!isOccupied(x, y - 1)) { geo.boundaryEdges.push_back({ {x0, y0}, {x1, y0} }); }
-				if (!isOccupied(x, y + 1)) { geo.boundaryEdges.push_back({ {x0, y1}, {x1, y1} }); }
+				if (!isOccupied(x - 1, y)) { geo.boundaryEdges.push_back({ c00, c01 }); }
+				if (!isOccupied(x + 1, y)) { geo.boundaryEdges.push_back({ c10, c11 }); }
+				if (!isOccupied(x, y - 1)) { geo.boundaryEdges.push_back({ c00, c10 }); }
+				if (!isOccupied(x, y + 1)) { geo.boundaryEdges.push_back({ c01, c11 }); }
 			}
 		}
 

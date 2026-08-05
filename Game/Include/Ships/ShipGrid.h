@@ -27,6 +27,10 @@ namespace Engine {
 		i32 height;
 	};
 
+	// grid row 0 is the ship's forward edge, rotates grid col/row axes into local ship space where forward is +x
+	inline Vector2float gridAxesToLocal(f32 gridX, f32 gridY) { return Vector2float{ -gridY, gridX }; }
+	inline Vector2float localAxesToGrid(f32 localX, f32 localY) { return Vector2float{ localY, -localX }; }
+
 	class ShipGrid : public Base {
 	public: 
 		explicit ShipGrid(const ShipGridDesc& desc);

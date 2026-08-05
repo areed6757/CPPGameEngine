@@ -129,7 +129,8 @@ namespace Engine {
 		f32 halfW = grid.width * 0.5f, halfH = grid.height * 0.5f;
 
 		auto toCell = [&](const Vector2float& p) -> Vector2float {
-			return Vector2float{ p.x / cellKm + halfW, p.y / cellKm + halfH };
+			Vector2float g = localAxesToGrid(p.x, p.y);
+			return Vector2float{ g.x / cellKm + halfW, g.y / cellKm + halfH };
 			};
 		Vector2float start = toCell(rayStart);
 		Vector2float end = toCell(rayEnd);
@@ -151,10 +152,8 @@ namespace Engine {
 				result.hit = true;
 				result.cellX = gx;
 				result.cellY = gy;
-				result.point = Vector2double{
-					(cx - halfW) * cellKm,
-					(cy - halfH) * cellKm
-				};
+				Vector2float local = gridAxesToLocal((cx - halfW) * cellKm, (cy - halfH) * cellKm);
+				result.point = Vector2double{ local.x, local.y };
 				return result;
 			}
 			cx += stepX; cy += stepY;

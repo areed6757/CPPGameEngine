@@ -8,7 +8,6 @@
 #include <filesystem>
 #include <algorithm>
 #include <cmath>
-#include <random>
 
 namespace Engine {
 	namespace {
@@ -44,10 +43,11 @@ namespace Engine {
 	}
 
 	// beyond the ~57km half-diagonal of the spawnTieredFleetBattle formation
-	constexpr f32 SHIP_BUILDER_SPAWN_RADIUS_KM = 70.0f;
+	constexpr f32 SHIP_BUILDER_SPAWN_RADIUS_KM = 84.0f;
 
 	// NE, SE, SW, NW
 	constexpr f32 SHIP_BUILDER_CARDINAL_ANGLES[4] = { PI * 0.25f, -PI * 0.25f, PI * 1.25f, PI * 0.75f };
+	constexpr i32 SHIP_BUILDER_CARDINAL_TEAM_IDS[4] = { 1, 2, 3, 4 };
 
 	ShipBuilderLayer::ShipBuilderLayer(const ShipBuilderLayerDesc& desc) : Base(desc.base),
 		m_builder(desc.builder),
@@ -169,10 +169,8 @@ namespace Engine {
 
 	void ShipBuilderLayer::spawnShip(const ShipGrid& grid, const HardpointLoadout& loadout)
 	{
-		static std::mt19937 rng{ std::random_device{}() };
-		std::uniform_int_distribution<i32> teamDist(1, 4);
-
 		f32 angle = SHIP_BUILDER_CARDINAL_ANGLES[m_spawnCardinalIndex];
+		i32 teamId = SHIP_BUILDER_CARDINAL_TEAM_IDS[m_spawnCardinalIndex];
 		m_spawnCardinalIndex = (m_spawnCardinalIndex + 1) % 4;
 
 		Vector2double spawnPos{
@@ -181,7 +179,6 @@ namespace Engine {
 		};
 		f32 facing = static_cast<f32>(std::atan2(-spawnPos.y, -spawnPos.x));
 
-		i32 teamId = teamDist(rng);
 		EntityID ship = m_shipFactory.bake(grid, spawnPos, facing, loadout);
 		// mirrors what ShipCollisionTest attaches after bake, bake itself stays policy-free
 		m_ecs.addComponent(ship, Faction{ .teamId = teamId });
@@ -287,8 +284,6 @@ namespace Engine {
 		ImGui::Separator();
 
 		if (ImGui::Button("Save Ship")) { save(); }
-		ImGui::SameLine();
-		if (ImGui::Button("Add to Simulation")) { spawnShip(m_builder.grid(), m_builder.hardpointLoadout()); }
 		if (!m_saveStatus.empty()) { ImGui::TextUnformatted(m_saveStatus.c_str()); }
 	}
 }

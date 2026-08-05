@@ -144,10 +144,10 @@ namespace Engine {
 		std::vector<std::tuple<i32, i32, const HardpointParams*, i32, f32>> hardpoints;
 
 		auto localOffsetFor = [&](i32 x, i32 y, i32 sizeX, i32 sizeY) -> Vector2float {
-			return Vector2float{
+			return gridAxesToLocal(
 				(static_cast<f32>(x) + sizeX * 0.5f - grid.width() * 0.5f) * static_cast<f32>(GRID_CELL_SIZE_KM),
 				(static_cast<f32>(y) + sizeY * 0.5f - grid.height() * 0.5f) * static_cast<f32>(GRID_CELL_SIZE_KM)
-			};
+			);
 			};
 
 		for (i32 y = 0; y < grid.height(); y++) {
@@ -221,10 +221,10 @@ namespace Engine {
 		f32 primaryRange = 0.0f;
 
 		for (auto& [hx, hy, params, visualPartIndex, hardpointRotation] : hardpoints) {
-			Vector2float offset{
+			Vector2float offset = gridAxesToLocal(
 				(static_cast<f32>(hx) + params->sizeX * 0.5f - grid.width() * 0.5f) * static_cast<f32>(GRID_CELL_SIZE_KM),
 				(static_cast<f32>(hy) + params->sizeY * 0.5f - grid.height() * 0.5f) * static_cast<f32>(GRID_CELL_SIZE_KM)
-			};
+			);
 
 			f32 mountRotation = hardpointRotation;
 
