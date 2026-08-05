@@ -27,7 +27,8 @@ namespace Engine {
 			.timeSinceLastFire = 0.0f,
 			.projectileSpeed = projectileSpeed,
 			.projectileRadius = projectileRadius,
-			.projectileDamage = projectileDamage
+			.projectileDamage = projectileDamage,
+			.projectileLifetime = 3.0f
 			});
 		// Note: the weapon entity itself has no Position -- WeaponSystem
 		// reads Position off mount.owner (the ship), not off the weapon

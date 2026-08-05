@@ -20,8 +20,8 @@ namespace Engine {
 		Camera& m_camera;
 		InputHandler& m_inHandle;
 		f32 m_basePanSpeed{ 3.0f };
-		f32 m_zoomFactor{ 4.0f };
-		f32 m_minZoom{ 0.5f };
+		f32 m_zoomFactor{ 5.0f };
+		f32 m_minZoom{ 0.25f };
 		f32 m_maxZoom{ 200.0f };
 	};
 }

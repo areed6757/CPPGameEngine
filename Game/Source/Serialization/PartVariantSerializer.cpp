@@ -41,8 +41,10 @@ namespace Engine {
 				base["cooldown"] = params.cooldown;
 				base["projectileSpeed"] = params.projectileSpeed;
 				base["projectileRadius"] = params.projectileRadius;
+				base["projectileLifetime"] = params.projectileLifetime;
 				base["barrelCount"] = params.barrelCount;
 				base["barrelSpread"] = params.barrelSpread;
+				base["muzzleForwardOffset"] = params.muzzleForwardOffset;
 			}
 			else if constexpr (std::is_same_v<T, HardpointParams>) {
 				j["paramsType"] = "Hardpoint";
@@ -78,7 +80,9 @@ namespace Engine {
 				outVariant.params = WeaponParams{ base,
 					p.at("damage").get<f32>(), p.at("cooldown").get<f32>(),
 					p.at("projectileSpeed").get<f32>(), p.at("projectileRadius").get<f32>(),
-					p.value("barrelCount", 1), p.value("barrelSpread", 0.0f) };
+					p.value("projectileLifetime", 3.0f),
+					p.value("barrelCount", 1), p.value("barrelSpread", 0.0f),
+					p.value("muzzleForwardOffset", 0.0f) };
 			}
 			else if (paramsType == "Hardpoint") {
 				outVariant.params = HardpointParams{ base, p.at("sizeX").get<i32>(), p.at("sizeY").get<i32>() };

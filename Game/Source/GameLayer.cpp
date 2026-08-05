@@ -86,7 +86,7 @@ namespace Engine {
 		SeparationSystemDesc sepSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_AABBTree.get() };
 		m_separationSystem = std::make_unique<SeparationSystem>(sepSysDesc);
 
-		AISystemDesc aiDesc{ {m_logger}, *m_ecsWrapper.get() };
+		AISystemDesc aiDesc{ {m_logger}, *m_ecsWrapper.get(), *m_AABBTree.get() };
 		m_aiSystem = std::make_unique<AISystem>(aiDesc);
 
 		// Ship stuff
@@ -101,10 +101,10 @@ namespace Engine {
 		m_partRenderSystem = std::make_unique<PartRenderSystem>(prsDesc);
 
 		Scheduler& scheduler = m_app.getScheduler();
-		scheduler.registerFrameSystem(m_renderSystem.get());
+		scheduler.registerFrameSystem(m_partRenderSystem.get());
 		scheduler.registerFrameSystem(m_cameraController.get());
 		//scheduler.registerFrameSystem(m_particleSystem.get());
-		scheduler.registerFrameSystem(m_partRenderSystem.get());
+		scheduler.registerFrameSystem(m_renderSystem.get());
 
 		scheduler.registerSystem(m_aiSystem.get());
 		scheduler.registerSystem(m_thrusterSystem.get());
@@ -169,11 +169,8 @@ namespace Engine {
 		ShipCollisionTestDesc sctDesc{ {m_logger}, *m_ecsWrapper.get(), *m_shipFactory.get(), *m_partRegistry.get() };
 		m_shipCollisionTest = std::make_unique<ShipCollisionTest>(sctDesc);
 
-		//m_shipCollisionTest->spawnTwoSidedBattle(600, 35.0, 1.0, 1.0f, 4.0f, 0.005f, 5.0f, 2.0f, 3.0f);
 		m_shipCollisionTest->spawnTieredFleetBattle(60.0, 4.0);
-
-		// TEMP: 500-part ship stress test, remove once confirmed.
-		m_shipCollisionTest->spawnMassiveShipTest(Vector2double{ 0.0, 0.0 });
+		//m_shipCollisionTest->spawnMassiveShipTest(Vector2double{ 0.0, 0.0 });
 		m_app.getScheduler().togglePause();
 
 	}

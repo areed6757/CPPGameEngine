@@ -44,7 +44,7 @@ void Engine::RenderSystem::Update(d64 dt)
 
 		f32 scale = renderable.scale;
 		std::optional<TextureID> texture = renderable.texture;
-		f32 rotation = position.rotation;
+		f32 rotation = position.rotation + renderable.rotationOffset;
 
 		if (renderable.iconTexture.has_value()) {
 			f32 pixelDiameter = renderable.scale / worldUnitsPerPixel;

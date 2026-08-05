@@ -31,8 +31,10 @@ namespace Engine {
 
 	struct WeaponParams : PartBaseStats {
 		f32 damage, cooldown, projectileSpeed, projectileRadius;
+		f32 projectileLifetime{ 3.0f };
 		i32 barrelCount{ 1 };
 		f32 barrelSpread{ 0.0f };
+		f32 muzzleForwardOffset{ 0.0f };
 	};
 
 	struct HullParams : PartBaseStats {

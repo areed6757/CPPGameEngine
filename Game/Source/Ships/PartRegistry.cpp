@@ -30,11 +30,12 @@ namespace Engine {
 		Weapon weapon{
 			.cooldown = params.cooldown, .timeSinceLastFire = 0.0f,
 			.projectileSpeed = params.projectileSpeed, .projectileRadius = params.projectileRadius,
-			.projectileDamage = params.damage, .barrelCount = std::clamp(params.barrelCount, 1, 4)
+			.projectileDamage = params.damage, .projectileLifetime = params.projectileLifetime,
+			.barrelCount = std::clamp(params.barrelCount, 1, 4)
 		};
 		f32 half = (weapon.barrelCount - 1) * 0.5f;
 		for (i32 i = 0; i < weapon.barrelCount; i++) {
-			weapon.barrelOffsets[i] = Vector2float{ 0.0f, (static_cast<f32>(i) - half) * params.barrelSpread };
+			weapon.barrelOffsets[i] = Vector2float{ params.muzzleForwardOffset, (static_cast<f32>(i) - half) * params.barrelSpread };
 		}
 		return weapon;
 	}

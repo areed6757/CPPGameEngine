@@ -8,7 +8,8 @@ Engine::TextureRegistry::TextureRegistry(const TextureRegistryDesc& desc) :
 		Texture{ TextureDesc {desc.base, 512, 512, 4, "Images/fighterIcon.png"}},
 		Texture{ TextureDesc {desc.base, 512, 512, 4, "Images/frigateIcon.png"}},
 		Texture{ TextureDesc {desc.base, 512, 512, 4, "Images/DestroyerIcon.png"}},
-		Texture{ TextureDesc {desc.base, 512, 512, 4, "Images/smallProjIcon.png"}}
+		Texture{ TextureDesc {desc.base, 512, 512, 4, "Images/smallProjIcon.png"}},
+		Texture{ TextureDesc {desc.base, 128, 128, 4, "Images/smallCannon.png"}}
 	}
 {
 	EngineLogInfo("Texture registry created.");

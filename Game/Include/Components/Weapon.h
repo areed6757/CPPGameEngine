@@ -7,6 +7,7 @@ namespace Engine {
 		f32 projectileSpeed;
 		f32 projectileRadius;
 		f32 projectileDamage;
+		f32 projectileLifetime;
 		std::array<Vector2float, 4> barrelOffsets{}; // local to the mount's own position/facing, unused entries stay {0,0}
 		i32 barrelCount{ 1 };
 	};

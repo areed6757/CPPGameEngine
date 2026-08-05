@@ -14,6 +14,10 @@
 #include <tuple>
 
 namespace Engine {
+	constexpr f32 THRUST_FORCE_MULTIPLIER = 2.0f;
+	constexpr f32 TURRET_ART_ROTATION_OFFSET = -1.57079632679f;
+	constexpr f32 TURRET_ART_SCALE_MULTIPLIER = 2.0f;
+
 	ShipFactory::ShipFactory(const ShipFactoryDesc& desc) : Base(desc.base),
 		m_ecs(desc.ecs),
 		m_partReg(desc.partReg)
@@ -96,7 +100,7 @@ namespace Engine {
 		m_ecs.addComponent(ship, grid.toRuntimeData());
 
 		if (totalThrustForce > 0.0f) {
-			m_ecs.addComponent(ship, Thruster{ .maxAccel = totalThrustForce / totalMass, .throttle = 0.0f });
+			m_ecs.addComponent(ship, Thruster{ .maxAccel = (totalThrustForce * THRUST_FORCE_MULTIPLIER) / totalMass, .throttle = 0.0f });
 			m_ecs.addComponent(ship, MovementDamper{});
 		}
 
@@ -110,8 +114,9 @@ namespace Engine {
 			m_ecs.addComponent(mountEntity, Mount{ .owner = ship, .offset = offset });
 			m_ecs.addComponent(mountEntity, Position{ .transform = spawnPos, .rotation = spawnRotation }); // corrected next tick by MountFollowSystem
 			m_ecs.addComponent(mountEntity, Renderable{
-				.mesh = MeshID::Quad, .texture = std::nullopt,
-				.scale = std::max(params->sizeX, params->sizeY) * static_cast<f32>(GRID_CELL_SIZE_KM) * 0.5f
+				.mesh = MeshID::Quad, .texture = TextureID::SmallCannon,
+				.scale = std::max(params->sizeX, params->sizeY) * static_cast<f32>(GRID_CELL_SIZE_KM) * TURRET_ART_SCALE_MULTIPLIER,
+				.rotationOffset = TURRET_ART_ROTATION_OFFSET
 				});
 			m_ecs.addComponent(mountEntity, Health{ .current = params->health, .max = params->health });
 

@@ -6,12 +6,11 @@
 #include <cmath>
 
 namespace Engine {
-	// Below this closing speed the ship is considered "stopped enough" to resume a held chase
-	// burn -- matches MovementDamper's default linearStopThreshold, not tied to any one ship's.
-	constexpr f32 AI_CHASE_RESUME_SPEED_THRESHOLD = 0.05f;
+	constexpr f32 AI_CHASE_RESUME_SPEED_THRESHOLD = 0.5f;
+	constexpr d64 AI_MAX_LEAD_TIME = 15.0;
 
 	AISystem::AISystem(const AISystemDesc& desc) : Base(desc.base),
-		m_ecs(desc.ecs)
+		m_ecs(desc.ecs), m_aabbTree(desc.aabbTree)
 	{
 		m_entityMask = m_ecs.makeSignature<AIController, Position, Movement, Thruster>();
 		m_reads = m_ecs.makeSignature<AIController, Position, Movement>();
@@ -26,27 +25,77 @@ namespace Engine {
 
 	EntityID AISystem::findNearestEnemy(EntityID self, i32 selfTeam, const Vector2double& selfPos) const
 	{
-		EntityID best{};
-		d64 bestDistSq = std::numeric_limits<d64>::max();
+		constexpr d64 kInitialSearchRadius = 10.0;
+		constexpr d64 kMaxSearchRadius = 1.0e6;
 
-		i32 c = m_ecs.sizeComponentPool<AIController>();
-		for (i32 i = 0; i < c; i++) {
-			i32 entityIndex = m_ecs.entityAtDenseIndex<AIController>(i);
-			EntityID other = m_ecs.entityFromIndex(entityIndex);
-			if (other.id == self.id) { continue; }
-			if (!m_ecs.hasComponent<Position>(other) || !m_ecs.hasComponent<Faction>(other)) { continue; }
+		for (d64 searchRadius = kInitialSearchRadius; searchRadius <= kMaxSearchRadius; searchRadius *= 2.0) {
+			AABB queryBounds{
+				Vector2double{ selfPos.x - searchRadius, selfPos.y - searchRadius },
+				Vector2double{ selfPos.x + searchRadius, selfPos.y + searchRadius }
+			};
 
-			if (m_ecs.getComponent<Faction>(other).teamId == selfTeam) { continue; }
+			m_nearbyScratch.clear();
+			m_aabbTree.query(queryBounds, m_nearbyScratch);
 
-			auto& otherPos = m_ecs.getComponent<Position>(other);
-			Vector2double delta = otherPos.transform - selfPos;
-			d64 distSq = delta.x * delta.x + delta.y * delta.y;
-			if (distSq < bestDistSq) {
-				bestDistSq = distSq;
-				best = other;
+			EntityID best{};
+			d64 bestDistSq = std::numeric_limits<d64>::max();
+
+			for (EntityID other : m_nearbyScratch) {
+				if (other.id == self.id) { continue; }
+				if (!m_ecs.hasComponent<Position>(other) || !m_ecs.hasComponent<Faction>(other)) { continue; }
+				if (m_ecs.getComponent<Faction>(other).teamId == selfTeam) { continue; }
+
+				auto& otherPos = m_ecs.getComponent<Position>(other);
+				Vector2double delta = otherPos.transform - selfPos;
+				d64 distSq = delta.x * delta.x + delta.y * delta.y;
+				if (distSq < bestDistSq) {
+					bestDistSq = distSq;
+					best = other;
+				}
+			}
+
+			if (m_ecs.isValidEntity(best) && bestDistSq <= searchRadius * searchRadius) {
+				return best;
 			}
 		}
-		return best;
+		return EntityID{};
+	}
+
+	Vector2double AISystem::predictInterceptPoint(const Vector2double& selfPos, const Vector2float& selfVel,
+		const Vector2double& targetPos, const Vector2float& targetVel, d64 dist) const
+	{
+		if (dist <= 1e-6) { return targetPos; }
+
+		Vector2double toTarget = targetPos - selfPos;
+		Vector2double relVel(targetVel);
+		d64 selfSpeed = Vector2double(selfVel).length();
+		if (selfSpeed <= 1e-3) { return targetPos; }
+
+		d64 a = relVel.dot(relVel) - selfSpeed * selfSpeed;
+		d64 b = 2.0 * toTarget.dot(relVel);
+		d64 c = toTarget.dot(toTarget);
+
+		d64 leadTime;
+		if (std::abs(a) < 1e-6) {
+			if (std::abs(b) < 1e-9) { return targetPos; }
+			leadTime = -c / b;
+			if (leadTime <= 0.0) { return targetPos; }
+		}
+		else {
+			d64 disc = b * b - 4.0 * a * c;
+			if (disc < 0.0) { return targetPos; }
+			d64 sqrtDisc = std::sqrt(disc);
+			d64 t1 = (-b + sqrtDisc) / (2.0 * a);
+			d64 t2 = (-b - sqrtDisc) / (2.0 * a);
+
+			leadTime = std::numeric_limits<d64>::max();
+			if (t1 > 0.0) { leadTime = t1; }
+			if (t2 > 0.0 && t2 < leadTime) { leadTime = t2; }
+			if (leadTime == std::numeric_limits<d64>::max()) { return targetPos; }
+		}
+
+		leadTime = std::min(leadTime, AI_MAX_LEAD_TIME);
+		return targetPos + relVel * leadTime;
 	}
 
 	void AISystem::Update(d64 dt)
@@ -72,16 +121,21 @@ namespace Engine {
 				Vector2double toTarget = targetPos.transform - pos.transform;
 				d64 dist = std::sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
 
-				// Snap-face the target no smoothing/angularVelocity
-				pos.rotation = static_cast<f32>(std::atan2(toTarget.y, toTarget.x));
+				Vector2float targetVel = m_ecs.hasComponent<Movement>(ai.target) ?
+					m_ecs.getComponent<Movement>(ai.target).linearVelocity : Vector2float{};
+				Vector2double aimPoint = predictInterceptPoint(pos.transform, movement.linearVelocity,
+					targetPos.transform, targetVel, dist);
+				Vector2double toAimPoint = aimPoint - pos.transform;
+
+				// Snap-face the predicted intercept point, no smoothing/angularVelocity
+				pos.rotation = static_cast<f32>(std::atan2(toAimPoint.y, toAimPoint.x));
 
 				if (dist <= static_cast<d64>(ai.engageRange)) {
 					thruster.throttle = 0.0f;
 					ai.throttleHeld = false;
 				}
 				else if (ai.throttleHeld) {
-					// Coasting off a losing chase -- wait until velocity has bled down near
-					// zero (MovementDamper does the actual killing) before burning again.
+
 					f32 speed = std::sqrt(movement.linearVelocity.x * movement.linearVelocity.x +
 						movement.linearVelocity.y * movement.linearVelocity.y);
 					if (speed < AI_CHASE_RESUME_SPEED_THRESHOLD) {
@@ -93,7 +147,6 @@ namespace Engine {
 					}
 				}
 				else if (ai.lastTargetDist >= 0.0 && dist > ai.lastTargetDist) {
-					// Target is outrunning us -- stop burning into a chase we're losing.
 					ai.throttleHeld = true;
 					thruster.throttle = 0.0f;
 				}
@@ -104,7 +157,7 @@ namespace Engine {
 				ai.lastTargetDist = dist;
 			}
 			else {
-				thruster.throttle = 0.0f; // no enemies left, sit idle
+				thruster.throttle = 0.0f;
 				ai.lastTargetDist = -1.0;
 				ai.throttleHeld = false;
 			}

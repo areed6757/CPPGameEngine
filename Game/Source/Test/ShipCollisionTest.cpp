@@ -225,11 +225,11 @@ namespace Engine {
 
 	void ShipCollisionTest::spawnTieredFleetBattle(d64 sideSpacing, d64 shipSpacing)
 	{
-		// Small fighter: single engine, fires fast and weak, short range (speed * 3s Lifetime),
+		// Small fighter: single engine, fires fast and weak, short range (speed * 1.5s Lifetime),
 		// stays quick by being both light and modestly thrust-heavy.
 		PartVariantID smallWeapon = m_registry.registerVariant(PartVariant{
 			.name = "Fighter Light Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 0.5f, 5.0f, 1.0f, 0.0f }, 3.0f, 0.3f, 5.0f, 0.003f }
+			.params = WeaponParams{ PartBaseStats{ 0.5f, 5.0f, 1.0f, 0.0f }, 3.0f, 0.3f, 10.0f, 0.003f, 1.5f }
 			});
 		PartVariantID smallEngine = m_registry.registerVariant(PartVariant{
 			.name = "Fighter Engine", .category = PartCategory::Engine,

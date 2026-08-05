@@ -7,6 +7,7 @@ namespace Engine {
 		FrigateIcon,
 		DestroyerIcon,
 		ProjectileIcon,
+		SmallCannon,
 		Count // Must remain last, size of TextureRegistry's array not a real id
 	};
 }

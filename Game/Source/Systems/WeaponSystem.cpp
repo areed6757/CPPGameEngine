@@ -61,7 +61,7 @@ namespace Engine {
 				});
 			m_cmdBuffer.addComponent(projectile, Physics{ .radius = weapon.projectileRadius, .mass = 0.01f });
 			m_cmdBuffer.addComponent(projectile, DamagePayload{ .amount = weapon.projectileDamage, .source = mount.owner });
-			m_cmdBuffer.addComponent(projectile, Lifetime{ .remaining = 3.0f });
+			m_cmdBuffer.addComponent(projectile, Lifetime{ .remaining = weapon.projectileLifetime });
 			m_cmdBuffer.addComponent(projectile, Renderable{
 				.mesh = MeshID::Quad,
 				.texture = std::nullopt,

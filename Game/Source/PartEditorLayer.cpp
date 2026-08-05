@@ -54,8 +54,10 @@ namespace Engine {
 			ImGui::DragFloat("Cooldown", &m_weaponParams.cooldown, 0.05f, 0.01f, 60.0f);
 			ImGui::DragFloat("Projectile Speed", &m_weaponParams.projectileSpeed, 0.5f, 0.0f, 1000.0f);
 			ImGui::DragFloat("Projectile Radius", &m_weaponParams.projectileRadius, 0.001f, 0.0f, 1.0f);
+			ImGui::DragFloat("Projectile Lifetime", &m_weaponParams.projectileLifetime, 0.05f, 0.01f, 60.0f);
 			ImGui::SliderInt("Barrel Count", &m_weaponParams.barrelCount, 1, 4);
 			ImGui::DragFloat("Barrel Spacing", &m_weaponParams.barrelSpread, 0.001f, 0.0f, 0.25f);
+			ImGui::DragFloat("Muzzle Forward Offset", &m_weaponParams.muzzleForwardOffset, 0.001f, 0.0f, 0.25f);
 			break;
 		}
 		case PartCategory::Hardpoint: {

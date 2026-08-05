@@ -6,6 +6,10 @@ Engine::Texture::Texture(const TextureDesc& desc) : Base(desc.base),
 	m_colorChannels(desc.colorChannels),
 	m_bytes(stbi_load(desc.imgAddr, &m_widthImg, &m_heightImg, &m_colorChannels, 4))
 {
+	if (!m_bytes) {
+		EngineLogError("Texture: stbi_load failed for '{}' (cwd-relative path, reason: {})", desc.imgAddr, stbi_failure_reason());
+	}
+
 	glGenTextures(1, &m_texture);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
