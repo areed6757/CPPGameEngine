@@ -35,7 +35,7 @@ namespace Engine {
 		return at(cell.anchorX, cell.anchorY);
 	}
 
-	bool ShipGrid::tryPlacePart(i32 x, i32 y, i32 sizeX, i32 sizeY, PartCategory category, PartVariantID variant)
+	bool ShipGrid::tryPlacePart(i32 x, i32 y, i32 sizeX, i32 sizeY, PartCategory category, PartVariantID variant, f32 rotation)
 	{
 		for (i32 dy = 0; dy < sizeY; dy++) {
 			for (i32 dx = 0; dx < sizeX; dx++) {
@@ -56,12 +56,13 @@ namespace Engine {
 				cell.anchorY = anchor ? -1 : y;
 				cell.sizeX = sizeX;
 				cell.sizeY = sizeY;
+				cell.rotation = rotation;
 			}
 		}
 		return true;
 	}
 
-	void ShipGrid::forcePlacePart(i32 x, i32 y, i32 sizeX, i32 sizeY, PartCategory category, PartVariantID variant)
+	void ShipGrid::forcePlacePart(i32 x, i32 y, i32 sizeX, i32 sizeY, PartCategory category, PartVariantID variant, f32 rotation)
 	{
 		for (i32 dy = 0; dy < sizeY; dy++) {
 			for (i32 dx = 0; dx < sizeX; dx++) {
@@ -77,6 +78,7 @@ namespace Engine {
 				cell.anchorY = anchor ? -1 : y;
 				cell.sizeX = sizeX;
 				cell.sizeY = sizeY;
+				cell.rotation = rotation;
 			}
 		}
 	}

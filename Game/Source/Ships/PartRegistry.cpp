@@ -1,6 +1,9 @@
 #include <Ships/PartRegistry.h>
+#include <cmath>
 
 namespace Engine {
+	constexpr f32 WEAPON_NOMINAL_TARGET_RADIUS_KM = 0.03f;
+
 	PartRegistry::PartRegistry(const PartRegistryDesc& desc) : Base(desc.base)
 	{
 		EngineLogInfo("Part registry created.");
@@ -42,6 +45,12 @@ namespace Engine {
 		weapon.maxRotationAbs = mountRotation + params.maxRotation;
 		weapon.restRotationAbs = (weapon.minRotationAbs + weapon.maxRotationAbs) * 0.5f;
 		weapon.aimRotation = weapon.restRotationAbs;
+
+		weapon.maxRange = params.projectileSpeed * params.projectileLifetime;
+		weapon.idealRange = params.accuracy > 0.0f
+			? std::min(weapon.maxRange, WEAPON_NOMINAL_TARGET_RADIUS_KM / std::tan(params.accuracy))
+			: weapon.maxRange;
+		weapon.role = params.role;
 		return weapon;
 	}
 

@@ -19,6 +19,18 @@ namespace Engine {
 		}
 	}
 
+	void PartEditorLayer::drawWeaponRolePicker()
+	{
+		static const char* roleNames[] = {
+			"Point Defense", "Flak", "Light Primary", "Standard Primary",
+			"Rapid Primary", "Heavy Primary", "Siege Primary", "Torpedo"
+		};
+		i32 current = static_cast<i32>(m_weaponParams.role);
+		if (ImGui::Combo("Role", &current, roleNames, IM_ARRAYSIZE(roleNames))) {
+			m_weaponParams.role = static_cast<WeaponRole>(current);
+		}
+	}
+
 	void PartEditorLayer::drawStatFields()
 	{
 		switch (m_editCategory) {
@@ -58,6 +70,7 @@ namespace Engine {
 			ImGui::SliderInt("Barrel Count", &m_weaponParams.barrelCount, 1, 4);
 			ImGui::DragFloat("Barrel Spacing", &m_weaponParams.barrelSpread, 0.001f, 0.0f, 0.25f);
 			ImGui::DragFloat("Muzzle Forward Offset", &m_weaponParams.muzzleForwardOffset, 0.001f, 0.0f, 0.25f);
+			drawWeaponRolePicker();
 			break;
 		}
 		case PartCategory::Hardpoint: {

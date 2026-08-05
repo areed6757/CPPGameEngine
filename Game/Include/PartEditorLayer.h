@@ -20,6 +20,7 @@ namespace Engine {
 	private:
 		void drawCategoryPicker();
 		void drawStatFields();
+		void drawWeaponRolePicker();
 		void save();
 
 		Application& m_app;

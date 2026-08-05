@@ -18,6 +18,7 @@ namespace Engine {
 		bool isAnchor = true; // False for any cell that is not the anchor point of multi-cell parts
 		i32 anchorX = -1, anchorY = -1;
 		i32 sizeX = 1, sizeY = 1;
+		f32 rotation = 0.0f; // ship-relative facing; only meaningful for Hardpoint cells, baked into Mount::rotation
 	};
 
 	struct ShipGridDesc {
@@ -43,9 +44,9 @@ namespace Engine {
 
 		[[nodiscard]] ShipGridData toRuntimeData() const;
 
-		bool tryPlacePart(i32 x, i32 y, i32 sizeX, i32 sizeY, PartCategory category, PartVariantID variant);
+		bool tryPlacePart(i32 x, i32 y, i32 sizeX, i32 sizeY, PartCategory category, PartVariantID variant, f32 rotation = 0.0f);
 
-		void forcePlacePart(i32 x, i32 y, i32 sizeX, i32 sizeY, PartCategory category, PartVariantID variant);
+		void forcePlacePart(i32 x, i32 y, i32 sizeX, i32 sizeY, PartCategory category, PartVariantID variant, f32 rotation = 0.0f);
 
 		void removePart(i32 x, i32 y);
 

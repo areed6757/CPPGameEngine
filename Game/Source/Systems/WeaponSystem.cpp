@@ -32,7 +32,7 @@ namespace Engine {
 
 			auto& weapon = m_ecs.getComponentAtDenseIndex<Weapon>(i);
 			weapon.timeSinceLastFire += static_cast<f32>(dt);
-			if (weapon.timeSinceLastFire >= weapon.cooldown) { fire(id); }
+			if (weapon.timeSinceLastFire >= weapon.cooldown && weapon.targetInRange) { fire(id); }
 		}
 	}
 

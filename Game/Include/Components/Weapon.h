@@ -1,4 +1,5 @@
 #pragma once
+#include <Ships/PartTypes.h>
 
 namespace Engine {
 	struct Weapon {
@@ -17,5 +18,11 @@ namespace Engine {
 		f32 restRotationAbs{ 0.0f }; // baked midpoint, held when no target
 		f32 traverseSpeed{ 1000.0f }; // rad/s, max angular speed of aimRotation tracking
 		f32 accuracy{ 0.0f }; // cone half-angle (radians) of random spread applied at fire time
+
+		f32 maxRange{ 0.0f };
+		f32 idealRange{ 0.0f };
+		WeaponRole role{ WeaponRole::StandardPrimary };
+
+		bool targetInRange{ false };
 	};
 }

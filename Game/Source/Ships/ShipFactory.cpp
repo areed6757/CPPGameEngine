@@ -11,21 +11,61 @@
 #include <Components/Weapon.h>
 #include <Components/Renderable.h>
 #include <Components/ShipVisual.h>
+#include <Components/UtilityAIState.h>
 #include <Graphics/MeshID.h>
 #include <tuple>
 #include <algorithm>
 
 namespace Engine {
 	constexpr f32 THRUST_FORCE_MULTIPLIER = 2.0f;
-	constexpr f32 TURRET_ART_ROTATION_OFFSET = -1.57079632679f;
+	constexpr f32 TURRET_ART_ROTATION_OFFSET = -HALF_PI;
 	constexpr f32 TURRET_ART_SCALE_MULTIPLIER = 2.0f;
-	constexpr f32 SHIP_FACTORY_PI = 3.14159265f;
+
+	constexpr i32 SHIP_CLASS_FRIGATE_MIN_PARTS = 20;
+	constexpr i32 SHIP_CLASS_DESTROYER_MIN_PARTS = 60;
+	constexpr i32 SHIP_CLASS_CRUISER_MIN_PARTS = 150;
+	constexpr i32 SHIP_CLASS_BATTLESHIP_MIN_PARTS = 500;
+
+	constexpr f32 POINT_DEFENSE_DPS_THRESHOLD = 0.5f;
 
 	namespace {
 		f32 normalizeAngle(f32 a) {
-			while (a > SHIP_FACTORY_PI) { a -= 2.0f * SHIP_FACTORY_PI; }
-			while (a < -SHIP_FACTORY_PI) { a += 2.0f * SHIP_FACTORY_PI; }
+			while (a > PI) { a -= 2.0f * PI; }
+			while (a < -PI) { a += 2.0f * PI; }
 			return a;
+		}
+
+		ShipClass classifyShipSize(i32 totalPartCount) {
+			if (totalPartCount < SHIP_CLASS_FRIGATE_MIN_PARTS) { return ShipClass::Fighter; }
+			if (totalPartCount < SHIP_CLASS_DESTROYER_MIN_PARTS) { return ShipClass::Frigate; }
+			if (totalPartCount < SHIP_CLASS_CRUISER_MIN_PARTS) { return ShipClass::Destroyer; }
+			if (totalPartCount < SHIP_CLASS_BATTLESHIP_MIN_PARTS) { return ShipClass::Cruiser; }
+			return ShipClass::Battleship;
+		}
+
+		const char* weaponRoleName(WeaponRole role) {
+			switch (role) {
+			case WeaponRole::PointDefense:   return "PointDefense";
+			case WeaponRole::Flak:           return "Flak";
+			case WeaponRole::LightPrimary:   return "LightPrimary";
+			case WeaponRole::StandardPrimary:return "StandardPrimary";
+			case WeaponRole::RapidPrimary:   return "RapidPrimary";
+			case WeaponRole::HeavyPrimary:   return "HeavyPrimary";
+			case WeaponRole::SiegePrimary:   return "SiegePrimary";
+			case WeaponRole::Torpedo:        return "Torpedo";
+			default:                         return "Unknown";
+			}
+		}
+
+		const char* shipClassName(ShipClass shipClass) {
+			switch (shipClass) {
+			case ShipClass::Fighter:    return "Fighter";
+			case ShipClass::Frigate:    return "Frigate";
+			case ShipClass::Destroyer:  return "Destroyer";
+			case ShipClass::Cruiser:    return "Cruiser";
+			case ShipClass::Battleship: return "Battleship";
+			default:                    return "Unknown";
+			}
 		}
 
 		// Event-sweep over circular interval start/end points to find the angle
@@ -46,8 +86,8 @@ namespace Engine {
 				}
 				else {
 					events.push_back({ start, +1 });
-					events.push_back({ SHIP_FACTORY_PI, -1 });
-					events.push_back({ -SHIP_FACTORY_PI, +1 });
+					events.push_back({ PI, -1 });
+					events.push_back({ -PI, +1 });
 					events.push_back({ end, -1 });
 				}
 			}
@@ -56,12 +96,12 @@ namespace Engine {
 
 			i32 count = 0;
 			i32 bestCount = 0;
-			f32 bestStart = -SHIP_FACTORY_PI, bestEnd = SHIP_FACTORY_PI;
+			f32 bestStart = -PI, bestEnd = PI;
 			i32 n = static_cast<i32>(events.size());
 			for (i32 i = 0; i < n; i++) {
 				f32 segStart = events[i].angle;
 				count += events[i].delta;
-				f32 segEnd = (i + 1 < n) ? events[i + 1].angle : SHIP_FACTORY_PI;
+				f32 segEnd = (i + 1 < n) ? events[i + 1].angle : PI;
 				if (segEnd <= segStart) { continue; }
 
 				if (count > bestCount || (count == bestCount && count > 0 && (segEnd - segStart) > (bestEnd - bestStart))) {
@@ -94,7 +134,7 @@ namespace Engine {
 		f32 totalThrustForce = 0.0f;
 
 		ShipVisual visual;
-		std::vector<std::tuple<i32, i32, const HardpointParams*, i32>> hardpoints;
+		std::vector<std::tuple<i32, i32, const HardpointParams*, i32, f32>> hardpoints;
 
 		auto localOffsetFor = [&](i32 x, i32 y, i32 sizeX, i32 sizeY) -> Vector2float {
 			return Vector2float{
@@ -140,7 +180,7 @@ namespace Engine {
 						visual.parts.push_back({
 							localOffsetFor(x, y, cell.sizeX, cell.sizeY), cell.sizeX, cell.sizeY, PartCategory::Hardpoint, cell.variant
 							});
-						hardpoints.emplace_back(x, y, &params, visualPartIndex);
+						hardpoints.emplace_back(x, y, &params, visualPartIndex, cell.rotation);
 					}
 					}, variant.params);
 			}
@@ -163,14 +203,19 @@ namespace Engine {
 
 		std::vector<std::pair<f32, f32>> weaponArcs;
 
-		for (auto& [hx, hy, params, visualPartIndex] : hardpoints) {
+		f32 totalDps = 0.0f;
+		f32 pointDefenseDps = 0.0f;
+		f32 dpsWeightedRangeSum = 0.0f;
+		f32 bestVolleyDamage = -1.0f;
+		f32 primaryRange = 0.0f;
+
+		for (auto& [hx, hy, params, visualPartIndex, hardpointRotation] : hardpoints) {
 			Vector2float offset{
 				(static_cast<f32>(hx) + params->sizeX * 0.5f - grid.width() * 0.5f) * static_cast<f32>(GRID_CELL_SIZE_KM),
 				(static_cast<f32>(hy) + params->sizeY * 0.5f - grid.height() * 0.5f) * static_cast<f32>(GRID_CELL_SIZE_KM)
 			};
 
-			// No per-hardpoint rotation authoring data exists yet (grid/loadout carry no such field); mounts default to facing 0.
-			f32 mountRotation = 0.0f;
+			f32 mountRotation = hardpointRotation;
 
 			auto loadoutIt = hardpointLoadout.find({ hx, hy });
 
@@ -194,6 +239,21 @@ namespace Engine {
 			if (loadoutIt != hardpointLoadout.end()) {
 				Weapon weapon = m_partReg.buildWeaponFromVariant(loadoutIt->second, mountRotation);
 				weaponArcs.emplace_back(weapon.minRotationAbs, weapon.maxRotationAbs);
+
+				f32 volleyDamage = weapon.projectileDamage * static_cast<f32>(weapon.barrelCount);
+				f32 dps = weapon.cooldown > 0.0f ? volleyDamage / weapon.cooldown : volleyDamage;
+
+				totalDps += dps;
+				dpsWeightedRangeSum += dps * weapon.idealRange;
+				if (weapon.role == WeaponRole::PointDefense) { pointDefenseDps += dps; }
+				if (volleyDamage > bestVolleyDamage) {
+					bestVolleyDamage = volleyDamage;
+					primaryRange = weapon.maxRange;
+				}
+
+				EngineLogInfo("ShipFactory:   hardpoint ({}, {}) weapon: role={}, maxRange={:.2f}, idealRange={:.2f}, volleyDamage={:.1f}, dps={:.1f}",
+					hx, hy, weaponRoleName(weapon.role), weapon.maxRange, weapon.idealRange, volleyDamage, dps);
+
 				m_ecs.addComponent(mountEntity, weapon);
 			}
 			// No matching entity, mount stays empty
@@ -203,7 +263,19 @@ namespace Engine {
 		}
 
 		m_ecs.addComponent(ship, grid.toRuntimeData());
-		m_ecs.addComponent(ship, BakedShipStats{ .idealFiringHeading = computeIdealFiringHeading(weaponArcs) });
+
+		BakedShipStats stats{
+			.idealFiringHeading = computeIdealFiringHeading(weaponArcs),
+			.primaryRange = primaryRange,
+			.idealRange = totalDps > 0.0f ? dpsWeightedRangeSum / totalDps : 0.0f,
+			.isPointDefense = totalDps > 0.0f && (pointDefenseDps / totalDps) > POINT_DEFENSE_DPS_THRESHOLD,
+			.shipClass = classifyShipSize(static_cast<i32>(visual.parts.size())),
+		};
+		EngineLogInfo("ShipFactory: baked stats -- class={}, idealFiringHeading={:.2f}, primaryRange={:.2f}, idealRange={:.2f}, isPointDefense={}, isUtility={}",
+			shipClassName(stats.shipClass), stats.idealFiringHeading, stats.primaryRange, stats.idealRange, stats.isPointDefense, stats.isUtility);
+
+		m_ecs.addComponent(ship, stats);
+		m_ecs.addComponent(ship, UtilityAIState{});
 
 		m_ecs.addComponent(ship, visual);
 

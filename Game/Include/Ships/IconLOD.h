@@ -19,8 +19,8 @@ namespace Engine {
 	};
 
 	// Applied to newly-fired projectiles by WeaponSystem; changing this at runtime only affects subsequent projectiles spawned
-	inline f32 g_projectileIconMinPixelSize = 6.0f;
+	inline f32 g_projectileIconMinPixelSize = 10.0f;
 	inline TextureID g_projectileIconTexture = TextureID::ProjectileIcon;
 
-	constexpr f32 ICON_ART_ROTATION_OFFSET = -1.57079632679f; // -half_pi
+	constexpr f32 ICON_ART_ROTATION_OFFSET = -HALF_PI;
 }

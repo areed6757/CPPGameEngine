@@ -6,7 +6,6 @@ namespace Engine {
 
 	namespace {
 		f32 normalizeAngle(f32 a) {
-			constexpr f32 PI = 3.14159265f;
 			while (a > PI) { a -= 2.0f * PI; }
 			while (a < -PI) { a += 2.0f * PI; }
 			return a;
@@ -122,6 +121,7 @@ namespace Engine {
 			auto& ownerPos = m_ecs.getComponent<Position>(mount.owner);
 
 			if (!m_ecs.hasComponent<Faction>(mount.owner)) {
+				weapon.targetInRange = false;
 				stepTowardAngle(weapon.aimRotation, weapon.restRotationAbs, weapon.traverseSpeed, static_cast<f32>(dt));
 				continue;
 			}
@@ -137,6 +137,7 @@ namespace Engine {
 
 			EntityID target = findNearestEnemy(mount.owner, myTeam, anchorWorldPos);
 			if (!m_ecs.isValidEntity(target) || !m_ecs.hasComponent<Position>(target)) {
+				weapon.targetInRange = false;
 				stepTowardAngle(weapon.aimRotation, weapon.restRotationAbs, weapon.traverseSpeed, static_cast<f32>(dt));
 				continue;
 			}
@@ -144,6 +145,8 @@ namespace Engine {
 			auto& targetPos = m_ecs.getComponent<Position>(target);
 			Vector2double toTarget = targetPos.transform - anchorWorldPos;
 			d64 dist = std::sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
+
+			weapon.targetInRange = dist <= static_cast<d64>(weapon.maxRange);
 
 			Vector2float targetVel = m_ecs.hasComponent<Movement>(target) ?
 				m_ecs.getComponent<Movement>(target).linearVelocity : Vector2float{};
