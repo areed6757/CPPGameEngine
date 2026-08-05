@@ -52,6 +52,7 @@
 #include <Systems/PartRenderSystem.h>
 #include <Systems/AISystem.h>
 #include <Systems/SeparationSystem.h>
+#include <Systems/TransformHistorySystem.h>
 
 // Layers and Overlays
 #include <PartEditorLayer.h>

@@ -8,7 +8,8 @@ Engine::RenderSystem::RenderSystem(const RenderSystemDesc& desc) : Base(desc.bas
 	m_textureReg(desc.textureRegistry),
 	m_renderer(desc.renderer),
 	m_camera(desc.camera),
-	m_window(desc.window)
+	m_window(desc.window),
+	m_scheduler(desc.scheduler)
 {
 	m_entityMask = m_ecs.makeSignature<Position, Renderable>();
 	m_reads = m_ecs.makeSignature<Position, Renderable>();
@@ -27,6 +28,7 @@ void Engine::RenderSystem::Update(d64 dt)
 
 	AABB viewport = m_camera.getViewportBounds(m_window.getWidth(), m_window.getHeight());
 	f32 worldUnitsPerPixel = m_camera.getWorldUnitsPerPixel(m_window.getHeight());
+	f32 alpha = m_scheduler.getInterpolationAlpha();
 
 	i32 c = m_ecs.sizeComponentPool<Renderable>();
 	for (i32 i = 0; i < c; i++) {
@@ -45,6 +47,7 @@ void Engine::RenderSystem::Update(d64 dt)
 
 		auto& renderable = m_ecs.getComponentAtDenseIndex<Renderable>(i);
 		auto& position = m_ecs.getComponent<Position>(id);
+		InterpolatedPose pose = interpolatePosition(position, alpha);
 
 		f32 cullScale = renderable.scale;
 		if (renderable.iconTexture.has_value()) {
@@ -52,14 +55,14 @@ void Engine::RenderSystem::Update(d64 dt)
 		}
 
 		AABB entityBounds{
-			Vector2double{ position.transform.x - cullScale, position.transform.y - cullScale },
-			Vector2double{ position.transform.x + cullScale, position.transform.y + cullScale }
+			Vector2double{ pose.transform.x - cullScale, pose.transform.y - cullScale },
+			Vector2double{ pose.transform.x + cullScale, pose.transform.y + cullScale }
 		};
 		if (!viewport.overlaps(entityBounds)) { continue; }
 
 		f32 scale = renderable.scale;
 		std::optional<TextureID> texture = renderable.texture;
-		f32 rotation = position.rotation + renderable.rotationOffset;
+		f32 rotation = pose.rotation + renderable.rotationOffset;
 
 		if (renderable.iconTexture.has_value()) {
 			f32 pixelDiameter = renderable.scale / worldUnitsPerPixel;
@@ -70,7 +73,7 @@ void Engine::RenderSystem::Update(d64 dt)
 			}
 		}
 
-		Vector2double relative = m_camera.toCameraRelative(position.transform);
+		Vector2double relative = m_camera.toCameraRelative(pose.transform);
 		glm::vec3 pos(static_cast<f32>(relative.x), static_cast<f32>(relative.y), 0.0f);
 
 		glm::mat4 model = glm::translate(glm::mat4(1.0f), pos);

@@ -8,7 +8,8 @@ namespace Engine {
 		m_window(desc.window),
 		m_meshReg(desc.meshReg),
 		m_partReg(desc.partReg),
-		m_textureReg(desc.textureReg)
+		m_textureReg(desc.textureReg),
+		m_scheduler(desc.scheduler)
 	{
 		m_entityMask = m_ecs.makeSignature<Position, ShipVisual>();
 		m_reads = m_ecs.makeSignature<Position, ShipVisual>();
@@ -28,6 +29,7 @@ namespace Engine {
 		AABB viewport = m_camera.getViewportBounds(m_window.getWidth(), m_window.getHeight());
 
 		f32 worldUnitsPerPixel = m_camera.getWorldUnitsPerPixel(m_window.getHeight());
+		f32 alpha = m_scheduler.getInterpolationAlpha();
 
 		i32 c = m_ecs.sizeComponentPool<ShipVisual>();
 		for (i32 i = 0; i < c; i++) {
@@ -37,6 +39,7 @@ namespace Engine {
 
 			auto& shipPos = m_ecs.getComponent<Position>(id);
 			auto& visual = m_ecs.getComponentAtDenseIndex<ShipVisual>(i);
+			InterpolatedPose pose = interpolatePosition(shipPos, alpha);
 
 			i32 tier = tierForPartCount(static_cast<i32>(visual.parts.size()));
 			const ShipIconTier& iconTier = g_shipIconTiers[tier];
@@ -47,8 +50,8 @@ namespace Engine {
 				shipRadius = shipPhysics.radius;
 				f32 cullRadius = std::max(shipRadius, iconTier.iconPixelSize * worldUnitsPerPixel);
 				AABB shipBounds{
-					Vector2double{ shipPos.transform.x - cullRadius, shipPos.transform.y - cullRadius },
-					Vector2double{ shipPos.transform.x + cullRadius, shipPos.transform.y + cullRadius }
+					Vector2double{ pose.transform.x - cullRadius, pose.transform.y - cullRadius },
+					Vector2double{ pose.transform.x + cullRadius, pose.transform.y + cullRadius }
 				};
 				if (!viewport.overlaps(shipBounds)) { continue; }
 			}
@@ -57,10 +60,10 @@ namespace Engine {
 			if (shipPixelDiameter < iconTier.swapThreshold) {
 				f32 iconWorldScale = iconTier.iconPixelSize * worldUnitsPerPixel;
 
-				Vector2double relative = m_camera.toCameraRelative(shipPos.transform);
+				Vector2double relative = m_camera.toCameraRelative(pose.transform);
 				glm::mat4 model = glm::translate(glm::mat4(1.0f),
 					glm::vec3(static_cast<f32>(relative.x), static_cast<f32>(relative.y), 0.0f));
-				model = glm::rotate(model, shipPos.rotation + ICON_ART_ROTATION_OFFSET, glm::vec3(0.0f, 0.0f, 1.0f));
+				model = glm::rotate(model, pose.rotation + ICON_ART_ROTATION_OFFSET, glm::vec3(0.0f, 0.0f, 1.0f));
 				model = glm::scale(model, glm::vec3(iconWorldScale, iconWorldScale, 1.0f));
 
 				m_iconBatches[iconTier.texture].push_back(PartInstanceData{ model, 1.0f });
@@ -73,7 +76,7 @@ namespace Engine {
 				shipHealthFraction = (stability.max > 0.0f) ? (stability.current / stability.max) : 1.0f;
 			}
 
-			f32 rot = shipPos.rotation;
+			f32 rot = pose.rotation;
 			f32 cosR = std::cos(rot), sinR = std::sin(rot);
 			for (auto& part : visual.parts) {
 				Vector2float anchorLocal = part.localOffset + part.anchorOffset;
@@ -81,7 +84,7 @@ namespace Engine {
 					anchorLocal.x * cosR - anchorLocal.y * sinR,
 					anchorLocal.x * sinR + anchorLocal.y * cosR
 				};
-				Vector2double worldPos = shipPos.transform + worldOffset;
+				Vector2double worldPos = pose.transform + worldOffset;
 				Vector2double relative = m_camera.toCameraRelative(worldPos);
 
 				glm::vec3 pos(static_cast<f32>(relative.x), static_cast<f32>(relative.y), 0.0f);

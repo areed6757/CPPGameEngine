@@ -31,6 +31,9 @@ namespace Engine {
 
 		void registerFlushCallback(std::function<void()> cb);
 
+		// how far into the next fixed tick the sim currently is, 0 to 1, for frame systems to smooth rendering against
+		[[nodiscard]] f32 getInterpolationAlpha() const noexcept { return static_cast<f32>(m_accumulator / m_fixedTimestep); }
+
 	private:
 		GameClock& m_clock;
 		d64 m_fixedTimestep;

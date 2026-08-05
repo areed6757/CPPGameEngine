@@ -25,6 +25,8 @@ namespace Engine {
 		std::unique_ptr<EntityRegister> m_entityRegister{};
 		std::unique_ptr<GameECSWrapper> m_ecsWrapper{};
 
+		std::unique_ptr<TransformHistorySystem> m_transformHistorySystem{};
+
 		std::unique_ptr<AABBTree> m_AABBTree{};
 		std::unique_ptr<ThreadPool> m_collisionThreadPool{};
 		std::unique_ptr<CollisionSystem> m_collisionSystem{};

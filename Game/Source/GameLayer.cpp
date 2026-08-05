@@ -50,7 +50,10 @@ namespace Engine {
 		ECSWrapperDesc ecsDesc = { {m_logger}, *m_entityRegister.get(), compDesc };
 		m_ecsWrapper = std::make_unique<GameECSWrapper>(ecsDesc);
 
-		RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get(), *m_camera.get(), m_app.getWindow() };
+		TransformHistorySystemDesc transformHistDesc = { {m_logger}, *m_ecsWrapper.get() };
+		m_transformHistorySystem = std::make_unique<TransformHistorySystem>(transformHistDesc);
+
+		RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get(), *m_camera.get(), m_app.getWindow(), m_app.getScheduler() };
 		m_renderSystem = std::make_unique<RenderSystem>(renderSysDesc);
 
 		CollisionSystemDesc collisionSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_AABBTree.get(), *m_collisionThreadPool.get() };
@@ -106,7 +109,7 @@ namespace Engine {
 		ShipBuilderDesc shipBuilderDesc{ {m_logger}, *m_partRegistry.get(), SHIP_BUILDER_GRID_WIDTH, SHIP_BUILDER_GRID_HEIGHT };
 		m_shipBuilder = std::make_unique<ShipBuilder>(shipBuilderDesc);
 
-		PartRenderSystemDesc prsDesc = { {m_logger}, *m_ecsWrapper.get(), *m_renderer.get(), *m_camera.get(), m_app.getWindow(), *m_meshRegistry.get(), *m_partRegistry.get(), *m_textureRegistry.get() };
+		PartRenderSystemDesc prsDesc = { {m_logger}, *m_ecsWrapper.get(), *m_renderer.get(), *m_camera.get(), m_app.getWindow(), *m_meshRegistry.get(), *m_partRegistry.get(), *m_textureRegistry.get(), m_app.getScheduler() };
 		m_partRenderSystem = std::make_unique<PartRenderSystem>(prsDesc);
 
 		Scheduler& scheduler = m_app.getScheduler();
@@ -115,6 +118,7 @@ namespace Engine {
 		//scheduler.registerFrameSystem(m_particleSystem.get());
 		scheduler.registerFrameSystem(m_renderSystem.get());
 
+		scheduler.registerSystem(m_transformHistorySystem.get());
 		scheduler.registerSystem(m_aiSystem.get());
 		scheduler.registerSystem(m_thrusterSystem.get());
 		scheduler.registerSystem(m_separationSystem.get());

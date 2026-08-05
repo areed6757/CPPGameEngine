@@ -14,6 +14,7 @@ namespace Engine {
 		Renderer& renderer;
 		Camera& camera;
 		Window& window;
+		Scheduler& scheduler;
 	};
 
 	class RenderSystem : public Base, public TickedSystem {
@@ -29,6 +30,7 @@ namespace Engine {
 		Renderer& m_renderer;
 		Camera& m_camera;
 		Window& m_window;
+		Scheduler& m_scheduler;
 		std::bitset<64> m_entityMask;
 		std::map<std::pair<MeshID, std::optional<TextureID>>, std::vector<PartInstanceData>> m_batches;
 	};

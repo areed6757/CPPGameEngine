@@ -16,6 +16,7 @@ namespace Engine {
 		MeshRegistry& meshReg;
 		PartRegistry& partReg;
 		TextureRegistry& textureReg;
+		Scheduler& scheduler;
 	};
 
 	// Complex draw class using ship part baked indices, this will eventually perform automatic visual generation for
@@ -35,6 +36,7 @@ namespace Engine {
 		MeshRegistry& m_meshReg;
 		PartRegistry& m_partReg;
 		TextureRegistry& m_textureReg;
+		Scheduler& m_scheduler;
 		std::bitset<64> m_entityMask;
 
 		std::map<std::pair<PartCategory, PartVariantID>, std::vector<PartInstanceData>> m_batches;
