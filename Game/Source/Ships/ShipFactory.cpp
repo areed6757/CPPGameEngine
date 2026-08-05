@@ -132,6 +132,13 @@ namespace Engine {
 		f32 totalMass = 0.0f;
 		f32 totalStability = 0.0f;
 		f32 totalThrustForce = 0.0f;
+		f32 systemCapacityMax = 0.0f;
+		f32 systemCapacityUsed = 0.0f;
+
+		auto applySystemCapacity = [&](f32 contribution) {
+			if (contribution > 0.0f) { systemCapacityMax += contribution; }
+			else { systemCapacityUsed += -contribution; }
+			};
 
 		ShipVisual visual;
 		std::vector<std::tuple<i32, i32, const HardpointParams*, i32, f32>> hardpoints;
@@ -154,6 +161,7 @@ namespace Engine {
 					if constexpr (std::is_same_v<T, HullParams>) {
 						totalMass += params.mass;
 						totalStability += params.stabilityContribution;
+						applySystemCapacity(params.systemCapacityContribution);
 						visual.parts.push_back({
 							localOffsetFor(x, y, cell.sizeX, cell.sizeY), cell.sizeX, cell.sizeY, PartCategory::Hull, cell.variant
 							});
@@ -161,6 +169,7 @@ namespace Engine {
 					else if constexpr (std::is_same_v<T, ArmorParams>) {
 						totalMass += params.mass;
 						totalStability += params.stabilityContribution;
+						applySystemCapacity(params.systemCapacityContribution);
 						visual.parts.push_back({
 							localOffsetFor(x, y, cell.sizeX, cell.sizeY), cell.sizeX, cell.sizeY, PartCategory::Armor, cell.variant
 							});
@@ -169,6 +178,7 @@ namespace Engine {
 						totalMass += params.mass;
 						totalStability += params.stabilityContribution;
 						totalThrustForce += params.thrustForce;
+						applySystemCapacity(params.systemCapacityContribution);
 						visual.parts.push_back({
 							localOffsetFor(x, y, cell.sizeX, cell.sizeY), cell.sizeX, cell.sizeY, PartCategory::Engine, cell.variant
 							});
@@ -176,6 +186,7 @@ namespace Engine {
 					else if constexpr (std::is_same_v<T, HardpointParams>) {
 						totalMass += params.mass;
 						totalStability += params.stabilityContribution;
+						applySystemCapacity(params.systemCapacityContribution);
 						i32 visualPartIndex = static_cast<i32>(visual.parts.size());
 						visual.parts.push_back({
 							localOffsetFor(x, y, cell.sizeX, cell.sizeY), cell.sizeX, cell.sizeY, PartCategory::Hardpoint, cell.variant
@@ -224,6 +235,7 @@ namespace Engine {
 				const WeaponParams& weaponParams = std::get<WeaponParams>(m_partReg.get(loadoutIt->second).params);
 				mountOffset = offset + weaponParams.anchorOffset;
 				visual.parts[visualPartIndex].anchorOffset = weaponParams.anchorOffset;
+				applySystemCapacity(weaponParams.systemCapacityContribution);
 			}
 
 			EntityID mountEntity = m_ecs.createEntity();
@@ -269,10 +281,14 @@ namespace Engine {
 			.primaryRange = primaryRange,
 			.idealRange = totalDps > 0.0f ? dpsWeightedRangeSum / totalDps : 0.0f,
 			.isPointDefense = totalDps > 0.0f && (pointDefenseDps / totalDps) > POINT_DEFENSE_DPS_THRESHOLD,
+			.systemCapacityMax = systemCapacityMax,
+			.systemCapacityUsed = systemCapacityUsed,
+			.isOverSystemCapacity = systemCapacityUsed > systemCapacityMax,
 			.shipClass = classifyShipSize(static_cast<i32>(visual.parts.size())),
 		};
-		EngineLogInfo("ShipFactory: baked stats -- class={}, idealFiringHeading={:.2f}, primaryRange={:.2f}, idealRange={:.2f}, isPointDefense={}, isUtility={}",
-			shipClassName(stats.shipClass), stats.idealFiringHeading, stats.primaryRange, stats.idealRange, stats.isPointDefense, stats.isUtility);
+		EngineLogInfo("ShipFactory: baked stats -- class={}, idealFiringHeading={:.2f}, primaryRange={:.2f}, idealRange={:.2f}, isPointDefense={}, isUtility={}, systemCapacity={:.1f}/{:.1f}{}",
+			shipClassName(stats.shipClass), stats.idealFiringHeading, stats.primaryRange, stats.idealRange, stats.isPointDefense, stats.isUtility,
+			stats.systemCapacityUsed, stats.systemCapacityMax, stats.isOverSystemCapacity ? " (OVER CAPACITY)" : "");
 
 		m_ecs.addComponent(ship, stats);
 		m_ecs.addComponent(ship, UtilityAIState{});

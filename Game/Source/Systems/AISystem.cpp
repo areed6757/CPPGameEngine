@@ -7,7 +7,6 @@
 
 namespace Engine {
 	constexpr f32 AI_CHASE_RESUME_SPEED_THRESHOLD = 0.5f;
-	constexpr d64 AI_MAX_LEAD_TIME = 15.0;
 
 	AISystem::AISystem(const AISystemDesc& desc) : Base(desc.base),
 		m_ecs(desc.ecs), m_aabbTree(desc.aabbTree)
@@ -61,43 +60,6 @@ namespace Engine {
 		return EntityID{};
 	}
 
-	Vector2double AISystem::predictInterceptPoint(const Vector2double& selfPos, const Vector2float& selfVel,
-		const Vector2double& targetPos, const Vector2float& targetVel, d64 dist) const
-	{
-		if (dist <= 1e-6) { return targetPos; }
-
-		Vector2double toTarget = targetPos - selfPos;
-		Vector2double relVel(targetVel);
-		d64 selfSpeed = Vector2double(selfVel).length();
-		if (selfSpeed <= 1e-3) { return targetPos; }
-
-		d64 a = relVel.dot(relVel) - selfSpeed * selfSpeed;
-		d64 b = 2.0 * toTarget.dot(relVel);
-		d64 c = toTarget.dot(toTarget);
-
-		d64 leadTime;
-		if (std::abs(a) < 1e-6) {
-			if (std::abs(b) < 1e-9) { return targetPos; }
-			leadTime = -c / b;
-			if (leadTime <= 0.0) { return targetPos; }
-		}
-		else {
-			d64 disc = b * b - 4.0 * a * c;
-			if (disc < 0.0) { return targetPos; }
-			d64 sqrtDisc = std::sqrt(disc);
-			d64 t1 = (-b + sqrtDisc) / (2.0 * a);
-			d64 t2 = (-b - sqrtDisc) / (2.0 * a);
-
-			leadTime = std::numeric_limits<d64>::max();
-			if (t1 > 0.0) { leadTime = t1; }
-			if (t2 > 0.0 && t2 < leadTime) { leadTime = t2; }
-			if (leadTime == std::numeric_limits<d64>::max()) { return targetPos; }
-		}
-
-		leadTime = std::min(leadTime, AI_MAX_LEAD_TIME);
-		return targetPos + relVel * leadTime;
-	}
-
 	void AISystem::Update(d64 dt)
 	{
 		i32 c = m_ecs.sizeComponentPool<AIController>();
@@ -121,14 +83,7 @@ namespace Engine {
 				Vector2double toTarget = targetPos.transform - pos.transform;
 				d64 dist = std::sqrt(toTarget.x * toTarget.x + toTarget.y * toTarget.y);
 
-				Vector2float targetVel = m_ecs.hasComponent<Movement>(ai.target) ?
-					m_ecs.getComponent<Movement>(ai.target).linearVelocity : Vector2float{};
-				Vector2double aimPoint = predictInterceptPoint(pos.transform, movement.linearVelocity,
-					targetPos.transform, targetVel, dist);
-				Vector2double toAimPoint = aimPoint - pos.transform;
-
-				// Snap-face the predicted intercept point, no smoothing/angularVelocity
-				pos.rotation = static_cast<f32>(std::atan2(toAimPoint.y, toAimPoint.x));
+				pos.rotation = static_cast<f32>(std::atan2(toTarget.y, toTarget.x));
 
 				if (dist <= static_cast<d64>(ai.engageRange)) {
 					thruster.throttle = 0.0f;

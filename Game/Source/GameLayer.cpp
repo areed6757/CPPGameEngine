@@ -150,11 +150,17 @@ namespace Engine {
 					ImGui::EndTabItem();
 				}
 				if (ImGui::BeginTabItem("Icon LOD")) {
-					ImGui::Text("Ship icon swap thresholds (screen-space pixel diameter)");
-					ImGui::DragFloat("Fighter tier 1", &g_shipIconTiers[0].minPixelSize, 0.5f, 1.0f, 200.0f);
-					ImGui::DragFloat("Fighter tier 2", &g_shipIconTiers[1].minPixelSize, 0.5f, 1.0f, 200.0f);
-					ImGui::DragFloat("Frigate tier", &g_shipIconTiers[2].minPixelSize, 0.5f, 1.0f, 200.0f);
-					ImGui::DragFloat("Destroyer tier", &g_shipIconTiers[3].minPixelSize, 0.5f, 1.0f, 200.0f);
+					ImGui::Text("Ship icon swap thresholds (screen-space pixel diameter -- higher swaps sooner/less zoomed-out)");
+					ImGui::DragFloat("Fighter tier 1 swap", &g_shipIconTiers[0].swapThreshold, 0.5f, 1.0f, 200.0f);
+					ImGui::DragFloat("Fighter tier 2 swap", &g_shipIconTiers[1].swapThreshold, 0.5f, 1.0f, 200.0f);
+					ImGui::DragFloat("Frigate swap", &g_shipIconTiers[2].swapThreshold, 0.5f, 1.0f, 200.0f);
+					ImGui::DragFloat("Destroyer swap", &g_shipIconTiers[3].swapThreshold, 0.5f, 1.0f, 200.0f);
+					ImGui::Separator();
+					ImGui::Text("Icon display size (screen-space pixels, once swapped)");
+					ImGui::DragFloat("Fighter tier 1 icon size", &g_shipIconTiers[0].iconPixelSize, 0.5f, 1.0f, 200.0f);
+					ImGui::DragFloat("Fighter tier 2 icon size", &g_shipIconTiers[1].iconPixelSize, 0.5f, 1.0f, 200.0f);
+					ImGui::DragFloat("Frigate icon size", &g_shipIconTiers[2].iconPixelSize, 0.5f, 1.0f, 200.0f);
+					ImGui::DragFloat("Destroyer icon size", &g_shipIconTiers[3].iconPixelSize, 0.5f, 1.0f, 200.0f);
 					ImGui::Separator();
 					ImGui::Text("Projectiles (applies to newly-fired projectiles)");
 					ImGui::DragFloat("Projectile icon threshold", &g_projectileIconMinPixelSize, 0.25f, 0.0f, 100.0f);

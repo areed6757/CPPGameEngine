@@ -38,23 +38,24 @@ namespace Engine {
 			auto& shipPos = m_ecs.getComponent<Position>(id);
 			auto& visual = m_ecs.getComponentAtDenseIndex<ShipVisual>(i);
 
+			i32 tier = tierForPartCount(static_cast<i32>(visual.parts.size()));
+			const ShipIconTier& iconTier = g_shipIconTiers[tier];
+
 			f32 shipRadius = 0.0f;
 			if (m_ecs.hasComponent<Physics>(id)) {
 				auto& shipPhysics = m_ecs.getComponent<Physics>(id);
 				shipRadius = shipPhysics.radius;
+				f32 cullRadius = std::max(shipRadius, iconTier.iconPixelSize * worldUnitsPerPixel);
 				AABB shipBounds{
-					Vector2double{ shipPos.transform.x - shipRadius, shipPos.transform.y - shipRadius },
-					Vector2double{ shipPos.transform.x + shipRadius, shipPos.transform.y + shipRadius }
+					Vector2double{ shipPos.transform.x - cullRadius, shipPos.transform.y - cullRadius },
+					Vector2double{ shipPos.transform.x + cullRadius, shipPos.transform.y + cullRadius }
 				};
 				if (!viewport.overlaps(shipBounds)) { continue; }
 			}
 
-			i32 tier = tierForPartCount(static_cast<i32>(visual.parts.size()));
 			f32 shipPixelDiameter = (shipRadius * 2.0f) / worldUnitsPerPixel;
-
-			const ShipIconTier& iconTier = g_shipIconTiers[tier];
-			if (shipPixelDiameter < iconTier.minPixelSize) {
-				f32 iconWorldScale = iconTier.minPixelSize * worldUnitsPerPixel;
+			if (shipPixelDiameter < iconTier.swapThreshold) {
+				f32 iconWorldScale = iconTier.iconPixelSize * worldUnitsPerPixel;
 
 				Vector2double relative = m_camera.toCameraRelative(shipPos.transform);
 				glm::mat4 model = glm::translate(glm::mat4(1.0f),

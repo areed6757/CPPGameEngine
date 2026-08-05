@@ -20,6 +20,11 @@ namespace Engine {
 		f32 stabilityContribution;
 
 		f32 kineticResistance;
+
+		// Positive: this part provides system capacity (chassis/hull parts). Negative: this
+		// part consumes it to be mounted (engines, hardpoint sockets, equipped weapons). Armor
+		// deliberately defaults to 0 either way - it's pure protection, not chassis.
+		f32 systemCapacityContribution{ 0.0f };
 	};
 
 	struct ArmorParams : PartBaseStats {

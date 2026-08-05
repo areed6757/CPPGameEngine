@@ -30,7 +30,7 @@ namespace Engine {
 		// variety, so a single 5x5 solid block is deliberately simple.
 		m_hullVariant = m_registry.registerVariant(PartVariant{
 			.name = "Test Hull", .category = PartCategory::Hull,
-			.params = HullParams{ PartBaseStats{ 5.0f, 20.0f, 10.0f, 0.0f } }
+			.params = HullParams{ PartBaseStats{ 5.0f, 20.0f, 10.0f, 0.0f, 2.0f } }
 			});
 
 		// Shared armor variant reused by every corner plate on complex test
@@ -43,7 +43,7 @@ namespace Engine {
 
 		m_hardpointVariant = m_registry.registerVariant(PartVariant{
 			.name = "Test Hardpoint", .category = PartCategory::Hardpoint,
-			.params = HardpointParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f }, 1, 1 }
+			.params = HardpointParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f, -1.0f }, 1, 1 }
 			});
 		
 		m_engineVariant = {};
@@ -62,7 +62,8 @@ namespace Engine {
 	}
 
 	EntityID ShipCollisionTest::buildComplexShip(Vector2double pos, f32 rotation, std::mt19937& rng,
-		i32 basePartCount, i32 hardpointCount, i32 engineCount, PartVariantID hardpointVariant, PartVariantID weaponVariant, PartVariantID engineVariant)
+		i32 basePartCount, i32 hardpointCount, i32 engineCount, PartVariantID hardpointVariant, PartVariantID weaponVariant, PartVariantID engineVariant,
+		bool fixedForwardHardpoints)
 	{
 		i32 targetParts = basePartCount + hardpointCount + engineCount; // base hull/armor growth + N hardpoints + M engines
 		// Grid must comfortably outgrow targetParts -- organic frontier growth doesn't perfectly
@@ -139,12 +140,12 @@ namespace Engine {
 				variant = useArmor ? m_armorVariant : m_hullVariant;
 			}
 
-			f32 rotation = 0.0f;
-			if (isHardpoint) {
-				rotation = std::atan2(static_cast<f32>(ny - seed), static_cast<f32>(nx - seed));
+			f32 cellRotation = 0.0f;
+			if (isHardpoint && !fixedForwardHardpoints) {
+				cellRotation = std::atan2(static_cast<f32>(ny - seed), static_cast<f32>(nx - seed));
 			}
 
-			if (grid.tryPlacePart(nx, ny, 1, 1, category, variant, rotation)) {
+			if (grid.tryPlacePart(nx, ny, 1, 1, category, variant, cellRotation)) {
 				placed.emplace_back(nx, ny);
 				if (isHardpoint) { hardpointPositions.emplace_back(nx, ny); }
 				else if (isEngine) { enginePositions.emplace_back(nx, ny); }
@@ -198,12 +199,12 @@ namespace Engine {
 	{
 		PartVariantID weaponVariant = m_registry.registerVariant(PartVariant{
 			.name = "Battle Weapon", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f }, projectileDamage, cooldown, projectileSpeed, projectileRadius,
+			.params = WeaponParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f, -1.0f }, projectileDamage, cooldown, projectileSpeed, projectileRadius,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 1000.0f, weaponAccuracyForCooldown(cooldown) }
 			});
 		m_engineVariant = m_registry.registerVariant(PartVariant{
 			.name = "Battle Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 3.0f, 15.0f, 3.0f, 0.0f }, engineThrust, engineMaxAccel }
+			.params = EngineParams{ PartBaseStats{ 3.0f, 15.0f, 3.0f, 0.0f, -2.0f }, engineThrust, engineMaxAccel }
 			});
 
 		std::mt19937 rng{ std::random_device{}() };
@@ -243,23 +244,23 @@ namespace Engine {
 		// stays quick by being both light and modestly thrust-heavy.
 		PartVariantID smallWeapon = m_registry.registerVariant(PartVariant{
 			.name = "Fighter Light Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 0.5f, 5.0f, 1.0f, 0.0f }, 3.0f, 0.3f, 10.0f, 0.003f, 1.5f,
+			.params = WeaponParams{ PartBaseStats{ 0.5f, 5.0f, 1.0f, 0.0f, -0.5f }, 3.0f, 0.3f, 10.0f, 0.003f, 1.5f,
 				1, 0.0f, 0.0f, Vector2float{}, -5.0f * DEG_TO_RAD, 5.0f * DEG_TO_RAD, 12.0f, weaponAccuracyForCooldown(0.3f) }
 			});
 		PartVariantID smallEngine = m_registry.registerVariant(PartVariant{
 			.name = "Fighter Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 2.0f, 10.0f, 2.0f, 0.0f }, 6.0f, 2.0f }
+			.params = EngineParams{ PartBaseStats{ 2.0f, 10.0f, 2.0f, 0.0f, -1.5f }, 6.0f, 2.0f }
 			});
 
 		// Medium fighter: same archetype, a notch stronger/slower/tankier in every stat.
 		PartVariantID mediumWeapon = m_registry.registerVariant(PartVariant{
 			.name = "Fighter Medium Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 0.75f, 8.0f, 1.5f, 0.0f }, 8.0f, 0.6f, 6.0f, 0.004f,
+			.params = WeaponParams{ PartBaseStats{ 0.75f, 8.0f, 1.5f, 0.0f, -0.75f }, 8.0f, 0.6f, 6.0f, 0.004f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -5.0f * DEG_TO_RAD, 5.0f * DEG_TO_RAD, 9.0f, weaponAccuracyForCooldown(0.6f) }
 			});
 		PartVariantID mediumEngine = m_registry.registerVariant(PartVariant{
 			.name = "Medium Fighter Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 3.0f, 15.0f, 3.0f, 0.0f }, 8.0f, 3.0f }
+			.params = EngineParams{ PartBaseStats{ 3.0f, 15.0f, 3.0f, 0.0f, -2.0f }, 8.0f, 3.0f }
 			});
 
 		// Frigate: 4 size-1 hardpoints (m_hardpointVariant is already 1x1). Three gun profiles
@@ -267,65 +268,67 @@ namespace Engine {
 		// range/damage and simply trade blows at an identical stalemate range.
 		PartVariantID frigateGunRapid = m_registry.registerVariant(PartVariant{
 			.name = "Frigate Rapid Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 1.5f, 20.0f, 3.0f, 0.0f }, 22.0f, 1.0f, 10.0f, 0.008f,
+			.params = WeaponParams{ PartBaseStats{ 1.5f, 20.0f, 3.0f, 0.0f, -1.5f }, 22.0f, 1.0f, 10.0f, 0.008f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 4.0f, weaponAccuracyForCooldown(1.0f) }
 			});
 		PartVariantID frigateGunStandard = m_registry.registerVariant(PartVariant{
 			.name = "Frigate Long Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 2.0f, 25.0f, 4.0f, 0.0f }, 40.0f, 2.5f, 16.0f, 0.01f,
+			.params = WeaponParams{ PartBaseStats{ 2.0f, 25.0f, 4.0f, 0.0f, -2.0f }, 40.0f, 2.5f, 16.0f, 0.01f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 4.0f, weaponAccuracyForCooldown(2.5f) }
 			});
 		PartVariantID frigateGunSiege = m_registry.registerVariant(PartVariant{
 			.name = "Frigate Siege Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 2.5f, 30.0f, 5.0f, 0.0f }, 65.0f, 4.0f, 22.0f, 0.012f,
+			.params = WeaponParams{ PartBaseStats{ 2.5f, 30.0f, 5.0f, 0.0f, -2.5f }, 65.0f, 4.0f, 22.0f, 0.012f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 4.0f, weaponAccuracyForCooldown(4.0f) }
 			});
 		PartVariantID frigateEngine = m_registry.registerVariant(PartVariant{
 			.name = "Frigate Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 6.0f, 30.0f, 6.0f, 0.0f }, 12.0f, 5.0f }
+			.params = EngineParams{ PartBaseStats{ 6.0f, 30.0f, 6.0f, 0.0f, -3.0f }, 12.0f, 5.0f }
 			});
 
 		// Destroyer: ~90 parts (largest icon LOD tier), 3 engines, 8 size-1 hardpoints. Same
 		// idea as the frigate -- flak/heavy/siege profiles instead of one fixed gun.
 		PartVariantID destroyerGunFlak = m_registry.registerVariant(PartVariant{
 			.name = "Destroyer Flak Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 2.5f, 35.0f, 5.0f, 0.0f }, 35.0f, 1.2f, 14.0f, 0.01f,
+			.params = WeaponParams{ PartBaseStats{ 2.5f, 35.0f, 5.0f, 0.0f, -2.0f }, 35.0f, 1.2f, 14.0f, 0.01f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 1.2f, weaponAccuracyForCooldown(1.2f) }
 			});
 		PartVariantID destroyerGunHeavy = m_registry.registerVariant(PartVariant{
 			.name = "Destroyer Heavy Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 3.0f, 40.0f, 6.0f, 0.0f }, 70.0f, 3.5f, 20.0f, 0.015f,
+			.params = WeaponParams{ PartBaseStats{ 3.0f, 40.0f, 6.0f, 0.0f, -3.0f }, 70.0f, 3.5f, 20.0f, 0.015f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 1.2f, weaponAccuracyForCooldown(3.5f) }
 			});
 		PartVariantID destroyerGunSiege = m_registry.registerVariant(PartVariant{
 			.name = "Destroyer Siege Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 4.0f, 50.0f, 7.0f, 0.0f }, 110.0f, 6.0f, 26.0f, 0.02f,
+			.params = WeaponParams{ PartBaseStats{ 4.0f, 50.0f, 7.0f, 0.0f, -4.0f }, 110.0f, 6.0f, 26.0f, 0.02f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 1.2f, weaponAccuracyForCooldown(6.0f) }
 			});
 		PartVariantID destroyerEngine = m_registry.registerVariant(PartVariant{
 			.name = "Destroyer Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 8.0f, 40.0f, 8.0f, 0.0f }, 20.0f, 8.0f }
+			.params = EngineParams{ PartBaseStats{ 8.0f, 40.0f, 8.0f, 0.0f, -4.0f }, 20.0f, 8.0f }
 			});
 
 		std::mt19937 rng{ std::random_device{}() };
 
-		// Formation slots, laid out per side: 5 small fighters, 3 medium fighters, 1 frigate, 1 destroyer.
+		// Formation slots, laid out per side: 10 small fighters, 6 medium fighters, 2 frigates, 2 destroyers.
 		// weaponOptions, when non-empty, overrides weapon/engageRange with a per-ship random pick
 		// from {gun, matching engageRange} pairs -- lets frigates/destroyers vary ship-to-ship
 		// instead of every ship in the tier bringing an identical gun.
 		struct WeaponOption { PartVariantID weapon; f32 engageRange; };
-		struct FleetSlot { i32 basePartCount, hardpointCount, engineCount; PartVariantID weapon, engine; f32 engageRange; std::vector<WeaponOption> weaponOptions{}; };
-		const FleetSlot SMALL_FIGHTER{ 6, 1, 1, smallWeapon, smallEngine, 4.0f };    // ~15km gun range, brawls close
-		const FleetSlot MEDIUM_FIGHTER{ 15, 2, 1, mediumWeapon, mediumEngine, 6.0f }; // ~18km gun range
+		struct FleetSlot { i32 basePartCount, hardpointCount, engineCount; PartVariantID weapon, engine; f32 engageRange; std::vector<WeaponOption> weaponOptions{}; bool fixedForwardHardpoints{ false }; };
+		const FleetSlot SMALL_FIGHTER{ 6, 1, 1, smallWeapon, smallEngine, 4.0f, {}, true };    // ~15km gun range, brawls close
+		const FleetSlot MEDIUM_FIGHTER{ 15, 2, 1, mediumWeapon, mediumEngine, 6.0f, {}, true }; // ~18km gun range
 		const FleetSlot FRIGATE{ 41, 4, 1, frigateGunStandard, frigateEngine, 40.0f,
 			{ { frigateGunRapid, 25.0f }, { frigateGunStandard, 40.0f }, { frigateGunSiege, 55.0f } } };
 		const FleetSlot DESTROYER{ 79, 8, 3, destroyerGunHeavy, destroyerEngine, 60.0f,
 			{ { destroyerGunFlak, 40.0f }, { destroyerGunHeavy, 60.0f }, { destroyerGunSiege, 85.0f } } };
 
 		std::vector<FleetSlot> formation;
-		for (i32 i = 0; i < 5; i++) { formation.push_back(SMALL_FIGHTER); }
-		for (i32 i = 0; i < 3; i++) { formation.push_back(MEDIUM_FIGHTER); }
+		for (i32 i = 0; i < 10; i++) { formation.push_back(SMALL_FIGHTER); }
+		for (i32 i = 0; i < 6; i++) { formation.push_back(MEDIUM_FIGHTER); }
 		formation.push_back(FRIGATE);
+		formation.push_back(FRIGATE);
+		formation.push_back(DESTROYER);
 		formation.push_back(DESTROYER);
 
 		auto spawnSide = [&](d64 xOffset, f32 facing, i32 teamId) {
@@ -343,7 +346,7 @@ namespace Engine {
 
 				Vector2double pos{ xOffset, static_cast<d64>(i) * shipSpacing - half };
 				EntityID ship = buildComplexShip(pos, facing, rng, slot.basePartCount, slot.hardpointCount, slot.engineCount,
-					m_hardpointVariant, weapon, slot.engine);
+					m_hardpointVariant, weapon, slot.engine, slot.fixedForwardHardpoints);
 
 				m_ecs.addComponent(ship, Faction{ .teamId = teamId });
 				m_ecs.addComponent(ship, Separation{ .margin = 0.1f });
@@ -359,20 +362,20 @@ namespace Engine {
 		spawnSide(-sideSpacing / 2.0, 0.0f, 0);
 		spawnSide(sideSpacing / 2.0, PI, 1);
 
-		EngineLogInfo("ShipCollisionTest: spawned tiered fleet battle ({} small fighters, {} medium fighters, {} frigate, {} destroyer per side, {} total).",
-			5, 3, 1, 1, formation.size() * 2);
+		EngineLogInfo("ShipCollisionTest: spawned tiered fleet battle ({} small fighters, {} medium fighters, {} frigates, {} destroyers per side, {} total).",
+			10, 6, 2, 2, formation.size() * 2);
 	}
 
 	void ShipCollisionTest::spawnMassiveShipTest(Vector2double pos)
 	{
 		PartVariantID weapon = m_registry.registerVariant(PartVariant{
 			.name = "Massive Test Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 2.0f, 25.0f, 4.0f, 0.0f }, 40.0f, 2.5f, 16.0f, 0.01f,
+			.params = WeaponParams{ PartBaseStats{ 2.0f, 25.0f, 4.0f, 0.0f, -2.0f }, 40.0f, 2.5f, 16.0f, 0.01f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 0.8f, weaponAccuracyForCooldown(2.5f) }
 			});
 		PartVariantID engine = m_registry.registerVariant(PartVariant{
 			.name = "Massive Test Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 6.0f, 30.0f, 6.0f, 0.0f }, 12.0f, 5.0f }
+			.params = EngineParams{ PartBaseStats{ 6.0f, 30.0f, 6.0f, 0.0f, -3.0f }, 12.0f, 5.0f }
 			});
 
 		std::mt19937 rng{ std::random_device{}() };

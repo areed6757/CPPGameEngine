@@ -23,8 +23,6 @@ namespace Engine {
 
 	private:
 		EntityID findNearestEnemy(EntityID self, i32 selfTeam, const Vector2double& selfPos) const;
-		Vector2double predictInterceptPoint(const Vector2double& selfPos, const Vector2float& selfVel,
-			const Vector2double& targetPos, const Vector2float& targetVel, d64 dist) const;
 
 		GameECSWrapper& m_ecs;
 		AABBTree& m_aabbTree;

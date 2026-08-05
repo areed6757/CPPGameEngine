@@ -1,5 +1,6 @@
 #include <Systems/RenderSystem.h>
 #include <Ships/IconLOD.h>
+#include <algorithm>
 
 Engine::RenderSystem::RenderSystem(const RenderSystemDesc& desc) : Base(desc.base),
 	m_ecs(desc.ecs),
@@ -36,9 +37,14 @@ void Engine::RenderSystem::Update(d64 dt)
 		auto& renderable = m_ecs.getComponentAtDenseIndex<Renderable>(i);
 		auto& position = m_ecs.getComponent<Position>(id);
 
+		f32 cullScale = renderable.scale;
+		if (renderable.iconTexture.has_value()) {
+			cullScale = std::max(cullScale, renderable.iconMinPixelSize * worldUnitsPerPixel);
+		}
+
 		AABB entityBounds{
-			Vector2double{ position.transform.x - renderable.scale, position.transform.y - renderable.scale },
-			Vector2double{ position.transform.x + renderable.scale, position.transform.y + renderable.scale }
+			Vector2double{ position.transform.x - cullScale, position.transform.y - cullScale },
+			Vector2double{ position.transform.x + cullScale, position.transform.y + cullScale }
 		};
 		if (!viewport.overlaps(entityBounds)) { continue; }
 

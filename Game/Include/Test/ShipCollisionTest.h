@@ -35,7 +35,7 @@ namespace Engine {
 			f32 cooldown, f32 projectileSpeed, f32 projectileRadius, f32 projectileDamage,
 			f32 engineThrust, f32 engineMaxAccel);
 
-		// Two mixed fleets (5 small fighters, 3 medium fighters, 1 frigate, 1 destroyer each
+		// Two mixed fleets (10 small fighters, 6 medium fighters, 2 frigates, 2 destroyers each
 		// side) facing off. Small fighters: single engine, fast-firing/weak/short-range guns,
 		// quick and close-brawling. Medium fighters: the same archetype scaled up a notch.
 		// Frigates: 4 size-1 hardpoints, slow-firing/hard-hitting/long-range guns, and hold that
@@ -52,7 +52,8 @@ namespace Engine {
 		EntityID buildSmallShip(Vector2double pos, f32 rotation);
 
 		EntityID buildComplexShip(Vector2double pos, f32 rotation, std::mt19937& rng,
-			i32 basePartCount, i32 hardpointCount, i32 engineCount, PartVariantID hardpointVariant, PartVariantID weaponVariant, PartVariantID engineVariant);
+			i32 basePartCount, i32 hardpointCount, i32 engineCount, PartVariantID hardpointVariant, PartVariantID weaponVariant, PartVariantID engineVariant,
+			bool fixedForwardHardpoints = false);
 
 		PartVariantID m_hullVariant, m_armorVariant, m_hardpointVariant, m_engineVariant;
 
