@@ -3,6 +3,7 @@
 
 namespace Engine {
 	constexpr d64 WEAPON_AIM_MAX_LEAD_TIME = 15.0;
+	constexpr f32 SIGNAL_POSITION_ERROR_MAX_KM = 2.0f; // worst-case (resolution 0) random-offset radius around the target's real position, shrinks to 0 at a perfect lock
 
 	namespace {
 		f32 normalizeAngle(f32 a) {
@@ -20,53 +21,15 @@ namespace Engine {
 	}
 
 	WeaponAimSystem::WeaponAimSystem(const WeaponAimSystemDesc& desc) : Base(desc.base),
-		m_ecs(desc.ecs), m_aabbTree(desc.aabbTree)
+		m_ecs(desc.ecs), m_rng(std::random_device{}())
 	{
 		m_entityMask = m_ecs.makeSignature<Mount, Weapon>();
-		m_reads = m_ecs.makeSignature<Mount, Weapon, Position, Movement, Faction>();
+		m_reads = m_ecs.makeSignature<Mount, Weapon, Position, Movement, AIController>();
 		m_writes = m_ecs.makeSignature<Weapon>();
 	}
 
 	WeaponAimSystem::~WeaponAimSystem()
 	{
-	}
-
-	EntityID WeaponAimSystem::findNearestEnemy(EntityID self, i32 selfTeam, const Vector2double& selfPos) const
-	{
-		constexpr d64 kInitialSearchRadius = 10.0;
-		constexpr d64 kMaxSearchRadius = 1.0e6;
-
-		for (d64 searchRadius = kInitialSearchRadius; searchRadius <= kMaxSearchRadius; searchRadius *= 2.0) {
-			AABB queryBounds{
-				Vector2double{ selfPos.x - searchRadius, selfPos.y - searchRadius },
-				Vector2double{ selfPos.x + searchRadius, selfPos.y + searchRadius }
-			};
-
-			m_nearbyScratch.clear();
-			m_aabbTree.query(queryBounds, m_nearbyScratch);
-
-			EntityID best{};
-			d64 bestDistSq = std::numeric_limits<d64>::max();
-
-			for (EntityID other : m_nearbyScratch) {
-				if (other.id == self.id) { continue; }
-				if (!m_ecs.hasComponent<Position>(other) || !m_ecs.hasComponent<Faction>(other)) { continue; }
-				if (m_ecs.getComponent<Faction>(other).teamId == selfTeam) { continue; }
-
-				auto& otherPos = m_ecs.getComponent<Position>(other);
-				Vector2double delta = otherPos.transform - selfPos;
-				d64 distSq = delta.x * delta.x + delta.y * delta.y;
-				if (distSq < bestDistSq) {
-					bestDistSq = distSq;
-					best = other;
-				}
-			}
-
-			if (m_ecs.isValidEntity(best) && bestDistSq <= searchRadius * searchRadius) {
-				return best;
-			}
-		}
-		return EntityID{};
 	}
 
 	Vector2double WeaponAimSystem::predictInterceptPoint(const Vector2double& selfPos, f32 projectileSpeed,
@@ -120,13 +83,11 @@ namespace Engine {
 			auto& weapon = m_ecs.getComponentAtDenseIndex<Weapon>(i);
 			auto& ownerPos = m_ecs.getComponent<Position>(mount.owner);
 
-			if (!m_ecs.hasComponent<Faction>(mount.owner)) {
+			if (!m_ecs.hasComponent<AIController>(mount.owner)) {
 				weapon.targetInRange = false;
 				stepTowardAngle(weapon.aimRotation, weapon.restRotationAbs, weapon.traverseSpeed, static_cast<f32>(dt));
 				continue;
 			}
-
-			i32 myTeam = m_ecs.getComponent<Faction>(mount.owner).teamId;
 
 			f32 shipRot = ownerPos.rotation;
 			Vector2float facing{ std::cos(shipRot), std::sin(shipRot) };
@@ -135,7 +96,9 @@ namespace Engine {
 				mount.offset.x * facing.y + mount.offset.y * facing.x
 			};
 
-			EntityID target = findNearestEnemy(mount.owner, myTeam, anchorWorldPos);
+			auto& ownerAI = m_ecs.getComponent<AIController>(mount.owner);
+			EntityID target = ownerAI.target;
+			f32 resolution = ownerAI.targetResolution;
 			if (!m_ecs.isValidEntity(target) || !m_ecs.hasComponent<Position>(target)) {
 				weapon.targetInRange = false;
 				stepTowardAngle(weapon.aimRotation, weapon.restRotationAbs, weapon.traverseSpeed, static_cast<f32>(dt));
@@ -151,7 +114,16 @@ namespace Engine {
 			Vector2float targetVel = m_ecs.hasComponent<Movement>(target) ?
 				m_ecs.getComponent<Movement>(target).linearVelocity : Vector2float{};
 
-			Vector2double aimPoint = predictInterceptPoint(anchorWorldPos, weapon.projectileSpeed, targetPos.transform, targetVel, dist);
+			Vector2double signaturePos = targetPos.transform;
+			f32 positionErrorRadius = (1.0f - resolution) * SIGNAL_POSITION_ERROR_MAX_KM;
+			if (positionErrorRadius > 0.0f) {
+				std::uniform_real_distribution<f32> unitDist(0.0f, 1.0f);
+				f32 r = positionErrorRadius * std::sqrt(unitDist(m_rng)); // sqrt for uniform-in-disk, not uniform-in-square
+				f32 theta = unitDist(m_rng) * 2.0f * PI;
+				signaturePos += Vector2double{ static_cast<d64>(r * std::cos(theta)), static_cast<d64>(r * std::sin(theta)) };
+			}
+
+			Vector2double aimPoint = predictInterceptPoint(anchorWorldPos, weapon.projectileSpeed, signaturePos, targetVel, dist);
 			Vector2double toAimPoint = aimPoint - anchorWorldPos;
 
 			f32 desiredWorldAngle = static_cast<f32>(std::atan2(toAimPoint.y, toAimPoint.x));

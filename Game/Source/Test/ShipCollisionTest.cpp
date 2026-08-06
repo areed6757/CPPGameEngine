@@ -30,7 +30,7 @@ namespace Engine {
 		// variety, so a single 5x5 solid block is deliberately simple.
 		m_hullVariant = m_registry.registerVariant(PartVariant{
 			.name = "Test Hull", .category = PartCategory::Hull,
-			.params = HullParams{ PartBaseStats{ 5.0f, 20.0f, 10.0f, 0.0f, 2.0f } }
+			.params = HullParams{ PartBaseStats{ 5.0f, 20.0f, 10.0f, 0.0f, 2.0f, 0.06f } }
 			});
 
 		// Shared armor variant reused by every corner plate on complex test
@@ -38,12 +38,12 @@ namespace Engine {
 		// a visually/mechanically distinct second part type.
 		m_armorVariant = m_registry.registerVariant(PartVariant{
 			.name = "Test Armor", .category = PartCategory::Armor,
-			.params = ArmorParams{ PartBaseStats{ 2.0f, 10.0f, 5.0f, 0.0f } }
+			.params = ArmorParams{ PartBaseStats{ 2.0f, 10.0f, 5.0f, 0.0f, 0.0f, 0.12f } }
 			});
 
 		m_hardpointVariant = m_registry.registerVariant(PartVariant{
 			.name = "Test Hardpoint", .category = PartCategory::Hardpoint,
-			.params = HardpointParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f, -1.0f }, 1, 1 }
+			.params = HardpointParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f, -1.0f, 0.18f }, 1, 1 }
 			});
 		
 		m_engineVariant = {};
@@ -199,12 +199,12 @@ namespace Engine {
 	{
 		PartVariantID weaponVariant = m_registry.registerVariant(PartVariant{
 			.name = "Battle Weapon", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f, -1.0f }, projectileDamage, cooldown, projectileSpeed, projectileRadius,
+			.params = WeaponParams{ PartBaseStats{ 1.0f, 10.0f, 2.0f, 0.0f, -1.0f, 0.24f }, projectileDamage, cooldown, projectileSpeed, projectileRadius,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 1000.0f, weaponAccuracyForCooldown(cooldown) }
 			});
 		m_engineVariant = m_registry.registerVariant(PartVariant{
 			.name = "Battle Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 3.0f, 15.0f, 3.0f, 0.0f, -2.0f }, engineThrust, engineMaxAccel }
+			.params = EngineParams{ PartBaseStats{ 3.0f, 15.0f, 3.0f, 0.0f, -2.0f, 0.12f }, engineThrust, engineMaxAccel }
 			});
 
 		std::mt19937 rng{ std::random_device{}() };
@@ -244,23 +244,23 @@ namespace Engine {
 		// stays quick by being both light and modestly thrust-heavy.
 		PartVariantID smallWeapon = m_registry.registerVariant(PartVariant{
 			.name = "Fighter Light Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 0.5f, 5.0f, 1.0f, 0.0f, -0.5f }, 3.0f, 0.3f, 10.0f, 0.003f, 1.5f,
+			.params = WeaponParams{ PartBaseStats{ 0.5f, 5.0f, 1.0f, 0.0f, -0.5f, 0.12f }, 3.0f, 0.3f, 10.0f, 0.003f, 1.5f,
 				1, 0.0f, 0.0f, Vector2float{}, -5.0f * DEG_TO_RAD, 5.0f * DEG_TO_RAD, 12.0f, weaponAccuracyForCooldown(0.3f) }
 			});
 		PartVariantID smallEngine = m_registry.registerVariant(PartVariant{
 			.name = "Fighter Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 2.0f, 10.0f, 2.0f, 0.0f, -1.5f }, 6.0f, 2.0f }
+			.params = EngineParams{ PartBaseStats{ 2.0f, 10.0f, 2.0f, 0.0f, -1.5f, 0.12f }, 6.0f, 2.0f }
 			});
 
 		// Medium fighter: same archetype, a notch stronger/slower/tankier in every stat.
 		PartVariantID mediumWeapon = m_registry.registerVariant(PartVariant{
 			.name = "Fighter Medium Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 0.75f, 8.0f, 1.5f, 0.0f, -0.75f }, 8.0f, 0.6f, 6.0f, 0.004f,
+			.params = WeaponParams{ PartBaseStats{ 0.75f, 8.0f, 1.5f, 0.0f, -0.75f, 0.18f }, 8.0f, 0.6f, 6.0f, 0.004f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -5.0f * DEG_TO_RAD, 5.0f * DEG_TO_RAD, 9.0f, weaponAccuracyForCooldown(0.6f) }
 			});
 		PartVariantID mediumEngine = m_registry.registerVariant(PartVariant{
 			.name = "Medium Fighter Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 3.0f, 15.0f, 3.0f, 0.0f, -2.0f }, 8.0f, 3.0f }
+			.params = EngineParams{ PartBaseStats{ 3.0f, 15.0f, 3.0f, 0.0f, -2.0f, 0.12f }, 8.0f, 3.0f }
 			});
 
 		// Frigate: 4 size-1 hardpoints (m_hardpointVariant is already 1x1). Three gun profiles
@@ -268,44 +268,44 @@ namespace Engine {
 		// range/damage and simply trade blows at an identical stalemate range.
 		PartVariantID frigateGunRapid = m_registry.registerVariant(PartVariant{
 			.name = "Frigate Rapid Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 1.5f, 20.0f, 3.0f, 0.0f, -1.5f }, 22.0f, 1.0f, 10.0f, 0.008f,
+			.params = WeaponParams{ PartBaseStats{ 1.5f, 20.0f, 3.0f, 0.0f, -1.5f, 0.24f }, 22.0f, 1.0f, 10.0f, 0.008f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 4.0f, weaponAccuracyForCooldown(1.0f) }
 			});
 		PartVariantID frigateGunStandard = m_registry.registerVariant(PartVariant{
 			.name = "Frigate Long Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 2.0f, 25.0f, 4.0f, 0.0f, -2.0f }, 40.0f, 2.5f, 16.0f, 0.01f,
+			.params = WeaponParams{ PartBaseStats{ 2.0f, 25.0f, 4.0f, 0.0f, -2.0f, 0.3f }, 40.0f, 2.5f, 16.0f, 0.01f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 4.0f, weaponAccuracyForCooldown(2.5f) }
 			});
 		PartVariantID frigateGunSiege = m_registry.registerVariant(PartVariant{
 			.name = "Frigate Siege Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 2.5f, 30.0f, 5.0f, 0.0f, -2.5f }, 65.0f, 4.0f, 22.0f, 0.012f,
+			.params = WeaponParams{ PartBaseStats{ 2.5f, 30.0f, 5.0f, 0.0f, -2.5f, 0.36f }, 65.0f, 4.0f, 22.0f, 0.012f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 4.0f, weaponAccuracyForCooldown(4.0f) }
 			});
 		PartVariantID frigateEngine = m_registry.registerVariant(PartVariant{
 			.name = "Frigate Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 6.0f, 30.0f, 6.0f, 0.0f, -3.0f }, 12.0f, 5.0f }
+			.params = EngineParams{ PartBaseStats{ 6.0f, 30.0f, 6.0f, 0.0f, -3.0f, 0.12f }, 12.0f, 5.0f }
 			});
 
 		// Destroyer: ~90 parts (largest icon LOD tier), 3 engines, 8 size-1 hardpoints. Same
 		// idea as the frigate -- flak/heavy/siege profiles instead of one fixed gun.
 		PartVariantID destroyerGunFlak = m_registry.registerVariant(PartVariant{
 			.name = "Destroyer Flak Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 2.5f, 35.0f, 5.0f, 0.0f, -2.0f }, 35.0f, 1.2f, 14.0f, 0.01f,
+			.params = WeaponParams{ PartBaseStats{ 2.5f, 35.0f, 5.0f, 0.0f, -2.0f, 0.36f }, 35.0f, 1.2f, 14.0f, 0.01f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 1.2f, weaponAccuracyForCooldown(1.2f) }
 			});
 		PartVariantID destroyerGunHeavy = m_registry.registerVariant(PartVariant{
 			.name = "Destroyer Heavy Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 3.0f, 40.0f, 6.0f, 0.0f, -3.0f }, 70.0f, 3.5f, 20.0f, 0.015f,
+			.params = WeaponParams{ PartBaseStats{ 3.0f, 40.0f, 6.0f, 0.0f, -3.0f, 0.48f }, 70.0f, 3.5f, 20.0f, 0.015f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 1.2f, weaponAccuracyForCooldown(3.5f) }
 			});
 		PartVariantID destroyerGunSiege = m_registry.registerVariant(PartVariant{
 			.name = "Destroyer Siege Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 4.0f, 50.0f, 7.0f, 0.0f, -4.0f }, 110.0f, 6.0f, 26.0f, 0.02f,
+			.params = WeaponParams{ PartBaseStats{ 4.0f, 50.0f, 7.0f, 0.0f, -4.0f, 0.6f }, 110.0f, 6.0f, 26.0f, 0.02f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 1.2f, weaponAccuracyForCooldown(6.0f) }
 			});
 		PartVariantID destroyerEngine = m_registry.registerVariant(PartVariant{
 			.name = "Destroyer Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 8.0f, 40.0f, 8.0f, 0.0f, -4.0f }, 20.0f, 8.0f }
+			.params = EngineParams{ PartBaseStats{ 8.0f, 40.0f, 8.0f, 0.0f, -4.0f, 0.12f }, 20.0f, 8.0f }
 			});
 
 		std::mt19937 rng{ std::random_device{}() };
@@ -370,12 +370,12 @@ namespace Engine {
 	{
 		PartVariantID weapon = m_registry.registerVariant(PartVariant{
 			.name = "Massive Test Gun", .category = PartCategory::Weapon,
-			.params = WeaponParams{ PartBaseStats{ 2.0f, 25.0f, 4.0f, 0.0f, -2.0f }, 40.0f, 2.5f, 16.0f, 0.01f,
+			.params = WeaponParams{ PartBaseStats{ 2.0f, 25.0f, 4.0f, 0.0f, -2.0f, 0.3f }, 40.0f, 2.5f, 16.0f, 0.01f,
 				3.0f, 1, 0.0f, 0.0f, Vector2float{}, -PI, PI, 0.8f, weaponAccuracyForCooldown(2.5f) }
 			});
 		PartVariantID engine = m_registry.registerVariant(PartVariant{
 			.name = "Massive Test Engine", .category = PartCategory::Engine,
-			.params = EngineParams{ PartBaseStats{ 6.0f, 30.0f, 6.0f, 0.0f, -3.0f }, 12.0f, 5.0f }
+			.params = EngineParams{ PartBaseStats{ 6.0f, 30.0f, 6.0f, 0.0f, -3.0f, 0.12f }, 12.0f, 5.0f }
 			});
 
 		std::mt19937 rng{ std::random_device{}() };

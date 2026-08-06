@@ -28,6 +28,9 @@ namespace Engine {
 
 		// baseline contribution to the ship's single unified targeting signal, summed at bake time, stealth/utility parts will modify this later
 		f32 signalEmissionValue{ 0.0f };
+
+		// bonus detection range multiplier contribution, summed at bake time on top of a guaranteed 1.0 baseline, dedicated sensor utility parts will use this
+		f32 sensorPowerValue{ 0.0f };
 	};
 
 	struct ArmorParams : PartBaseStats {

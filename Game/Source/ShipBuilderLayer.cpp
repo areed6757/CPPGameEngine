@@ -42,8 +42,7 @@ namespace Engine {
 		}
 	}
 
-	// beyond the ~57km half-diagonal of the spawnTieredFleetBattle formation
-	constexpr f32 SHIP_BUILDER_SPAWN_RADIUS_KM = 84.0f;
+	constexpr f32 SHIP_BUILDER_SPAWN_RADIUS_KM = 42.0f;
 
 	// NE, SE, SW, NW
 	constexpr f32 SHIP_BUILDER_CARDINAL_ANGLES[4] = { PI * 0.25f, -PI * 0.25f, PI * 1.25f, PI * 0.75f };
@@ -260,6 +259,7 @@ namespace Engine {
 		ImGui::Text("Max Accel: %.2f", stats.maxAccel);
 		ImGui::Text("System Capacity: %.1f / %.1f", stats.systemCapacityUsed, stats.systemCapacityMax);
 		ImGui::Text("Signal Emission: %.1f", stats.totalSignalEmission);
+		ImGui::Text("Sensor Power: %.2f", 1.0f + stats.totalSensorPower);
 		if (stats.isOverSystemCapacity) {
 			ImGui::TextColored(ImVec4(1.0f, 0.3f, 0.3f, 1.0f), "OVER SYSTEM CAPACITY");
 		}

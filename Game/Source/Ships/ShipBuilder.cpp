@@ -119,6 +119,7 @@ namespace Engine {
 					stats.totalStability += params.stabilityContribution;
 					applySystemCapacity(params.systemCapacityContribution);
 					stats.totalSignalEmission += params.signalEmissionValue;
+					stats.totalSensorPower += params.sensorPowerValue;
 					if constexpr (std::is_same_v<T, EngineParams>) {
 						stats.totalThrustForce += params.thrustForce;
 					}
@@ -130,6 +131,7 @@ namespace Engine {
 						const WeaponParams& weaponParams = std::get<WeaponParams>(m_partRegistry.get(loadoutIt->second).params);
 						applySystemCapacity(weaponParams.systemCapacityContribution);
 						stats.totalSignalEmission += weaponParams.signalEmissionValue;
+						stats.totalSensorPower += weaponParams.sensorPowerValue;
 					}
 				}
 			}

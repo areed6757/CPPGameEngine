@@ -30,6 +30,8 @@ namespace Engine {
 		std::unique_ptr<AABBTree> m_AABBTree{};
 		std::unique_ptr<AABBTree> m_signalTree{};
 		std::unique_ptr<SignalTreeSystem> m_signalTreeSystem{};
+		std::unique_ptr<ThreadPool> m_detectionThreadPool{};
+		std::unique_ptr<DetectionSystem> m_detectionSystem{};
 		std::unique_ptr<ThreadPool> m_collisionThreadPool{};
 		std::unique_ptr<CollisionSystem> m_collisionSystem{};
 		std::unique_ptr<ImpulseSystem> m_impulseSystem{};

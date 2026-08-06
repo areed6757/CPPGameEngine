@@ -9,7 +9,7 @@ namespace Engine {
 	constexpr f32 AI_CHASE_RESUME_SPEED_THRESHOLD = 0.5f;
 
 	AISystem::AISystem(const AISystemDesc& desc) : Base(desc.base),
-		m_ecs(desc.ecs), m_aabbTree(desc.aabbTree)
+		m_ecs(desc.ecs)
 	{
 		m_entityMask = m_ecs.makeSignature<AIController, Position, Movement, Thruster>();
 		m_reads = m_ecs.makeSignature<AIController, Position, Movement>();
@@ -20,44 +20,6 @@ namespace Engine {
 	AISystem::~AISystem()
 	{
 		EngineLogInfo("AI system destroyed.");
-	}
-
-	EntityID AISystem::findNearestEnemy(EntityID self, i32 selfTeam, const Vector2double& selfPos) const
-	{
-		constexpr d64 kInitialSearchRadius = 10.0;
-		constexpr d64 kMaxSearchRadius = 1.0e6;
-
-		for (d64 searchRadius = kInitialSearchRadius; searchRadius <= kMaxSearchRadius; searchRadius *= 2.0) {
-			AABB queryBounds{
-				Vector2double{ selfPos.x - searchRadius, selfPos.y - searchRadius },
-				Vector2double{ selfPos.x + searchRadius, selfPos.y + searchRadius }
-			};
-
-			m_nearbyScratch.clear();
-			m_aabbTree.query(queryBounds, m_nearbyScratch);
-
-			EntityID best{};
-			d64 bestDistSq = std::numeric_limits<d64>::max();
-
-			for (EntityID other : m_nearbyScratch) {
-				if (other.id == self.id) { continue; }
-				if (!m_ecs.hasComponent<Position>(other) || !m_ecs.hasComponent<Faction>(other)) { continue; }
-				if (m_ecs.getComponent<Faction>(other).teamId == selfTeam) { continue; }
-
-				auto& otherPos = m_ecs.getComponent<Position>(other);
-				Vector2double delta = otherPos.transform - selfPos;
-				d64 distSq = delta.x * delta.x + delta.y * delta.y;
-				if (distSq < bestDistSq) {
-					bestDistSq = distSq;
-					best = other;
-				}
-			}
-
-			if (m_ecs.isValidEntity(best) && bestDistSq <= searchRadius * searchRadius) {
-				return best;
-			}
-		}
-		return EntityID{};
 	}
 
 	void AISystem::Update(d64 dt)
@@ -73,10 +35,6 @@ namespace Engine {
 			auto& movement = m_ecs.getComponent<Movement>(id);
 			auto& thruster = m_ecs.getComponent<Thruster>(id);
 			i32 myTeam = m_ecs.getComponent<Faction>(id).teamId;
-
-			if (!m_ecs.isValidEntity(ai.target)) {
-				ai.target = findNearestEnemy(id, myTeam, pos.transform);
-			}
 
 			if (m_ecs.isValidEntity(ai.target) && m_ecs.hasComponent<Position>(ai.target)) {
 				auto& targetPos = m_ecs.getComponent<Position>(ai.target);

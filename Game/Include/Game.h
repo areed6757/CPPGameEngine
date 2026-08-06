@@ -30,6 +30,7 @@
 #include <Components/Faction.h>
 #include <Components/Separation.h>
 #include <Components/SignalSignature.h>
+#include <Components/Sensor.h>
 
 // Graphics
 #include <Graphics/TextureRegistry.h>
@@ -55,6 +56,7 @@
 #include <Systems/SeparationSystem.h>
 #include <Systems/TransformHistorySystem.h>
 #include <Systems/SignalTreeSystem.h>
+#include <Systems/DetectionSystem.h>
 
 // Layers and Overlays
 #include <PartEditorLayer.h>

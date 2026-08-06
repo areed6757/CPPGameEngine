@@ -6,14 +6,16 @@ namespace Engine {
 			return Json{ {"mass", s.mass}, {"health", s.health},
 				{"stabilityContribution", s.stabilityContribution}, {"kineticResistance", s.kineticResistance},
 				{"systemCapacityContribution", s.systemCapacityContribution},
-				{"signalEmissionValue", s.signalEmissionValue} };
+				{"signalEmissionValue", s.signalEmissionValue},
+				{"sensorPowerValue", s.sensorPowerValue} };
 		}
 		PartBaseStats deserializeBaseStats(const Json& j) {
 			return PartBaseStats{
 				j.at("mass").get<f32>(), j.at("health").get<f32>(),
 				j.at("stabilityContribution").get<f32>(), j.at("kineticResistance").get<f32>(),
 				j.value("systemCapacityContribution", 0.0f),
-				j.value("signalEmissionValue", 0.0f)
+				j.value("signalEmissionValue", 0.0f),
+				j.value("sensorPowerValue", 0.0f)
 			};
 		}
 	}

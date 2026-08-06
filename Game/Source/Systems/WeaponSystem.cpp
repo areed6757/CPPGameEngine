@@ -3,12 +3,14 @@
 #include <random>
 
 namespace Engine {
+	constexpr f32 SIGNAL_ACCURACY_DEGRADATION_MAX = 2.0f; // +200% spread at the weakest still-locked resolution, +0% at a perfect lock
+
 	WeaponSystem::WeaponSystem(const WeaponSystemDesc& desc) : Base(desc.base),
 		m_ecs(desc.ecs),
 		m_cmdBuffer({desc.base, desc.ecs})
 	{
 		m_entityMask = m_ecs.makeSignature<Mount, Weapon>();
-		m_reads = m_ecs.makeSignature<Mount, Weapon>();
+		m_reads = m_ecs.makeSignature<Mount, Weapon, Position, AIController>();
 		m_writes = m_ecs.makeSignature<Weapon>();
 	}
 
@@ -47,8 +49,12 @@ namespace Engine {
 		f32 aimRot = shipRot + weapon.aimRotation;
 		Vector2float facing{ std::cos(aimRot), std::sin(aimRot) };
 
+		f32 resolution = m_ecs.hasComponent<AIController>(mount.owner) ? m_ecs.getComponent<AIController>(mount.owner).targetResolution : 1.0f;
+		f32 accuracyScalar = 1.0f + (1.0f - resolution) * SIGNAL_ACCURACY_DEGRADATION_MAX;
+		f32 effectiveAccuracy = weapon.accuracy * accuracyScalar;
+
 		static std::mt19937 rng{ std::random_device{}() };
-		std::uniform_real_distribution<f32> spreadDist(-weapon.accuracy, weapon.accuracy);
+		std::uniform_real_distribution<f32> spreadDist(-effectiveAccuracy, effectiveAccuracy);
 
 		for (i32 b = 0; b < weapon.barrelCount; b++) {
 			f32 shotRot = aimRot + spreadDist(rng);

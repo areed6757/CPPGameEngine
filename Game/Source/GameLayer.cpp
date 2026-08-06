@@ -46,6 +46,11 @@ namespace Engine {
 		ThreadPoolDesc collisionTpDesc{ {m_logger}, collisionThreadCount };
 		m_collisionThreadPool = std::make_unique<ThreadPool>(collisionTpDesc);
 
+		// dedicated pool, kept separate from m_app.getThreadPool() for the same reason m_collisionThreadPool is,
+		// DetectionSystem does its own direct fork-join against the signal tree rather than going through JobController
+		ThreadPoolDesc detectionTpDesc{ {m_logger}, collisionThreadCount };
+		m_detectionThreadPool = std::make_unique<ThreadPool>(detectionTpDesc);
+
 		EntityRegisterDesc eRegDesc = { {m_logger} };
 		m_entityRegister = std::make_unique<EntityRegister>(eRegDesc);
 
@@ -58,6 +63,9 @@ namespace Engine {
 
 		SignalTreeSystemDesc signalTreeSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_signalTree.get() };
 		m_signalTreeSystem = std::make_unique<SignalTreeSystem>(signalTreeSysDesc);
+
+		DetectionSystemDesc detectionSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_signalTree.get(), *m_detectionThreadPool.get() };
+		m_detectionSystem = std::make_unique<DetectionSystem>(detectionSysDesc);
 
 		RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get(), *m_camera.get(), m_app.getWindow(), m_app.getScheduler() };
 		m_renderSystem = std::make_unique<RenderSystem>(renderSysDesc);
@@ -83,7 +91,7 @@ namespace Engine {
 		ParticleSystemDesc partSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_camera.get(), m_app.getWindow() };
 		m_particleSystem = std::make_unique<ParticleSystem>(partSysDesc);
 
-		WeaponAimSystemDesc wepAimSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_AABBTree.get() };
+		WeaponAimSystemDesc wepAimSysDesc = { {m_logger}, *m_ecsWrapper.get() };
 		m_weaponAimSystem = std::make_unique<WeaponAimSystem>(wepAimSysDesc);
 
 		WeaponSystemDesc wepSysDesc = { {m_logger}, *m_ecsWrapper.get() };
@@ -101,7 +109,7 @@ namespace Engine {
 		SeparationSystemDesc sepSysDesc{ {m_logger}, *m_ecsWrapper.get(), *m_AABBTree.get() };
 		m_separationSystem = std::make_unique<SeparationSystem>(sepSysDesc);
 
-		AISystemDesc aiDesc{ {m_logger}, *m_ecsWrapper.get(), *m_AABBTree.get() };
+		AISystemDesc aiDesc{ {m_logger}, *m_ecsWrapper.get() };
 		m_aiSystem = std::make_unique<AISystem>(aiDesc);
 
 		// Ship stuff
@@ -126,6 +134,7 @@ namespace Engine {
 
 		scheduler.registerSystem(m_transformHistorySystem.get());
 		scheduler.registerSystem(m_signalTreeSystem.get());
+		scheduler.registerSystem(m_detectionSystem.get());
 		scheduler.registerSystem(m_aiSystem.get());
 		scheduler.registerSystem(m_thrusterSystem.get());
 		scheduler.registerSystem(m_separationSystem.get());
@@ -150,6 +159,9 @@ namespace Engine {
 		m_app.getJobController().addOrderingConstraint(m_collisionSystem.get(), m_moveTicks.get());
 		m_app.getJobController().addOrderingConstraint(m_collisionSystem.get(), m_damageSystem.get());
 		m_app.getJobController().addOrderingConstraint(m_collisionSystem.get(), m_weaponAimSystem.get());
+		// SignalTreeSystem mutates the signal tree directly (not ECS-visible), DetectionSystem fans out concurrent
+		// reads against it - same external-resource hazard as the collision tree above
+		m_app.getJobController().addOrderingConstraint(m_signalTreeSystem.get(), m_detectionSystem.get());
 
 		EngineLogInfo("GameLayer attached, game initialized successfully.");
 

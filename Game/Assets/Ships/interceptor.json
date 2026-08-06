@@ -1,0 +1,56 @@
+{
+  "hardpointLoadout": [
+    {
+      "weapon": "Fighter Medium Gun",
+      "x": 5,
+      "y": 6
+    }
+  ],
+  "height": 12,
+  "name": "interceptor",
+  "parts": [
+    {
+      "part": "Test Hardpoint",
+      "rotation": 0.0,
+      "x": 5,
+      "y": 6
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 4,
+      "y": 7
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 5,
+      "y": 7
+    },
+    {
+      "part": "Test Armor",
+      "rotation": 0.0,
+      "x": 6,
+      "y": 7
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 4,
+      "y": 8
+    },
+    {
+      "part": "Frigate Engine",
+      "rotation": 0.0,
+      "x": 5,
+      "y": 8
+    },
+    {
+      "part": "Test Hull",
+      "rotation": 0.0,
+      "x": 6,
+      "y": 8
+    }
+  ],
+  "width": 12
+}

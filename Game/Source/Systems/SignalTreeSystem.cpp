@@ -7,15 +7,33 @@ namespace Engine {
 	{
 		m_entityMask = m_ecs.makeSignature<Position, SignalSignature>();
 		m_reads = m_ecs.makeSignature<Position, SignalSignature, Movement>();
-		m_writes = m_ecs.makeSignature<>();
+		m_writes = m_ecs.makeSignature<SignalSignature>(); // magnitude deltas applied from the queue, tree mutation itself stays external/unsignatured like the collision tree
 	}
 
 	SignalTreeSystem::~SignalTreeSystem()
 	{
 	}
 
+	void SignalTreeSystem::queueSignalDelta(EntityID target, f32 delta)
+	{
+		std::lock_guard<std::mutex> lock(m_pendingDeltasMutex);
+		m_pendingDeltas.push_back(SignalDelta{ target, delta });
+	}
+
 	void SignalTreeSystem::Update(d64 dt)
 	{
+		{
+			std::vector<SignalDelta> deltas;
+			{
+				std::lock_guard<std::mutex> lock(m_pendingDeltasMutex);
+				deltas.swap(m_pendingDeltas);
+			}
+			for (auto& d : deltas) {
+				if (!m_ecs.isValidEntity(d.target) || !m_ecs.hasComponent<SignalSignature>(d.target)) { continue; }
+				m_ecs.getComponent<SignalSignature>(d.target).magnitude += d.delta;
+			}
+		}
+
 		for (i32 idx = 0; idx < static_cast<i32>(m_proxies.size()); idx++) {
 			auto& entry = m_proxies[idx];
 			if (entry.proxyId == -1) { continue; }
