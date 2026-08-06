@@ -20,7 +20,7 @@ namespace Engine {
 
 			if (m_ecs.hasComponent<Thruster>(id)) {
 				auto& thruster = m_ecs.getComponent<Thruster>(id);
-				if (thruster.throttle > 0.01f) { continue; }
+				if (std::abs(thruster.throttle) > 0.01f) { continue; }
 			}
 			
 			auto& damper = m_ecs.getComponentAtDenseIndex<MovementDamper>(i);

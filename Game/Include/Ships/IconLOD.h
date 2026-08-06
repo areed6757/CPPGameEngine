@@ -17,7 +17,7 @@ namespace Engine {
 		{ 65.0f, 24.0f, TextureID::DestroyerIcon }
 	};
 
-	inline f32 g_projectileIconMinPixelSize = 6.0f;
+	inline f32 g_projectileIconMinPixelSize = 2.75f;
 	inline TextureID g_projectileIconTexture = TextureID::ProjectileIcon;
 
 	constexpr f32 ICON_ART_ROTATION_OFFSET = -HALF_PI;

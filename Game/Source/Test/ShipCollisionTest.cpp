@@ -30,7 +30,7 @@ namespace Engine {
 		// variety, so a single 5x5 solid block is deliberately simple.
 		m_hullVariant = m_registry.registerVariant(PartVariant{
 			.name = "Test Hull", .category = PartCategory::Hull,
-			.params = HullParams{ PartBaseStats{ 5.0f, 20.0f, 10.0f, 0.0f, 2.0f, 0.06f } }
+			.params = HullParams{ PartBaseStats{ 5.0f, 20.0f, 10.0f, 0.0f, 2.0f, 0.06f, 0.03f } }
 			});
 
 		// Shared armor variant reused by every corner plate on complex test

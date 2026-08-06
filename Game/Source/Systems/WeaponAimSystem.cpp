@@ -3,7 +3,7 @@
 
 namespace Engine {
 	constexpr d64 WEAPON_AIM_MAX_LEAD_TIME = 15.0;
-	constexpr f32 SIGNAL_POSITION_ERROR_MAX_KM = 2.0f; // worst-case (resolution 0) random-offset radius around the target's real position, shrinks to 0 at a perfect lock
+	constexpr f32 SIGNAL_POSITION_ERROR_MAX_KM = 6.0f; // worst-case (resolution 0) random-offset radius around the target's real position, shrinks to 0 at a perfect lock
 
 	namespace {
 		f32 normalizeAngle(f32 a) {

@@ -20,6 +20,14 @@
 
 namespace Engine {
 	constexpr f32 THRUST_FORCE_MULTIPLIER = 2.0f;
+	constexpr f32 VELOCITY_MULTIPLIER = 20.0f; // km/s per (thrustForce/mass) unit, same shared-formula shape as maxAccel/turnRate, perpetual maxAccel with no cap was the problem this fixes
+	constexpr f32 TURN_RATE_MULTIPLIER = 6.0f; // rad/s per (thrustForce/mass) unit, mirrors maxAccel's derivation so heavier/less-thrusty ships turn slower too
+	constexpr f32 TURN_RATE_FIGHTER_BONUS_MULTIPLIER = 2.5f; // extra agility on top of the shared formula, fighters only
+	constexpr f32 THRUST_FIGHTER_BONUS_MULTIPLIER = 2.0f; // extra acceleration on top of the shared formula, fighters only, ramps to full speed faster without raising engine thrustForce itself
+	// 15%-per-class steps down from the shared formula, destroyer -> cruiser -> battleship, tuning placeholder for now
+	constexpr f32 DESTROYER_MANEUVER_PENALTY_MULTIPLIER = 0.85f;
+	constexpr f32 CRUISER_MANEUVER_PENALTY_MULTIPLIER = 0.70f;
+	constexpr f32 BATTLESHIP_MANEUVER_PENALTY_MULTIPLIER = 0.55f;
 	constexpr f32 TURRET_ART_ROTATION_OFFSET = -HALF_PI;
 	constexpr f32 TURRET_ART_SCALE_MULTIPLIER = 2.0f;
 
@@ -220,7 +228,39 @@ namespace Engine {
 		m_ecs.addComponent(ship, grid.buildCollisionGeometry());
 
 		if (totalThrustForce > 0.0f) {
-			m_ecs.addComponent(ship, Thruster{ .maxAccel = (totalThrustForce * THRUST_FORCE_MULTIPLIER) / totalMass, .throttle = 0.0f });
+			f32 maxAccel = (totalThrustForce * THRUST_FORCE_MULTIPLIER) / totalMass;
+			f32 maxVelocity = (totalThrustForce * VELOCITY_MULTIPLIER) / totalMass;
+			f32 turnRate = (totalThrustForce * TURN_RATE_MULTIPLIER) / totalMass;
+			switch (classifyShipSize(static_cast<i32>(visual.parts.size()))) {
+			case ShipClass::Fighter:
+				maxAccel *= THRUST_FIGHTER_BONUS_MULTIPLIER;
+				maxVelocity *= THRUST_FIGHTER_BONUS_MULTIPLIER;
+				turnRate *= TURN_RATE_FIGHTER_BONUS_MULTIPLIER;
+				break;
+			case ShipClass::Destroyer:
+				maxAccel *= DESTROYER_MANEUVER_PENALTY_MULTIPLIER;
+				maxVelocity *= DESTROYER_MANEUVER_PENALTY_MULTIPLIER;
+				turnRate *= DESTROYER_MANEUVER_PENALTY_MULTIPLIER;
+				break;
+			case ShipClass::Cruiser:
+				maxAccel *= CRUISER_MANEUVER_PENALTY_MULTIPLIER;
+				maxVelocity *= CRUISER_MANEUVER_PENALTY_MULTIPLIER;
+				turnRate *= CRUISER_MANEUVER_PENALTY_MULTIPLIER;
+				break;
+			case ShipClass::Battleship:
+				maxAccel *= BATTLESHIP_MANEUVER_PENALTY_MULTIPLIER;
+				maxVelocity *= BATTLESHIP_MANEUVER_PENALTY_MULTIPLIER;
+				turnRate *= BATTLESHIP_MANEUVER_PENALTY_MULTIPLIER;
+				break;
+			default: break;
+			}
+
+			m_ecs.addComponent(ship, Thruster{
+				.maxAccel = maxAccel,
+				.maxVelocity = maxVelocity,
+				.turnRate = turnRate,
+				.throttle = 0.0f
+				});
 			m_ecs.addComponent(ship, MovementDamper{});
 		}
 

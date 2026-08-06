@@ -1,4 +1,5 @@
 #include <Systems/MovementTicks.h>
+#include <Components/Thruster.h>
 #include <bitset>
 
 namespace Engine {
@@ -7,7 +8,7 @@ namespace Engine {
 		m_chunkCount(desc.threadPool.threadCount())
 	{
 		m_entityMask = m_ecs.makeSignature<Position, Movement>(); // Defines entities that can be modified by this system
-		m_reads = m_ecs.makeSignature<Position, Movement>();
+		m_reads = m_ecs.makeSignature<Position, Movement, Thruster>();
 		m_writes = m_ecs.makeSignature<Position, Movement>();
 	}
 
@@ -27,6 +28,15 @@ namespace Engine {
 			f32 fdt = static_cast<f32>(dt);
 			movement.linearVelocity += movement.linearAcceleration * fdt;
 			movement.angularVelocity += movement.angularAcceleration * fdt;
+
+			if (m_ecs.hasComponent<Thruster>(id)) {
+				f32 maxVelocity = m_ecs.getComponent<Thruster>(id).maxVelocity;
+				if (maxVelocity > 0.0f) {
+					f32 speed = movement.linearVelocity.length();
+					if (speed > maxVelocity) { movement.linearVelocity *= (maxVelocity / speed); }
+				}
+			}
+
 			tform.transform += Vector2double(movement.linearVelocity * fdt);
 			tform.rotation += movement.angularVelocity * fdt;
 		}

@@ -6,6 +6,9 @@ namespace Engine {
 	// tuned against ShipCollisionTest's fleet-battle content: fighters resolve ~7-16km,
 	// frigates ~40km, destroyers ~90km, bracketing their respective engageRange bands
 	constexpr d64 SIGNAL_RANGE_PER_MAGNITUDE_KM = 10.0;
+	// guaranteed additive floor, above the largest fighter engageRange (6km) so any target -
+	// however quiet - is always at least minimally resolvable at close range, "you can just see it"
+	constexpr d64 SIGNAL_BASE_DETECTION_RANGE_KM = 8.0;
 	constexpr d64 SIGNAL_DETECTION_SEARCH_RADIUS_KM = 300.0;
 	constexpr f32 SIGNAL_DETECTION_MIN_RESOLUTION = 0.02f;
 
@@ -68,8 +71,8 @@ namespace Engine {
 						Vector2double delta = otherPos.transform - pos.transform;
 						d64 dist = std::sqrt(delta.x * delta.x + delta.y * delta.y);
 
-						d64 effectiveRange = static_cast<d64>(otherSignal.magnitude) * static_cast<d64>(sensorPower) * SIGNAL_RANGE_PER_MAGNITUDE_KM;
-						if (effectiveRange <= 0.0) { continue; }
+						d64 effectiveRange = SIGNAL_BASE_DETECTION_RANGE_KM +
+							static_cast<d64>(otherSignal.magnitude) * static_cast<d64>(sensorPower) * SIGNAL_RANGE_PER_MAGNITUDE_KM;
 
 						f32 resolution = static_cast<f32>(std::clamp(1.0 - dist / effectiveRange, 0.0, 1.0));
 						if (resolution > bestResolution) {

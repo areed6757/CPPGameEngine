@@ -7,6 +7,7 @@ add_executable(EngineTests
     test_logger.cpp
 
     test_aabbtree.cpp
+    test_orca.cpp
     test_threadpool.cpp
     test_jobcontroller.cpp
     test_scheduler.cpp
