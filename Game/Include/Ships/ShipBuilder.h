@@ -15,6 +15,7 @@ namespace Engine {
 		f32 systemCapacityMax{ 0.0f };
 		f32 systemCapacityUsed{ 0.0f };
 		bool isOverSystemCapacity{ false };
+		f32 totalSignalEmission{ 0.0f };
 		i32 partCount{ 0 };
 	};
 

@@ -26,6 +26,8 @@ namespace Engine {
 		f32 systemCapacityUsed{ 0.0f }; // total consumed by engines, hardpoint sockets, and equipped weapons
 		bool isOverSystemCapacity{ false };
 
+		f32 totalSignalEmission{ 0.0f }; // sum of every part's signalEmissionValue, the ship's single unified targeting signal for now
+
 		ShipClass shipClass{ ShipClass::Fighter };
 	};
 }

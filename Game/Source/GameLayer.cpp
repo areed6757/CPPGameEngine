@@ -38,6 +38,9 @@ namespace Engine {
 		AABBTreeDesc aabbTreeDesc{ {m_logger}, 0.1f, 4.0f };
 		m_AABBTree = std::make_unique<AABBTree>(aabbTreeDesc);
 
+		AABBTreeDesc signalTreeDesc{ {m_logger}, 0.1f, 4.0f };
+		m_signalTree = std::make_unique<AABBTree>(signalTreeDesc);
+
 		unsigned int hwThreads = std::thread::hardware_concurrency();
 		i32 collisionThreadCount = (hwThreads > 1) ? static_cast<i32>(hwThreads - 1) : 1;
 		ThreadPoolDesc collisionTpDesc{ {m_logger}, collisionThreadCount };
@@ -52,6 +55,9 @@ namespace Engine {
 
 		TransformHistorySystemDesc transformHistDesc = { {m_logger}, *m_ecsWrapper.get() };
 		m_transformHistorySystem = std::make_unique<TransformHistorySystem>(transformHistDesc);
+
+		SignalTreeSystemDesc signalTreeSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_signalTree.get() };
+		m_signalTreeSystem = std::make_unique<SignalTreeSystem>(signalTreeSysDesc);
 
 		RenderSystemDesc renderSysDesc = { {m_logger}, *m_ecsWrapper.get(), *m_meshRegistry.get(), *m_textureRegistry.get(), *m_renderer.get(), *m_camera.get(), m_app.getWindow(), m_app.getScheduler() };
 		m_renderSystem = std::make_unique<RenderSystem>(renderSysDesc);
@@ -119,6 +125,7 @@ namespace Engine {
 		scheduler.registerFrameSystem(m_renderSystem.get());
 
 		scheduler.registerSystem(m_transformHistorySystem.get());
+		scheduler.registerSystem(m_signalTreeSystem.get());
 		scheduler.registerSystem(m_aiSystem.get());
 		scheduler.registerSystem(m_thrusterSystem.get());
 		scheduler.registerSystem(m_separationSystem.get());

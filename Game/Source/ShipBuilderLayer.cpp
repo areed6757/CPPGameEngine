@@ -259,6 +259,7 @@ namespace Engine {
 		ImGui::Text("Thrust Force: %.1f", stats.totalThrustForce);
 		ImGui::Text("Max Accel: %.2f", stats.maxAccel);
 		ImGui::Text("System Capacity: %.1f / %.1f", stats.systemCapacityUsed, stats.systemCapacityMax);
+		ImGui::Text("Signal Emission: %.1f", stats.totalSignalEmission);
 		if (stats.isOverSystemCapacity) {
 			ImGui::TextColored(ImVec4(1.0f, 0.3f, 0.3f, 1.0f), "OVER SYSTEM CAPACITY");
 		}

@@ -29,6 +29,7 @@
 #include <Components/AIController.h>
 #include <Components/Faction.h>
 #include <Components/Separation.h>
+#include <Components/SignalSignature.h>
 
 // Graphics
 #include <Graphics/TextureRegistry.h>
@@ -53,6 +54,7 @@
 #include <Systems/AISystem.h>
 #include <Systems/SeparationSystem.h>
 #include <Systems/TransformHistorySystem.h>
+#include <Systems/SignalTreeSystem.h>
 
 // Layers and Overlays
 #include <PartEditorLayer.h>

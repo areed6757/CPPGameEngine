@@ -25,6 +25,9 @@ namespace Engine {
 		// part consumes it to be mounted (engines, hardpoint sockets, equipped weapons). Armor
 		// deliberately defaults to 0 either way - it's pure protection, not chassis.
 		f32 systemCapacityContribution{ 0.0f };
+
+		// baseline contribution to the ship's single unified targeting signal, summed at bake time, stealth/utility parts will modify this later
+		f32 signalEmissionValue{ 0.0f };
 	};
 
 	struct ArmorParams : PartBaseStats {

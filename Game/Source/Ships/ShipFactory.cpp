@@ -12,6 +12,7 @@
 #include <Components/Renderable.h>
 #include <Components/ShipVisual.h>
 #include <Components/UtilityAIState.h>
+#include <Components/SignalSignature.h>
 #include <Graphics/MeshID.h>
 #include <tuple>
 #include <algorithm>
@@ -134,6 +135,7 @@ namespace Engine {
 		f32 totalThrustForce = 0.0f;
 		f32 systemCapacityMax = 0.0f;
 		f32 systemCapacityUsed = 0.0f;
+		f32 totalSignalEmission = 0.0f;
 
 		auto applySystemCapacity = [&](f32 contribution) {
 			if (contribution > 0.0f) { systemCapacityMax += contribution; }
@@ -162,6 +164,7 @@ namespace Engine {
 						totalMass += params.mass;
 						totalStability += params.stabilityContribution;
 						applySystemCapacity(params.systemCapacityContribution);
+						totalSignalEmission += params.signalEmissionValue;
 						visual.parts.push_back({
 							localOffsetFor(x, y, cell.sizeX, cell.sizeY), cell.sizeX, cell.sizeY, PartCategory::Hull, cell.variant
 							});
@@ -170,6 +173,7 @@ namespace Engine {
 						totalMass += params.mass;
 						totalStability += params.stabilityContribution;
 						applySystemCapacity(params.systemCapacityContribution);
+						totalSignalEmission += params.signalEmissionValue;
 						visual.parts.push_back({
 							localOffsetFor(x, y, cell.sizeX, cell.sizeY), cell.sizeX, cell.sizeY, PartCategory::Armor, cell.variant
 							});
@@ -179,6 +183,7 @@ namespace Engine {
 						totalStability += params.stabilityContribution;
 						totalThrustForce += params.thrustForce;
 						applySystemCapacity(params.systemCapacityContribution);
+						totalSignalEmission += params.signalEmissionValue;
 						visual.parts.push_back({
 							localOffsetFor(x, y, cell.sizeX, cell.sizeY), cell.sizeX, cell.sizeY, PartCategory::Engine, cell.variant
 							});
@@ -187,6 +192,7 @@ namespace Engine {
 						totalMass += params.mass;
 						totalStability += params.stabilityContribution;
 						applySystemCapacity(params.systemCapacityContribution);
+						totalSignalEmission += params.signalEmissionValue;
 						i32 visualPartIndex = static_cast<i32>(visual.parts.size());
 						visual.parts.push_back({
 							localOffsetFor(x, y, cell.sizeX, cell.sizeY), cell.sizeX, cell.sizeY, PartCategory::Hardpoint, cell.variant
@@ -236,6 +242,7 @@ namespace Engine {
 				mountOffset = offset + weaponParams.anchorOffset;
 				visual.parts[visualPartIndex].anchorOffset = weaponParams.anchorOffset;
 				applySystemCapacity(weaponParams.systemCapacityContribution);
+				totalSignalEmission += weaponParams.signalEmissionValue;
 			}
 
 			EntityID mountEntity = m_ecs.createEntity();
@@ -284,14 +291,16 @@ namespace Engine {
 			.systemCapacityMax = systemCapacityMax,
 			.systemCapacityUsed = systemCapacityUsed,
 			.isOverSystemCapacity = systemCapacityUsed > systemCapacityMax,
+			.totalSignalEmission = totalSignalEmission,
 			.shipClass = classifyShipSize(static_cast<i32>(visual.parts.size())),
 		};
-		EngineLogInfo("ShipFactory: baked stats -- class={}, idealFiringHeading={:.2f}, primaryRange={:.2f}, idealRange={:.2f}, isPointDefense={}, isUtility={}, systemCapacity={:.1f}/{:.1f}{}",
+		EngineLogInfo("ShipFactory: baked stats -- class={}, idealFiringHeading={:.2f}, primaryRange={:.2f}, idealRange={:.2f}, isPointDefense={}, isUtility={}, systemCapacity={:.1f}/{:.1f}{}, signalEmission={:.1f}",
 			shipClassName(stats.shipClass), stats.idealFiringHeading, stats.primaryRange, stats.idealRange, stats.isPointDefense, stats.isUtility,
-			stats.systemCapacityUsed, stats.systemCapacityMax, stats.isOverSystemCapacity ? " (OVER CAPACITY)" : "");
+			stats.systemCapacityUsed, stats.systemCapacityMax, stats.isOverSystemCapacity ? " (OVER CAPACITY)" : "", stats.totalSignalEmission);
 
 		m_ecs.addComponent(ship, stats);
 		m_ecs.addComponent(ship, UtilityAIState{});
+		m_ecs.addComponent(ship, SignalSignature{ .magnitude = totalSignalEmission });
 
 		m_ecs.addComponent(ship, visual);
 
